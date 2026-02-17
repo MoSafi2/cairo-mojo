@@ -1,27 +1,21 @@
 """
-Example: create a PNG image with a red rectangle in the middle.
+Example: create an image with a red rectangle in the middle and write it to a file.
 
-Uses the Cairo bindings via static linking (external_call). All Cairo calls
-must use the same library instance; mixing dynamic (CairoLib) and static
-(external_call) causes crashes because surfaces from one instance are invalid
-in another.
+Uses Cairo via CairoLib (dynamic loading). Writes the result as PPM (Portable
+Pixmap, P3 ASCII) by reading the surface pixel data — avoids cairo_surface_write_to_png.
 
   - Create an image surface (400×300)
   - Draw a red rectangle centered on the image
-  - Write the result to red_rectangle.png
+  - Write the result to red_rectangle.ppm
 
-Build (must link libcairo):
-  mojo build -Xlinker -lcairo -o red_rectangle_png examples/red_rectangle_png.mojo
-
-Run: ./red_rectangle_png
+Run: pixi run mojo run examples/red_rectangle_png.mojo
 
 Requires: system libcairo (e.g. libcairo2-dev on Debian/Ubuntu).
-Output: red_rectangle.png in the current working directory.
+Output: red_rectangle.ppm in the current working directory.
 """
 
-from src.cairo import CairoLib, CairoFormatT, CairoStatusT
-from memory import alloc, UnsafePointer
-from sys.ffi import c_char, c_int, c_double
+from src.cairo import CairoLib, CairoFormatT
+from sys.ffi import c_int, c_double
 
 
 fn main() raises:
@@ -43,24 +37,30 @@ fn main() raises:
     cairo_lib.rectangle(cr, rect_x, rect_y, rect_width, rect_height)
     cairo_lib.fill(cr)
 
-    #destroy(cr)
+    cairo_lib.destroy(cr)
 
-    # Null-terminated C string for filename
-    var path_ptr = alloc[c_char](32)
-    var path_ascii = InlineArray[Int, 19](
-        114, 101, 100, 95, 114, 101, 99, 116, 97, 110, 103, 108, 101, 46, 112, 110, 103, 0
-    )
-    for i in range(19):
-        path_ptr.store(i, c_char(path_ascii[i]))
-    var write_status = cairo_lib.surface_write_to_png(surface, path_ptr)
-    # var write_status = CairoStatusT.CAIRO_STATUS_INVALID_MATRIX
-    # _ = path_ptr
-    path_ptr.free()
+    # Flush so drawing is in the surface buffer, then write PPM by reading pixel data
+    cairo_lib.surface_flush(surface)
+    var w = cairo_lib.image_surface_get_width(surface)
+    var h = cairo_lib.image_surface_get_height(surface)
+    var stride = cairo_lib.image_surface_get_stride(surface)
+    var data = cairo_lib.image_surface_get_data(surface)
+    var f = open("red_rectangle.ppm", "w")
+    f.write("P3\n")
+    f.write(String(w) + " " + String(h) + "\n")
+    f.write("255\n")
+    for y in range(h):
+        var row: String = ""
+        for x in range(w):
+            var offset = y * stride + x * 4
+            # ARGB32 little-endian: bytes at offset are B, G, R, A
+            var r = Int((data + offset + 2)[]) & 0xFF
+            var g = Int((data + offset + 1)[]) & 0xFF
+            var b = Int((data + offset)[]) & 0xFF
+            row += String(r) + " " + String(g) + " " + String(b) + " "
+        row += "\n"
+        f.write(row)
+    f.close()
 
-    if write_status.value != CairoStatusT.CAIRO_STATUS_SUCCESS:
-        print("Failed to write PNG: status", write_status.value)
-        cairo_lib.surface_destroy(surface)
-        return
-
-    # surface_destroy(surface)
-    print("Wrote red_rectangle.png")
+    cairo_lib.surface_destroy(surface)
+    print("Wrote red_rectangle.ppm")
