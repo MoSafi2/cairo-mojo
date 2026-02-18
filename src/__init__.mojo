@@ -1,1 +1,1 @@
-from cairo import CairoLib
+from src import cairo
