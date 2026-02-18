@@ -14,8 +14,8 @@ Requires: system libcairo (e.g. libcairo2-dev on Debian/Ubuntu).
 Output: red_rectangle.ppm in the current working directory.
 """
 
-from src.cairo import CairoLib, CairoFormatT
-from sys.ffi import c_int, c_double
+from src.cairo import CairoLib, CairoFormatT, CairoStatusT
+from sys.ffi import c_int, c_double, c_char
 
 
 fn main() raises:
@@ -37,30 +37,14 @@ fn main() raises:
     cairo_lib.rectangle(cr, rect_x, rect_y, rect_width, rect_height)
     cairo_lib.fill(cr)
 
-    cairo_lib.destroy(cr)
-
+    
     # Flush so drawing is in the surface buffer, then write PPM by reading pixel data
     cairo_lib.surface_flush(surface)
-    var w = cairo_lib.image_surface_get_width(surface)
-    var h = cairo_lib.image_surface_get_height(surface)
-    var stride = cairo_lib.image_surface_get_stride(surface)
-    var data = cairo_lib.image_surface_get_data(surface)
-    var f = open("red_rectangle.ppm", "w")
-    f.write("P3\n")
-    f.write(String(w) + " " + String(h) + "\n")
-    f.write("255\n")
-    for y in range(h):
-        var row: String = ""
-        for x in range(w):
-            var offset = y * stride + x * 4
-            # ARGB32 little-endian: bytes at offset are B, G, R, A
-            var r = Int((data + offset + 2)[]) & 0xFF
-            var g = Int((data + offset + 1)[]) & 0xFF
-            var b = Int((data + offset)[]) & 0xFF
-            row += String(r) + " " + String(g) + " " + String(b) + " "
-        row += "\n"
-        f.write(row)
-    f.close()
-
+    var fname = String("red_rectangle.png")
+    ptr = fname.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+    result = cairo_lib.surface_write_to_png(surface, ptr)
+    if result.value != CairoStatusT.CAIRO_STATUS_SUCCESS:
+        print("Error writing PNG file: " + String(result.value))
+    cairo_lib.destroy(cr)
     cairo_lib.surface_destroy(surface)
     print("Wrote red_rectangle.ppm")
