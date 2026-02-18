@@ -1311,11 +1311,6 @@ struct CairoLib:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_int]("cairo_surface_get_content")
         return f(surface)
 
-    # fn surface_write_to_png(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], filename: UnsafePointer[c_char, MutExternalOrigin]) -> cairo_status_t:
-    #     # C returns cairo_status_t (int); use c_int in FFI to avoid struct-return ABI issues
-    #     var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[c_char, MutExternalOrigin]) -> c_int]("cairo_surface_write_to_png")
-    #     return cairo_status_t(f(surface, filename))
-    
     fn surface_write_to_png(
         self, 
         surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin],  # Use the opaque handle wrapper
@@ -3008,6 +3003,3 @@ fn debug_reset_static_data() -> NoneType:
     return external_call["cairo_debug_reset_static_data", NoneType]()
 
 
-# Entry point for `mojo run` (minimal; use CairoLib or static fns in your code)
-fn main():
-    pass
