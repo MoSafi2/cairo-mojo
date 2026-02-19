@@ -52,6 +52,7 @@ comptime cairo_bool_t = c_int
 
 # cairo_surface_observer_mode_t: _SURFACE_OBSERVER_NORMAL: no recording is done _SURFACE_OBSERVER_RECORD_OPERATIONS: operations are recorded
 @fieldwise_init
+@register_passable("trivial")
 struct CairoSurfaceObserverModeT(Copyable, Movable):
     """C enum `cairo_surface_observer_mode_t`."""
     var value: c_int
@@ -64,6 +65,7 @@ struct CairoSurfaceObserverModeT(Copyable, Movable):
 
 # cairo_status_t
 @fieldwise_init
+@register_passable("trivial")
 struct CairoStatusT(Copyable, Movable):
     """C enum `cairo_status_t`."""
     var value: c_int
@@ -89,6 +91,7 @@ struct CairoStatusT(Copyable, Movable):
 
 # cairo_format_t
 @fieldwise_init
+@register_passable("trivial")
 struct CairoFormatT(Copyable, Movable):
     """C enum `cairo_format_t`."""
     var value: c_int
@@ -105,6 +108,7 @@ struct CairoFormatT(Copyable, Movable):
         return self.value == other.value
 
 @fieldwise_init
+@register_passable("trivial")
 struct CairoLineCapT(Copyable, Movable):
     """C enum `cairo_line_cap_t`."""
     var value: c_int
@@ -117,6 +121,7 @@ struct CairoLineCapT(Copyable, Movable):
         return self.value == other.value
 
 @fieldwise_init
+@register_passable("trivial")
 struct CairoLineJoinT(Copyable, Movable):
     """C enum `cairo_line_join_t`."""
     var value: c_int
@@ -129,6 +134,7 @@ struct CairoLineJoinT(Copyable, Movable):
         return self.value == other.value
 
 @fieldwise_init
+@register_passable("trivial")
 struct CairoFontSlantT(Copyable, Movable):
     """C enum `cairo_font_slant_t`."""
     var value: c_int
@@ -141,6 +147,7 @@ struct CairoFontSlantT(Copyable, Movable):
         return self.value == other.value
 
 @fieldwise_init
+@register_passable("trivial")
 struct CairoFontWeightT(Copyable, Movable):
     """C enum `cairo_font_weight_t`."""
     var value: c_int
@@ -169,6 +176,8 @@ comptime cairo_font_weight_t = CairoFontWeightT
 # own the memory — ownership is managed by the library's ref-count
 # or destroy functions (e.g. cairo_destroy, cairo_surface_destroy).
 
+
+@register_passable("trivial")
 struct __CairoT:
     """Opaque handle for C type `cairo_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -182,6 +191,7 @@ struct __CairoT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoSurfaceT:
     """Opaque handle for C type `cairo_surface_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -195,6 +205,7 @@ struct __CairoSurfaceT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoPatternT:
     """Opaque handle for C type `cairo_pattern_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -208,6 +219,7 @@ struct __CairoPatternT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoFontFaceT:
     """Opaque handle for C type `cairo_font_face_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -221,6 +233,7 @@ struct __CairoFontFaceT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoFontOptionsT:
     """Opaque handle for C type `cairo_font_options_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -234,6 +247,7 @@ struct __CairoFontOptionsT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoScaledFontT:
     """Opaque handle for C type `cairo_scaled_font_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -247,6 +261,7 @@ struct __CairoScaledFontT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoPathT:
     """Opaque handle for C type `cairo_path_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -260,6 +275,7 @@ struct __CairoPathT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoRegionT:
     """Opaque handle for C type `cairo_region_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -273,6 +289,7 @@ struct __CairoRegionT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoDeviceT:
     """Opaque handle for C type `cairo_device_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -286,6 +303,7 @@ struct __CairoDeviceT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoMatrixT:
     """Opaque handle for C type `cairo_matrix_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -299,6 +317,7 @@ struct __CairoMatrixT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoRectangleListT:
     """Opaque handle for C type `cairo_rectangle_list_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -312,6 +331,7 @@ struct __CairoRectangleListT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoRectangleT:
     """Opaque handle for C type `cairo_rectangle_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]
@@ -325,6 +345,7 @@ struct __CairoRectangleT:
     fn as_opaque(self) -> UnsafePointer[NoneType, MutExternalOrigin]:
         return self._ptr
 
+@register_passable("trivial")
 struct __CairoRectangleIntT:
     """Opaque handle for C type `cairo_rectangle_int_t`."""
     var _ptr: UnsafePointer[NoneType, MutExternalOrigin]

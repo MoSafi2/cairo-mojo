@@ -1028,7 +1028,7 @@ struct Context(Movable):
             g: Green component (0.0 to 1.0).
             b: Blue component (0.0 to 1.0).
         """
-        self._lib.set_source_rgb(self._cr, r, g, b)
+        self._lib.set_source_rgb(self._cr, c_double(r), c_double(g), c_double(b))
     
     fn set_source_rgba(mut self, r: Float64, g: Float64, b: Float64, a: Float64):
         """
@@ -1040,7 +1040,7 @@ struct Context(Movable):
             b: Blue component (0.0 to 1.0).
             a: Alpha component (0.0 to 1.0).
         """
-        self._lib.set_source_rgba(self._cr, r, g, b, a)
+        self._lib.set_source_rgba(self._cr, c_double(r), c_double(g), c_double(b), c_double(a))
     
     # Drawing operations - Shapes
     fn rectangle(mut self, x: Float64, y: Float64, width: Float64, height: Float64):
@@ -1100,7 +1100,7 @@ struct Context(Movable):
         Args:
             alpha: Alpha value (0.0 to 1.0).
         """
-        self._lib.paint_with_alpha(self._cr, alpha)
+        self._lib.paint_with_alpha(self._cr, c_double(alpha))
     
     # Path operations
     fn new_path(mut self):
