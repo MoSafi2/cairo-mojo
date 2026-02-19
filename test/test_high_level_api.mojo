@@ -21,14 +21,16 @@ def test_ellipse():
     var surface = ImageSurface(CairoFormatT(CairoFormatT.CAIRO_FORMAT_ARGB32), 500, 300)
     var ctx = Context(surface)
 
-
-
     # # White background
     ctx.set_source_rgb(1.0, 1.0, 1.0)
     ctx.paint()
+    var x = ctx.status()
+    print("status: ", x.value)
 
     _ = surface
     _ = ctx
+    _ = ctx._lib
+    _ = ctx._lib._lib
     
     # # Draw green ellipse
     # ctx.set_source_rgb(0.0, 0.8, 0.0)

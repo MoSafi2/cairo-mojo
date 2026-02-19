@@ -782,7 +782,7 @@ struct Matrix(Movable):
 # Font Options Wrapper
 # ======================================================================
 
-struct FontOptions(Movable):
+struct FontOptions:
     """
     Font options wrapper.
     
@@ -938,7 +938,7 @@ struct FontOptions(Movable):
 # Context Wrapper
 # ======================================================================
 
-struct Context(Movable):
+struct Context:
     """
     Cairo drawing context, providing a Pythonic API for drawing operations.
     
@@ -959,10 +959,9 @@ struct Context(Movable):
         """
         print("Context.__init__ called")
         self._lib = CairoLib()
+        print("surface address: ", surface._get_ptr())
         self._cr = self._lib.create(surface._get_ptr())
         
-        if not self._cr:
-            raise Error("Failed to create Cairo context")
         
         var status = self._lib.status(self._cr)
         if status.value != CairoStatusT.CAIRO_STATUS_SUCCESS:
@@ -981,9 +980,8 @@ struct Context(Movable):
         print("Context.__init__ called")
         self._lib = CairoLib()
         self._cr = self._lib.create(surface._get_ptr())
-        
-        if not self._cr:
-            raise Error("Failed to create Cairo context")
+
+        print("surface address: ", surface._get_ptr())
         
         var status = self._lib.status(self._cr)
         if status.value != CairoStatusT.CAIRO_STATUS_SUCCESS:

@@ -249,7 +249,7 @@ struct CairoPath(Copyable, Movable):
 # Dynamic library loader — OwnedDLHandle-based dispatch
 # ======================================================================
 
-struct CairoLib(Movable):
+struct CairoLib(ImplicitlyDestructible):
     """
     RAII wrapper that loads `libcairo.so.2` at runtime and
     exposes its symbols as callable Mojo function-pointer fields.
@@ -258,7 +258,12 @@ struct CairoLib(Movable):
     var _lib: OwnedDLHandle
 
     fn __init__(out self, path: StaticString = '/usr/lib/x86_64-linux-gnu/libcairo.so.2\0') raises:
-        self._lib = OwnedDLHandle(path)
+        self._lib = OwnedDLHandle(path, flags = RTLD.LAZY | RTLD.GLOBAL)
+
+    fn __del__(deinit self):
+        print("CairoLib.__del__ called")
+        # if self._lib:
+        #     self._lib._handle.close()
 
     fn version(self) -> c_int:
         var f = self._lib.get_function[fn() -> c_int]("cairo_version")
@@ -473,14 +478,7 @@ struct CairoLib(Movable):
         return f(cr, x1, y1, x2, y2)
 
     fn paint(self, cr: __CairoT) -> None:
-        print("cairo_paint called")
-        print("cr address: ", cr)
         var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_paint")
-        print("have function")
-        return f(cr)
-
-    fn paint2(self, cr: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
-        var f = self._lib.get_function[fn(UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_paint")
         return f(cr)
 
     fn paint_with_alpha(self, cr: __CairoT, alpha: c_double) -> None:
