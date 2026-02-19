@@ -443,9 +443,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_get_user_data")
         return f(cr, key)
 
-    fn set_user_data(self, cr: UnsafePointer[__CairoT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_set_user_data")
-        return f(cr, key, user_data, destroy)
+    fn set_user_data(self, cr: UnsafePointer[__CairoT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_set_user_data")
+        return CairoStatusT(f(cr, key, user_data, destroy))
 
     fn save(self, cr: UnsafePointer[__CairoT, MutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin]) -> NoneType]("cairo_save")
@@ -739,9 +739,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]) -> NoneType]("cairo_font_options_destroy")
         return f(options)
 
-    fn font_options_status(self, options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]) -> cairo_status_t]("cairo_font_options_status")
-        return f(options)
+    fn font_options_status(self, options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]) -> c_int]("cairo_font_options_status")
+        return CairoStatusT(f(options))
 
     fn font_options_merge(self, options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], other: UnsafePointer[__CairoFontOptionsT, ImmutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], UnsafePointer[__CairoFontOptionsT, ImmutExternalOrigin]) -> NoneType]("cairo_font_options_merge")
@@ -815,9 +815,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], c_uint, c_double, c_double, c_double, c_double) -> NoneType]("cairo_font_options_set_custom_palette_color")
         return f(options, index, red, green, blue, alpha)
 
-    fn font_options_get_custom_palette_color(self, options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], index: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_font_options_get_custom_palette_color")
-        return f(options, index, red, green, blue, alpha)
+    fn font_options_get_custom_palette_color(self, options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], index: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontOptionsT, MutExternalOrigin], c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_font_options_get_custom_palette_color")
+        return CairoStatusT(f(options, index, red, green, blue, alpha))
 
     fn select_font_face(self, cr: UnsafePointer[__CairoT, MutExternalOrigin], family: UnsafePointer[c_char, ImmutExternalOrigin], slant: cairo_font_slant_t, weight: cairo_font_weight_t) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], cairo_font_slant_t, cairo_font_weight_t) -> NoneType]("cairo_select_font_face")
@@ -903,9 +903,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> c_uint]("cairo_font_face_get_reference_count")
         return f(font_face)
 
-    fn font_face_status(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> cairo_status_t]("cairo_font_face_status")
-        return f(font_face)
+    fn font_face_status(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> c_int]("cairo_font_face_status")
+        return CairoStatusT(f(font_face))
 
     fn font_face_get_type(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> c_int:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin]) -> c_int]("cairo_font_face_get_type")
@@ -915,9 +915,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_font_face_get_user_data")
         return f(font_face, key)
 
-    fn font_face_set_user_data(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_font_face_set_user_data")
-        return f(font_face, key, user_data, destroy)
+    fn font_face_set_user_data(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_font_face_set_user_data")
+        return CairoStatusT(f(font_face, key, user_data, destroy))
 
     fn scaled_font_create(self, font_face: UnsafePointer[__CairoFontFaceT, MutExternalOrigin], font_matrix: UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], ctm: UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], options: UnsafePointer[__CairoFontOptionsT, ImmutExternalOrigin]) -> UnsafePointer[__CairoScaledFontT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoFontFaceT, MutExternalOrigin], UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], UnsafePointer[__CairoFontOptionsT, ImmutExternalOrigin]) -> UnsafePointer[__CairoScaledFontT, MutExternalOrigin]]("cairo_scaled_font_create")
@@ -935,9 +935,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> c_uint]("cairo_scaled_font_get_reference_count")
         return f(scaled_font)
 
-    fn scaled_font_status(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> cairo_status_t]("cairo_scaled_font_status")
-        return f(scaled_font)
+    fn scaled_font_status(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> c_int]("cairo_scaled_font_status")
+        return CairoStatusT(f(scaled_font))
 
     fn scaled_font_get_type(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> c_int:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> c_int]("cairo_scaled_font_get_type")
@@ -947,9 +947,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_scaled_font_get_user_data")
         return f(scaled_font, key)
 
-    fn scaled_font_set_user_data(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_scaled_font_set_user_data")
-        return f(scaled_font, key, user_data, destroy)
+    fn scaled_font_set_user_data(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_scaled_font_set_user_data")
+        return CairoStatusT(f(scaled_font, key, user_data, destroy))
 
     fn scaled_font_extents(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin], extents: UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType]("cairo_scaled_font_extents")
@@ -963,9 +963,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType]("cairo_scaled_font_glyph_extents")
         return f(scaled_font, glyphs, num_glyphs, extents)
 
-    fn scaled_font_text_to_glyphs(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin], x: c_double, y: c_double, utf8: UnsafePointer[c_char, ImmutExternalOrigin], utf8_len: c_int, glyphs: UnsafePointer[UnsafePointer[__CairoGlyphT, MutExternalOrigin], MutExternalOrigin], num_glyphs: UnsafePointer[c_int, MutExternalOrigin], clusters: UnsafePointer[UnsafePointer[__CairoTextClusterT, MutExternalOrigin], MutExternalOrigin], num_clusters: UnsafePointer[c_int, MutExternalOrigin], cluster_flags: UnsafePointer[c_int, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], c_double, c_double, UnsafePointer[c_char, ImmutExternalOrigin], c_int, UnsafePointer[UnsafePointer[__CairoGlyphT, MutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin], UnsafePointer[UnsafePointer[__CairoTextClusterT, MutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]) -> cairo_status_t]("cairo_scaled_font_text_to_glyphs")
-        return f(scaled_font, x, y, utf8, utf8_len, glyphs, num_glyphs, clusters, num_clusters, cluster_flags)
+    fn scaled_font_text_to_glyphs(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin], x: c_double, y: c_double, utf8: UnsafePointer[c_char, ImmutExternalOrigin], utf8_len: c_int, glyphs: UnsafePointer[UnsafePointer[__CairoGlyphT, MutExternalOrigin], MutExternalOrigin], num_glyphs: UnsafePointer[c_int, MutExternalOrigin], clusters: UnsafePointer[UnsafePointer[__CairoTextClusterT, MutExternalOrigin], MutExternalOrigin], num_clusters: UnsafePointer[c_int, MutExternalOrigin], cluster_flags: UnsafePointer[c_int, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin], c_double, c_double, UnsafePointer[c_char, ImmutExternalOrigin], c_int, UnsafePointer[UnsafePointer[__CairoGlyphT, MutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin], UnsafePointer[UnsafePointer[__CairoTextClusterT, MutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]) -> c_int]("cairo_scaled_font_text_to_glyphs")
+        return CairoStatusT(f(scaled_font, x, y, utf8, utf8_len, glyphs, num_glyphs, clusters, num_clusters, cluster_flags))
 
     fn scaled_font_get_font_face(self, scaled_font: UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> UnsafePointer[__CairoFontFaceT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoScaledFontT, MutExternalOrigin]) -> UnsafePointer[__CairoFontFaceT, MutExternalOrigin]]("cairo_scaled_font_get_font_face")
@@ -1139,9 +1139,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPathT, MutExternalOrigin]) -> NoneType]("cairo_path_destroy")
         return f(path)
 
-    fn status(self, cr: UnsafePointer[__CairoT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin]) -> cairo_status_t]("cairo_status")
-        return f(cr)
+    fn status(self, cr: UnsafePointer[__CairoT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoT, MutExternalOrigin]) -> c_int]("cairo_status")
+        return CairoStatusT(f(cr))
 
     fn status_to_string(self, status: cairo_status_t) -> UnsafePointer[c_char, ImmutExternalOrigin]:
         var f = self._lib.get_function[fn(cairo_status_t) -> UnsafePointer[c_char, ImmutExternalOrigin]]("cairo_status_to_string")
@@ -1155,13 +1155,13 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> c_int]("cairo_device_get_type")
         return f(device)
 
-    fn device_status(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> cairo_status_t]("cairo_device_status")
-        return f(device)
+    fn device_status(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> c_int]("cairo_device_status")
+        return CairoStatusT(f(device))
 
-    fn device_acquire(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> cairo_status_t]("cairo_device_acquire")
-        return f(device)
+    fn device_acquire(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> c_int]("cairo_device_acquire")
+        return CairoStatusT(f(device))
 
     fn device_release(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> NoneType]("cairo_device_release")
@@ -1187,9 +1187,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_device_get_user_data")
         return f(device, key)
 
-    fn device_set_user_data(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_device_set_user_data")
-        return f(device, key, user_data, destroy)
+    fn device_set_user_data(self, device: UnsafePointer[__CairoDeviceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_device_set_user_data")
+        return CairoStatusT(f(device, key, user_data, destroy))
 
     fn surface_create_similar(self, other: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], content: c_int, width: c_int, height: c_int) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], c_int, c_int, c_int) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]]("cairo_surface_create_similar")
@@ -1215,45 +1215,45 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], cairo_surface_observer_mode_t) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]]("cairo_surface_create_observer")
         return f(target, mode)
 
-    fn surface_observer_add_paint_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_paint_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_paint_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_paint_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_mask_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_mask_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_mask_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_mask_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_fill_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_fill_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_fill_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_fill_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_stroke_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_stroke_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_stroke_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_stroke_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_glyphs_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_glyphs_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_glyphs_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_glyphs_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_flush_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_flush_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_flush_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_flush_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_add_finish_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_add_finish_callback")
-        return f(abstract_surface, func, data)
+    fn surface_observer_add_finish_callback(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], func: UnsafePointer[NoneType, MutExternalOrigin], data: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_add_finish_callback")
+        return CairoStatusT(f(abstract_surface, func, data))
 
-    fn surface_observer_print(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_observer_print")
-        return f(abstract_surface, write_func, closure)
+    fn surface_observer_print(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_observer_print")
+        return CairoStatusT(f(abstract_surface, write_func, closure))
 
     fn surface_observer_elapsed(self, abstract_surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_double:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_double]("cairo_surface_observer_elapsed")
         return f(abstract_surface)
 
-    fn device_observer_print(self, abstract_device: UnsafePointer[__CairoDeviceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_device_observer_print")
-        return f(abstract_device, write_func, closure)
+    fn device_observer_print(self, abstract_device: UnsafePointer[__CairoDeviceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_device_observer_print")
+        return CairoStatusT(f(abstract_device, write_func, closure))
 
     fn device_observer_elapsed(self, abstract_device: UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> c_double:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoDeviceT, MutExternalOrigin]) -> c_double]("cairo_device_observer_elapsed")
@@ -1299,9 +1299,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_uint]("cairo_surface_get_reference_count")
         return f(surface)
 
-    fn surface_status(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_status")
-        return f(surface)
+    fn surface_status(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_int]("cairo_surface_status")
+        return CairoStatusT(f(surface))
 
     fn surface_get_type(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_int:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) -> c_int]("cairo_surface_get_type")
@@ -1321,25 +1321,25 @@ struct CairoLib(Movable):
         ]("cairo_surface_write_to_png")
         return CairoStatusT(f(surface, filename))
 
-    fn surface_write_to_png_stream(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_write_to_png_stream")
-        return f(surface, write_func, closure)
+    fn surface_write_to_png_stream(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], write_func: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_write_to_png_stream")
+        return CairoStatusT(f(surface, write_func, closure))
 
     fn surface_get_user_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_surface_get_user_data")
         return f(surface, key)
 
-    fn surface_set_user_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_set_user_data")
-        return f(surface, key, user_data, destroy)
+    fn surface_set_user_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_set_user_data")
+        return CairoStatusT(f(surface, key, user_data, destroy))
 
     fn surface_get_mime_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: UnsafePointer[c_ulong, MutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_ulong, MutExternalOrigin]) -> NoneType]("cairo_surface_get_mime_data")
         return f(surface, mime_type, data, length)
 
-    fn surface_set_mime_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: c_ulong, destroy: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], c_ulong, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_surface_set_mime_data")
-        return f(surface, mime_type, data, length, destroy, closure)
+    fn surface_set_mime_data(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: c_ulong, destroy: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], c_ulong, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_set_mime_data")
+        return CairoStatusT(f(surface, mime_type, data, length, destroy, closure))
 
     fn surface_supports_mime_type(self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin], mime_type: UnsafePointer[c_char, ImmutExternalOrigin]) -> cairo_bool_t:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoSurfaceT, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]) -> cairo_bool_t]("cairo_surface_supports_mime_type")
@@ -1529,17 +1529,17 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> c_uint]("cairo_pattern_get_reference_count")
         return f(pattern)
 
-    fn pattern_status(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_status")
-        return f(pattern)
+    fn pattern_status(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> c_int]("cairo_pattern_status")
+        return CairoStatusT(f(pattern))
 
     fn pattern_get_user_data(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin]) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_pattern_get_user_data")
         return f(pattern, key)
 
-    fn pattern_set_user_data(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_set_user_data")
-        return f(pattern, key, user_data, destroy)
+    fn pattern_set_user_data(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], key: UnsafePointer[NoneType, ImmutExternalOrigin], user_data: UnsafePointer[NoneType, MutExternalOrigin], destroy: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_pattern_set_user_data")
+        return CairoStatusT(f(pattern, key, user_data, destroy))
 
     fn pattern_get_type(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> c_int:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> c_int]("cairo_pattern_get_type")
@@ -1609,45 +1609,45 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin]) -> c_int]("cairo_pattern_get_filter")
         return f(pattern)
 
-    fn pattern_get_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_rgba")
-        return f(pattern, red, green, blue, alpha)
+    fn pattern_get_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_pattern_get_rgba")
+        return CairoStatusT(f(pattern, red, green, blue, alpha))
 
-    fn pattern_get_surface(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], surface: UnsafePointer[UnsafePointer[__CairoSurfaceT, MutExternalOrigin], MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[UnsafePointer[__CairoSurfaceT, MutExternalOrigin], MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_surface")
-        return f(pattern, surface)
+    fn pattern_get_surface(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], surface: UnsafePointer[UnsafePointer[__CairoSurfaceT, MutExternalOrigin], MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[UnsafePointer[__CairoSurfaceT, MutExternalOrigin], MutExternalOrigin]) -> c_int]("cairo_pattern_get_surface")
+        return CairoStatusT(f(pattern, surface))
 
-    fn pattern_get_color_stop_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], index: c_int, offset: UnsafePointer[c_double, MutExternalOrigin], red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_int, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_color_stop_rgba")
-        return f(pattern, index, offset, red, green, blue, alpha)
+    fn pattern_get_color_stop_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], index: c_int, offset: UnsafePointer[c_double, MutExternalOrigin], red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_int, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_pattern_get_color_stop_rgba")
+        return CairoStatusT(f(pattern, index, offset, red, green, blue, alpha))
 
-    fn pattern_get_color_stop_count(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], count: UnsafePointer[c_int, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_color_stop_count")
-        return f(pattern, count)
+    fn pattern_get_color_stop_count(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], count: UnsafePointer[c_int, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]) -> c_int]("cairo_pattern_get_color_stop_count")
+        return CairoStatusT(f(pattern, count))
 
-    fn pattern_get_linear_points(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_linear_points")
-        return f(pattern, x0, y0, x1, y1)
+    fn pattern_get_linear_points(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_pattern_get_linear_points")
+        return CairoStatusT(f(pattern, x0, y0, x1, y1))
 
-    fn pattern_get_radial_circles(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], r0: UnsafePointer[c_double, MutExternalOrigin], x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], r1: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_pattern_get_radial_circles")
-        return f(pattern, x0, y0, r0, x1, y1, r1)
+    fn pattern_get_radial_circles(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], r0: UnsafePointer[c_double, MutExternalOrigin], x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], r1: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_pattern_get_radial_circles")
+        return CairoStatusT(f(pattern, x0, y0, r0, x1, y1, r1))
 
-    fn mesh_pattern_get_patch_count(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], count: UnsafePointer[c_uint, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_uint, MutExternalOrigin]) -> cairo_status_t]("cairo_mesh_pattern_get_patch_count")
-        return f(pattern, count)
+    fn mesh_pattern_get_patch_count(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], count: UnsafePointer[c_uint, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], UnsafePointer[c_uint, MutExternalOrigin]) -> c_int]("cairo_mesh_pattern_get_patch_count")
+        return CairoStatusT(f(pattern, count))
 
     fn mesh_pattern_get_path(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], patch_num: c_uint) -> UnsafePointer[__CairoPathT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_uint) -> UnsafePointer[__CairoPathT, MutExternalOrigin]]("cairo_mesh_pattern_get_path")
         return f(pattern, patch_num)
 
-    fn mesh_pattern_get_corner_color_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], patch_num: c_uint, corner_num: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_uint, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_mesh_pattern_get_corner_color_rgba")
-        return f(pattern, patch_num, corner_num, red, green, blue, alpha)
+    fn mesh_pattern_get_corner_color_rgba(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], patch_num: c_uint, corner_num: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_uint, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_mesh_pattern_get_corner_color_rgba")
+        return CairoStatusT(f(pattern, patch_num, corner_num, red, green, blue, alpha))
 
-    fn mesh_pattern_get_control_point(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], patch_num: c_uint, point_num: c_uint, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_uint, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> cairo_status_t]("cairo_mesh_pattern_get_control_point")
-        return f(pattern, patch_num, point_num, x, y)
+    fn mesh_pattern_get_control_point(self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin], patch_num: c_uint, point_num: c_uint, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoPatternT, MutExternalOrigin], c_uint, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_mesh_pattern_get_control_point")
+        return CairoStatusT(f(pattern, patch_num, point_num, x, y))
 
     fn matrix_init(self, matrix: UnsafePointer[__CairoMatrixT, MutExternalOrigin], xx: c_double, yx: c_double, xy: c_double, yy: c_double, x0: c_double, y0: c_double) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoMatrixT, MutExternalOrigin], c_double, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_matrix_init")
@@ -1681,9 +1681,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoMatrixT, MutExternalOrigin], c_double) -> NoneType]("cairo_matrix_rotate")
         return f(matrix, radians)
 
-    fn matrix_invert(self, matrix: UnsafePointer[__CairoMatrixT, MutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoMatrixT, MutExternalOrigin]) -> cairo_status_t]("cairo_matrix_invert")
-        return f(matrix)
+    fn matrix_invert(self, matrix: UnsafePointer[__CairoMatrixT, MutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoMatrixT, MutExternalOrigin]) -> c_int]("cairo_matrix_invert")
+        return CairoStatusT(f(matrix))
 
     fn matrix_multiply(self, result: UnsafePointer[__CairoMatrixT, MutExternalOrigin], a: UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], b: UnsafePointer[__CairoMatrixT, ImmutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoMatrixT, MutExternalOrigin], UnsafePointer[__CairoMatrixT, ImmutExternalOrigin], UnsafePointer[__CairoMatrixT, ImmutExternalOrigin]) -> NoneType]("cairo_matrix_multiply")
@@ -1725,9 +1725,9 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, ImmutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_bool_t]("cairo_region_equal")
         return f(a, b)
 
-    fn region_status(self, region: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_status")
-        return f(region)
+    fn region_status(self, region: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> c_int]("cairo_region_status")
+        return CairoStatusT(f(region))
 
     fn region_get_extents(self, region: UnsafePointer[__CairoRegionT, ImmutExternalOrigin], extents: UnsafePointer[__CairoRectangleIntT, MutExternalOrigin]) -> NoneType:
         var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, ImmutExternalOrigin], UnsafePointer[__CairoRectangleIntT, MutExternalOrigin]) -> NoneType]("cairo_region_get_extents")
@@ -1757,37 +1757,37 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], c_int, c_int) -> NoneType]("cairo_region_translate")
         return f(region, dx, dy)
 
-    fn region_subtract(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_subtract")
-        return f(dst, other)
+    fn region_subtract(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> c_int]("cairo_region_subtract")
+        return CairoStatusT(f(dst, other))
 
-    fn region_subtract_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_subtract_rectangle")
-        return f(dst, rectangle)
+    fn region_subtract_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> c_int]("cairo_region_subtract_rectangle")
+        return CairoStatusT(f(dst, rectangle))
 
-    fn region_intersect(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_intersect")
-        return f(dst, other)
+    fn region_intersect(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> c_int]("cairo_region_intersect")
+        return CairoStatusT(f(dst, other))
 
-    fn region_intersect_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_intersect_rectangle")
-        return f(dst, rectangle)
+    fn region_intersect_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> c_int]("cairo_region_intersect_rectangle")
+        return CairoStatusT(f(dst, rectangle))
 
-    fn region_union(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_union")
-        return f(dst, other)
+    fn region_union(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> c_int]("cairo_region_union")
+        return CairoStatusT(f(dst, other))
 
-    fn region_union_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_union_rectangle")
-        return f(dst, rectangle)
+    fn region_union_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> c_int]("cairo_region_union_rectangle")
+        return CairoStatusT(f(dst, rectangle))
 
-    fn region_xor(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_xor")
-        return f(dst, other)
+    fn region_xor(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], other: UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRegionT, ImmutExternalOrigin]) -> c_int]("cairo_region_xor")
+        return CairoStatusT(f(dst, other))
 
-    fn region_xor_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> cairo_status_t]("cairo_region_xor_rectangle")
-        return f(dst, rectangle)
+    fn region_xor_rectangle(self, dst: UnsafePointer[__CairoRegionT, MutExternalOrigin], rectangle: UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> CairoStatusT:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoRegionT, MutExternalOrigin], UnsafePointer[__CairoRectangleIntT, ImmutExternalOrigin]) -> c_int]("cairo_region_xor_rectangle")
+        return CairoStatusT(f(dst, rectangle))
 
     fn debug_reset_static_data(self) -> NoneType:
         var f = self._lib.get_function[fn() -> NoneType]("cairo_debug_reset_static_data")

@@ -75,7 +75,7 @@ struct ImageSurface:
     """
     var _base: Surface
     
-    fn __init__(out self, format: CairoFormatT, width: Int, height: Int) raises:
+    fn __init__(out self, format: CairoFormatT, width: Int32, height: Int32) raises:
         """
         Create a new image surface.
         
@@ -88,14 +88,13 @@ struct ImageSurface:
             Error if surface creation fails.
         """
         var lib = CairoLib()
-        var surface_ptr = lib.image_surface_create(format, c_int(width), c_int(height))
-        if not surface_ptr:
-            raise Error("Failed to create image surface")
-        
-        var status = lib.surface_status(surface_ptr)
-        if status.value != CairoStatusT.CAIRO_STATUS_SUCCESS:
-            raise Error("Image surface creation failed with status: " + String(status.value))
-        
+        var surface_ptr = lib.image_surface_create(format, width, height)
+        var status_raw = lib.surface_status(surface_ptr).value 
+    
+        if status_raw != CairoStatusT.CAIRO_STATUS_SUCCESS: # 0 is CAIRO_STATUS_SUCCESS
+            lib.surface_destroy(surface_ptr)
+            raise Error("Cairo Error Code: " + String(status_raw))
+                
         self._base = Surface(surface_ptr)
     
     fn __del__(deinit self):
@@ -1071,6 +1070,24 @@ struct Context(Movable):
     fn stroke_preserve(mut self):
         """Stroke the current path but preserve it for further operations."""
         self._lib.stroke_preserve(self._cr)
+    
+    fn set_line_width(mut self, width: Float64):
+        """
+        Set the line width for stroking operations.
+        
+        Args:
+            width: Line width in user-space units.
+        """
+        self._lib.set_line_width(self._cr, c_double(width))
+    
+    fn get_line_width(self) -> Float64:
+        """
+        Get the current line width.
+        
+        Returns:
+            The current line width in user-space units.
+        """
+        return Float64(self._lib.get_line_width(self._cr))
     
     fn paint(mut self):
         """Paint the entire surface with the source color."""
