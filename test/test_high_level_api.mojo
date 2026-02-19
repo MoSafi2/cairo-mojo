@@ -29,23 +29,79 @@ def test_circle():
     
     var surface = ImageSurface(CairoFormatT(CairoFormatT.CAIRO_FORMAT_ARGB32), 400, 400)
     var ctx = Context(surface)
+    print("ctx address: ", ctx._cr)
+    print("surface address: ", surface._get_ptr())
     
     # # White background
     ctx.set_source_rgb(1.0, 1.0, 1.0)
-    ctx.paint()
+    print("ctx address: ", ctx._cr)
+    print("surface address: ", surface._get_ptr())
+    ctx._lib.paint(ctx._cr)
+    print("ctx address: ", ctx._cr)
+    print("surface address: ", surface._get_ptr())
+    #ctx.paint()
     
     # # Draw green ellipse
     ctx.set_source_rgb(0.0, 0.8, 0.0)
+    print("ctx address: ", ctx._cr)
     ctx.circle(200.0, 200.0, 100.0)
-    # ctx.fill()
+    ctx._lib.fill(ctx._cr)
+    #ctx.fill()
 
     var status = ctx.status()
     assert_equal(status.value, CairoStatusT.CAIRO_STATUS_SUCCESS)
     
-    # var png_status = surface.write_to_png("test/data/test_circle.png")
-    # assert_equal(png_status.value, CairoStatusT.CAIRO_STATUS_SUCCESS)
-
+    var png_status = surface.write_to_png("test/data/test_circle.png")
+    assert_equal(png_status.value, CairoStatusT.CAIRO_STATUS_SUCCESS)
+    _ = ctx
+    _ = surface
     print("  ✓ Circle test passed - saved to test/data/test_circle.png")
+
+
+fn test_circle_low_level() raises:
+    """Test the circle convenience method."""
+    print("Testing circle()...")
+    lib = CairoLib()
+    var surface = lib.image_surface_create(CairoFormatT(CairoFormatT.CAIRO_FORMAT_ARGB32), 400, 400)
+    var ctx = lib.create(surface)
+
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+    # # White background
+    lib.set_source_rgb(ctx, 1.0, 1.0, 1.0)
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+    lib.paint(ctx)
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+
+    
+    # # Draw green ellipse
+    lib.set_source_rgb(ctx, 0.0, 0.8, 0.0)
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+    lib.new_path(ctx)
+    print("ctx address: ", ctx)
+    lib.move_to(ctx, 200.0, 200.0)
+    print("ctx address: ", ctx)
+    lib.line_to(ctx, 300.0, 300.0)
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+    lib.line_to(ctx, 200.0, 300.0)
+    print("ctx address: ", ctx)
+    print("surface address: ", surface)
+    lib.close_path(ctx)
+    lib.fill(ctx)
+
+    var status = lib.status(ctx)
+    assert_equal(status.value, CairoStatusT.CAIRO_STATUS_SUCCESS)
+    fname = String("test/data/test_circle_low_level.png")
+    fname_cstr = fname.as_c_string_slice()
+    fname_ptr = fname_cstr.unsafe_ptr().unsafe_origin_cast[MutExternalOrigin]()
+    var png_status = lib.surface_write_to_png(surface, fname_ptr)
+    assert_equal(png_status.value, CairoStatusT.CAIRO_STATUS_SUCCESS)
+    print("  ✓ Circle test low level passed - saved to test/data/test_circle_low_level.png")
+
 
 def test_ellipse():
     """Test the ellipse convenience method."""
@@ -434,6 +490,8 @@ fn main() raises:
     print("=" * 60)
     print()
     
+    
+    test_circle_low_level()
     test_circle()
     # test_ellipse()
     # test_rounded_rectangle()
