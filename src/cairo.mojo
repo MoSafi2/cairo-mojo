@@ -42,15 +42,16 @@ struct Surface:
     Surfaces represent the drawing target (image, PDF, SVG, etc.).
     """
     var _lib: CairoLib
-    var _surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]
+    var _surface: __CairoSurfaceT
     
-    fn __init__(out self, surface: UnsafePointer[__CairoSurfaceT, MutExternalOrigin]) raises:
+    fn __init__(out self, surface: __CairoSurfaceT) raises:
         """Initialize surface with library handle and Cairo surface pointer."""
         self._lib = CairoLib()
         self._surface = surface
     
     fn __del__(deinit self):
         """Destroy the Cairo surface when this wrapper is destroyed."""
+        print("Surface.__del__ called")
         if self._surface:
             self._lib.surface_destroy(self._surface)
     
@@ -62,7 +63,7 @@ struct Surface:
         """Get the status of the surface."""
         return self._lib.surface_status(self._surface)
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoSurfaceT:
         """Get the underlying Cairo surface pointer (internal use)."""
         return self._surface
 
@@ -99,6 +100,7 @@ struct ImageSurface:
     
     fn __del__(deinit self):
         """Destroy the Cairo surface when this wrapper is destroyed."""
+        print("ImageSurface.__del__ called")
         pass  # Surface.__del__ will be called automatically
     
     fn flush(mut self):
@@ -109,7 +111,7 @@ struct ImageSurface:
         """Get the status of the surface."""
         return self._base.status()
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoSurfaceT:
         """Get the underlying Cairo surface pointer (internal use)."""
         return self._base._surface
     
@@ -152,7 +154,7 @@ struct ImageSurface:
         var status = self._base._lib.surface_write_to_png(self._base._surface, ptr)
         if status.value != CairoStatusT.CAIRO_STATUS_SUCCESS:
             raise Error("Failed to write PNG file: " + String(status.value))
-        return status^
+        return status
 
 
 struct RecordingSurface:
@@ -191,7 +193,7 @@ struct RecordingSurface:
         # For now, create unbounded recording surface
         # TODO: Implement proper rectangle handling when bindings support it
         var lib = CairoLib()
-        var surface_ptr = lib.recording_surface_create(c_int(content), UnsafePointer[__CairoRectangleT, ImmutExternalOrigin]())
+        var surface_ptr = lib.recording_surface_create(c_int(content), __CairoRectangleT())
         
         if not surface_ptr:
             raise Error("Failed to create recording surface")
@@ -214,7 +216,7 @@ struct RecordingSurface:
         """
         # Pass None/null for extents to create unbounded recording surface
         var lib = CairoLib()
-        var surface_ptr = lib.recording_surface_create(c_int(content), UnsafePointer[__CairoRectangleT, ImmutExternalOrigin]())
+        var surface_ptr = lib.recording_surface_create(c_int(content), __CairoRectangleT())
         
         if not surface_ptr:
             raise Error("Failed to create recording surface")
@@ -237,7 +239,7 @@ struct RecordingSurface:
         """Get the status of the surface."""
         return self._base.status()
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoSurfaceT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoSurfaceT:
         """Get the underlying Cairo surface pointer (internal use)."""
         return self._base._surface
     
@@ -253,7 +255,7 @@ struct RecordingSurface:
         var rect_bytes = alloc[UInt8](32)
         var rect_ptr = rect_bytes.unsafe_origin_cast[MutExternalOrigin]().bitcast[__CairoRectangleT]()
         
-        var has_extents = self._base._lib.recording_surface_get_extents(self._base._surface, rect_ptr)
+        var has_extents = self._base._lib.recording_surface_get_extents(self._base._surface, rect_ptr[])
         
         if has_extents == 0:
             return (False, 0.0, 0.0, 0.0, 0.0)
@@ -301,9 +303,9 @@ struct Pattern:
     Patterns represent the source for drawing operations (solid colors, gradients, etc.).
     """
     var _lib: CairoLib
-    var _pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin]
+    var _pattern: __CairoPatternT
     
-    fn __init__(out self, pattern: UnsafePointer[__CairoPatternT, MutExternalOrigin]) raises:
+    fn __init__(out self, pattern: __CairoPatternT) raises:
         """
         Initialize pattern with library handle and Cairo pattern pointer.
         
@@ -327,7 +329,7 @@ struct Pattern:
         """Get the status of the pattern."""
         return self._lib.pattern_status(self._pattern)
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoPatternT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoPatternT:
         """Get the underlying Cairo pattern pointer (internal use)."""
         return self._pattern
 
@@ -387,7 +389,7 @@ struct SolidPattern:
         
         self._base = Pattern(pattern_ptr)
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoPatternT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoPatternT:
         """Get the underlying Cairo pattern pointer (internal use)."""
         return self._base._pattern
     
@@ -453,7 +455,7 @@ struct LinearGradient:
         """
         self._base._lib.pattern_add_color_stop_rgba(self._base._pattern, c_double(offset), c_double(r), c_double(g), c_double(b), c_double(a))
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoPatternT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoPatternT:
         """Get the underlying Cairo pattern pointer (internal use)."""
         return self._base._pattern
     
@@ -524,7 +526,7 @@ struct RadialGradient:
         """
         self._base._lib.pattern_add_color_stop_rgba(self._base._pattern, c_double(offset), c_double(r), c_double(g), c_double(b), c_double(a))
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoPatternT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoPatternT:
         """Get the underlying Cairo pattern pointer (internal use)."""
         return self._base._pattern
     
@@ -583,7 +585,7 @@ struct SurfacePattern:
         
         self._base = Pattern(pattern_ptr)
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoPatternT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoPatternT:
         """Get the underlying Cairo pattern pointer (internal use)."""
         return self._base._pattern
     
@@ -603,7 +605,7 @@ struct Matrix(Movable):
     Represents a 2D affine transformation matrix for coordinate transformations.
     """
     var _lib: CairoLib
-    var _matrix: UnsafePointer[__CairoMatrixT, MutExternalOrigin]
+    var _matrix: __CairoMatrixT
     
     fn __init__(out self) raises:
         """Initialize matrix as identity matrix."""
@@ -616,7 +618,7 @@ struct Matrix(Movable):
         # Check if InlineArray can be the workaround as it it is stack-allocated
         var matrix_bytes = alloc[UInt8](48)
         var matrix_ptr = matrix_bytes.unsafe_origin_cast[MutExternalOrigin]().bitcast[__CairoMatrixT]()
-        self._matrix = matrix_ptr
+        self._matrix = matrix_ptr[]
         self._lib.matrix_init_identity(self._matrix)
     
     fn __init__(out self, xx: Float64, yx: Float64, xy: Float64, yy: Float64, x0: Float64, y0: Float64) raises:
@@ -633,9 +635,9 @@ struct Matrix(Movable):
         """
         self._lib = CairoLib()
         var matrix_bytes = alloc[UInt8](48)
-        var matrix_ptr = matrix_bytes.unsafe_origin_cast[MutExternalOrigin]().bitcast[__CairoMatrixT]()
-        self._matrix = matrix_ptr
-        self._lib.matrix_init(self._matrix, c_double(xx), c_double(yx), c_double(xy), c_double(yy), c_double(x0), c_double(y0))
+        ptr = matrix_bytes.bitcast[__CairoMatrixT]()
+        self._matrix = ptr[]
+        self._lib.matrix_init(ptr[], c_double(xx), c_double(yx), c_double(xy), c_double(yy), c_double(x0), c_double(y0))
     
     fn __del__(deinit self):
         """Free the matrix memory."""
@@ -767,13 +769,13 @@ struct Matrix(Movable):
         self._lib.matrix_transform_point(_ptr, x_ptr, y_ptr)
         return (Float64(x_arr[0]), Float64(y_arr[0]))
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoMatrixT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoMatrixT:
         """Get the underlying Cairo matrix pointer (internal use)."""
         return self._matrix
     
-    fn _get_ptr_immut(self) -> UnsafePointer[__CairoMatrixT, ImmutExternalOrigin]:
+    fn _get_ptr_immut(self) -> __CairoMatrixT:
         """Get the underlying Cairo matrix pointer as immutable (internal use)."""
-        return self._matrix.unsafe_mut_cast[False]().unsafe_origin_cast[ImmutExternalOrigin]()
+        return self._matrix
 
 
 # ======================================================================
@@ -787,7 +789,7 @@ struct FontOptions(Movable):
     Represents font rendering options such as antialiasing, hinting, etc.
     """
     var _lib: CairoLib
-    var _options: UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]
+    var _options: __CairoFontOptionsT
     
     fn __init__(out self) raises:
         """
@@ -923,11 +925,11 @@ struct FontOptions(Movable):
         var result = self._lib.font_options_equal(self._get_ptr_immut(), other._get_ptr_immut())
         return Bool(result != 0)
     
-    fn _get_ptr(self) -> UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]:
+    fn _get_ptr(self) -> __CairoFontOptionsT:
         """Get the underlying Cairo font options pointer (internal use)."""
         return self._options
     
-    fn _get_ptr_immut(self) -> UnsafePointer[__CairoFontOptionsT, MutExternalOrigin]:
+    fn _get_ptr_immut(self) -> __CairoFontOptionsT:
         """Get the underlying Cairo font options pointer as immutable (internal use)."""
         return self._options.unsafe_origin_cast[MutExternalOrigin]()
 
@@ -943,7 +945,7 @@ struct Context(Movable):
     Supports both RAII and context manager usage patterns.
     """
     var _lib: CairoLib
-    var _cr: UnsafePointer[__CairoT, MutExternalOrigin]
+    var _cr: __CairoT
     
     fn __init__(out self, surface: Surface) raises:
         """
@@ -955,6 +957,7 @@ struct Context(Movable):
         Raises:
             Error if context creation fails.
         """
+        print("Context.__init__ called")
         self._lib = CairoLib()
         self._cr = self._lib.create(surface._get_ptr())
         
@@ -975,6 +978,7 @@ struct Context(Movable):
         Raises:
             Error if context creation fails.
         """
+        print("Context.__init__ called")
         self._lib = CairoLib()
         self._cr = self._lib.create(surface._get_ptr())
         
@@ -987,13 +991,15 @@ struct Context(Movable):
     
     fn __del__(deinit self):
         """Destroy the Cairo context when this wrapper is destroyed."""
+
+        print("Context.__del__ called")
         if self._cr:
             self._lib.destroy(self._cr)
     
     # Context manager support
     fn __enter__(mut self, surface: Surface) raises -> Self:
         """Enter the context manager. Returns self for use in 'with' statement."""
-        return self.__init__(surface)
+        return Self(surface)
 
     fn __exit__(deinit self):
         """Exit the context manager. Cleanup is handled by __del__."""
@@ -1028,6 +1034,7 @@ struct Context(Movable):
             g: Green component (0.0 to 1.0).
             b: Blue component (0.0 to 1.0).
         """
+        print("Context.set_source_rgb called")
         self._lib.set_source_rgb(self._cr, c_double(r), c_double(g), c_double(b))
     
     fn set_source_rgba(mut self, r: Float64, g: Float64, b: Float64, a: Float64):
@@ -1091,6 +1098,7 @@ struct Context(Movable):
     
     fn paint(mut self):
         """Paint the entire surface with the source color."""
+        print("Context.paint called")
         self._lib.paint(self._cr)
     
     fn paint_with_alpha(mut self, alpha: Float64):

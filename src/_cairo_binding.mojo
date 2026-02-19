@@ -268,8 +268,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn() -> UnsafePointer[c_char, ImmutExternalOrigin]]("cairo_version_string")
         return f()
 
-    fn pattern_set_dither(self, pattern: __CairoPatternT, dither: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> NoneType]("cairo_pattern_set_dither")
+    fn pattern_set_dither(self, pattern: __CairoPatternT, dither: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> None]("cairo_pattern_set_dither")
         return f(pattern, dither)
 
     fn pattern_get_dither(self, pattern: __CairoPatternT) -> c_int:
@@ -284,8 +284,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT) -> __CairoT]("cairo_reference")
         return f(cr)
 
-    fn destroy(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_destroy")
+    fn destroy(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_destroy")
         return f(cr)
 
     fn get_reference_count(self, cr: __CairoT) -> c_uint:
@@ -300,220 +300,223 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT, UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_set_user_data")
         return CairoStatusT(f(cr, key, user_data, destroy))
 
-    fn save(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_save")
+    fn save(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_save")
         return f(cr)
 
-    fn restore(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_restore")
+    fn restore(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_restore")
         return f(cr)
 
-    fn push_group(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_push_group")
+    fn push_group(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_push_group")
         return f(cr)
 
-    fn push_group_with_content(self, cr: __CairoT, content: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_int) -> NoneType]("cairo_push_group_with_content")
+    fn push_group_with_content(self, cr: __CairoT, content: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_int) -> None]("cairo_push_group_with_content")
         return f(cr, content)
 
     fn pop_group(self, cr: __CairoT) -> __CairoPatternT:
         var f = self._lib.get_function[fn(__CairoT) -> __CairoPatternT]("cairo_pop_group")
         return f(cr)
 
-    fn pop_group_to_source(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_pop_group_to_source")
+    fn pop_group_to_source(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_pop_group_to_source")
         return f(cr)
 
-    fn set_operator(self, cr: __CairoT, op: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_int) -> NoneType]("cairo_set_operator")
+    fn set_operator(self, cr: __CairoT, op: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_int) -> None]("cairo_set_operator")
         return f(cr, op)
 
-    fn set_source(self, cr: __CairoT, source: __CairoPatternT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoPatternT) -> NoneType]("cairo_set_source")
+    fn set_source(self, cr: __CairoT, source: __CairoPatternT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoPatternT) -> None]("cairo_set_source")
         return f(cr, source)
 
-    fn set_source_rgb(self, cr: __CairoT, red: c_double, green: c_double, blue: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double) -> NoneType]("cairo_set_source_rgb")
+    fn set_source_rgb(self, cr: __CairoT, red: c_double, green: c_double, blue: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double) -> None]("cairo_set_source_rgb")
         return f(cr, red, green, blue)
 
-    fn set_source_rgba(self, cr: __CairoT, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double) -> NoneType]("cairo_set_source_rgba")
+    fn set_source_rgba(self, cr: __CairoT, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double) -> None]("cairo_set_source_rgba")
         return f(cr, red, green, blue, alpha)
 
-    fn set_source_surface(self, cr: __CairoT, surface: __CairoSurfaceT, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoSurfaceT, c_double, c_double) -> NoneType]("cairo_set_source_surface")
+    fn set_source_surface(self, cr: __CairoT, surface: __CairoSurfaceT, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoSurfaceT, c_double, c_double) -> None]("cairo_set_source_surface")
         return f(cr, surface, x, y)
 
-    fn set_tolerance(self, cr: __CairoT, tolerance: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_set_tolerance")
+    fn set_tolerance(self, cr: __CairoT, tolerance: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_set_tolerance")
         return f(cr, tolerance)
 
-    fn set_antialias(self, cr: __CairoT, antialias: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_int) -> NoneType]("cairo_set_antialias")
+    fn set_antialias(self, cr: __CairoT, antialias: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_int) -> None]("cairo_set_antialias")
         return f(cr, antialias)
 
-    fn set_fill_rule(self, cr: __CairoT, fill_rule: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_int) -> NoneType]("cairo_set_fill_rule")
+    fn set_fill_rule(self, cr: __CairoT, fill_rule: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_int) -> None]("cairo_set_fill_rule")
         return f(cr, fill_rule)
 
-    fn set_line_width(self, cr: __CairoT, width: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_set_line_width")
+    fn set_line_width(self, cr: __CairoT, width: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_set_line_width")
         return f(cr, width)
 
-    fn set_hairline(self, cr: __CairoT, set_hairline: cairo_bool_t) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, cairo_bool_t) -> NoneType]("cairo_set_hairline")
+    fn set_hairline(self, cr: __CairoT, set_hairline: cairo_bool_t) -> None:
+        var f = self._lib.get_function[fn(__CairoT, cairo_bool_t) -> None]("cairo_set_hairline")
         return f(cr, set_hairline)
 
-    fn set_line_cap(self, cr: __CairoT, line_cap: cairo_line_cap_t) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, cairo_line_cap_t) -> NoneType]("cairo_set_line_cap")
+    fn set_line_cap(self, cr: __CairoT, line_cap: cairo_line_cap_t) -> None:
+        var f = self._lib.get_function[fn(__CairoT, cairo_line_cap_t) -> None]("cairo_set_line_cap")
         return f(cr, line_cap)
 
-    fn set_line_join(self, cr: __CairoT, line_join: cairo_line_join_t) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, cairo_line_join_t) -> NoneType]("cairo_set_line_join")
+    fn set_line_join(self, cr: __CairoT, line_join: cairo_line_join_t) -> None:
+        var f = self._lib.get_function[fn(__CairoT, cairo_line_join_t) -> None]("cairo_set_line_join")
         return f(cr, line_join)
 
-    fn set_dash(self, cr: __CairoT, dashes: UnsafePointer[c_double, ImmutExternalOrigin], num_dashes: c_int, offset: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, ImmutExternalOrigin], c_int, c_double) -> NoneType]("cairo_set_dash")
+    fn set_dash(self, cr: __CairoT, dashes: UnsafePointer[c_double, ImmutExternalOrigin], num_dashes: c_int, offset: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, ImmutExternalOrigin], c_int, c_double) -> None]("cairo_set_dash")
         return f(cr, dashes, num_dashes, offset)
 
-    fn set_miter_limit(self, cr: __CairoT, limit: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_set_miter_limit")
+    fn set_miter_limit(self, cr: __CairoT, limit: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_set_miter_limit")
         return f(cr, limit)
 
-    fn translate(self, cr: __CairoT, tx: c_double, ty: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_translate")
+    fn translate(self, cr: __CairoT, tx: c_double, ty: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_translate")
         return f(cr, tx, ty)
 
-    fn scale(self, cr: __CairoT, sx: c_double, sy: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_scale")
+    fn scale(self, cr: __CairoT, sx: c_double, sy: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_scale")
         return f(cr, sx, sy)
 
-    fn rotate(self, cr: __CairoT, angle: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_rotate")
+    fn rotate(self, cr: __CairoT, angle: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_rotate")
         return f(cr, angle)
 
-    fn transform(self, cr: __CairoT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> NoneType]("cairo_transform")
+    fn transform(self, cr: __CairoT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> None]("cairo_transform")
         return f(cr, matrix)
 
-    fn set_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> NoneType]("cairo_set_matrix")
+    fn set_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> None]("cairo_set_matrix")
         return f(cr, matrix)
 
-    fn identity_matrix(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_identity_matrix")
+    fn identity_matrix(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_identity_matrix")
         return f(cr)
 
-    fn user_to_device(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_user_to_device")
+    fn user_to_device(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_user_to_device")
         return f(cr, x, y)
 
-    fn user_to_device_distance(self, cr: __CairoT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_user_to_device_distance")
+    fn user_to_device_distance(self, cr: __CairoT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_user_to_device_distance")
         return f(cr, dx, dy)
 
-    fn device_to_user(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_device_to_user")
+    fn device_to_user(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_device_to_user")
         return f(cr, x, y)
 
-    fn device_to_user_distance(self, cr: __CairoT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_device_to_user_distance")
+    fn device_to_user_distance(self, cr: __CairoT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_device_to_user_distance")
         return f(cr, dx, dy)
 
-    fn new_path(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_new_path")
+    fn new_path(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_new_path")
         return f(cr)
 
-    fn move_to(self, cr: __CairoT, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_move_to")
+    fn move_to(self, cr: __CairoT, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_move_to")
         return f(cr, x, y)
 
-    fn new_sub_path(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_new_sub_path")
+    fn new_sub_path(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_new_sub_path")
         return f(cr)
 
-    fn line_to(self, cr: __CairoT, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_line_to")
+    fn line_to(self, cr: __CairoT, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_line_to")
         return f(cr, x, y)
 
-    fn curve_to(self, cr: __CairoT, x1: c_double, y1: c_double, x2: c_double, y2: c_double, x3: c_double, y3: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_curve_to")
+    fn curve_to(self, cr: __CairoT, x1: c_double, y1: c_double, x2: c_double, y2: c_double, x3: c_double, y3: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_curve_to")
         return f(cr, x1, y1, x2, y2, x3, y3)
 
-    fn arc(self, cr: __CairoT, xc: c_double, yc: c_double, radius: c_double, angle1: c_double, angle2: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_arc")
+    fn arc(self, cr: __CairoT, xc: c_double, yc: c_double, radius: c_double, angle1: c_double, angle2: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_arc")
         return f(cr, xc, yc, radius, angle1, angle2)
 
-    fn arc_negative(self, cr: __CairoT, xc: c_double, yc: c_double, radius: c_double, angle1: c_double, angle2: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_arc_negative")
+    fn arc_negative(self, cr: __CairoT, xc: c_double, yc: c_double, radius: c_double, angle1: c_double, angle2: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_arc_negative")
         return f(cr, xc, yc, radius, angle1, angle2)
 
-    fn rel_move_to(self, cr: __CairoT, dx: c_double, dy: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_rel_move_to")
+    fn rel_move_to(self, cr: __CairoT, dx: c_double, dy: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_rel_move_to")
         return f(cr, dx, dy)
 
-    fn rel_line_to(self, cr: __CairoT, dx: c_double, dy: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> NoneType]("cairo_rel_line_to")
+    fn rel_line_to(self, cr: __CairoT, dx: c_double, dy: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> None]("cairo_rel_line_to")
         return f(cr, dx, dy)
 
-    fn rel_curve_to(self, cr: __CairoT, dx1: c_double, dy1: c_double, dx2: c_double, dy2: c_double, dx3: c_double, dy3: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_rel_curve_to")
+    fn rel_curve_to(self, cr: __CairoT, dx1: c_double, dy1: c_double, dx2: c_double, dy2: c_double, dx3: c_double, dy3: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_rel_curve_to")
         return f(cr, dx1, dy1, dx2, dy2, dx3, dy3)
 
-    fn rectangle(self, cr: __CairoT, x: c_double, y: c_double, width: c_double, height: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double) -> NoneType]("cairo_rectangle")
+    fn rectangle(self, cr: __CairoT, x: c_double, y: c_double, width: c_double, height: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double, c_double, c_double, c_double) -> None]("cairo_rectangle")
         return f(cr, x, y, width, height)
 
-    fn close_path(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_close_path")
+    fn close_path(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_close_path")
         return f(cr)
 
-    fn path_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_path_extents")
+    fn path_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_path_extents")
         return f(cr, x1, y1, x2, y2)
 
-    fn paint(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_paint")
+    fn paint(self, cr: __CairoT) -> None:
+        print("cairo_paint called")
+        print("cr address: ", cr)
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_paint")
+        print("have function")
         return f(cr)
 
-    fn paint2(self, cr: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_paint")
+    fn paint2(self, cr: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_paint")
         return f(cr)
 
-    fn paint_with_alpha(self, cr: __CairoT, alpha: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_paint_with_alpha")
+    fn paint_with_alpha(self, cr: __CairoT, alpha: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_paint_with_alpha")
         return f(cr, alpha)
 
-    fn mask(self, cr: __CairoT, pattern: __CairoPatternT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoPatternT) -> NoneType]("cairo_mask")
+    fn mask(self, cr: __CairoT, pattern: __CairoPatternT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoPatternT) -> None]("cairo_mask")
         return f(cr, pattern)
 
-    fn mask_surface(self, cr: __CairoT, surface: __CairoSurfaceT, surface_x: c_double, surface_y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoSurfaceT, c_double, c_double) -> NoneType]("cairo_mask_surface")
+    fn mask_surface(self, cr: __CairoT, surface: __CairoSurfaceT, surface_x: c_double, surface_y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoSurfaceT, c_double, c_double) -> None]("cairo_mask_surface")
         return f(cr, surface, surface_x, surface_y)
 
-    fn stroke(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_stroke")
+    fn stroke(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_stroke")
         return f(cr)
 
-    fn stroke_preserve(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_stroke_preserve")
+    fn stroke_preserve(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_stroke_preserve")
         return f(cr)
 
-    fn fill(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_fill")
+    fn fill(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_fill")
         return f(cr)
 
-    fn fill_preserve(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_fill_preserve")
+    fn fill_preserve(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_fill_preserve")
         return f(cr)
 
-    fn copy_page(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_copy_page")
+    fn copy_page(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_copy_page")
         return f(cr)
 
-    fn show_page(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_show_page")
+    fn show_page(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_show_page")
         return f(cr)
 
     fn in_stroke(self, cr: __CairoT, x: c_double, y: c_double) -> cairo_bool_t:
@@ -528,60 +531,60 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT, c_double, c_double) -> cairo_bool_t]("cairo_in_clip")
         return f(cr, x, y)
 
-    fn stroke_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_stroke_extents")
+    fn stroke_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_stroke_extents")
         return f(cr, x1, y1, x2, y2)
 
-    fn fill_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_fill_extents")
+    fn fill_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_fill_extents")
         return f(cr, x1, y1, x2, y2)
 
-    fn reset_clip(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_reset_clip")
+    fn reset_clip(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_reset_clip")
         return f(cr)
 
-    fn clip(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_clip")
+    fn clip(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_clip")
         return f(cr)
 
-    fn clip_preserve(self, cr: __CairoT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT) -> NoneType]("cairo_clip_preserve")
+    fn clip_preserve(self, cr: __CairoT) -> None:
+        var f = self._lib.get_function[fn(__CairoT) -> None]("cairo_clip_preserve")
         return f(cr)
 
-    fn clip_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_clip_extents")
+    fn clip_extents(self, cr: __CairoT, x1: UnsafePointer[c_double, MutExternalOrigin], y1: UnsafePointer[c_double, MutExternalOrigin], x2: UnsafePointer[c_double, MutExternalOrigin], y2: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_clip_extents")
         return f(cr, x1, y1, x2, y2)
 
     fn copy_clip_rectangle_list(self, cr: __CairoT) -> __CairoRectangleListT:
         var f = self._lib.get_function[fn(__CairoT) -> __CairoRectangleListT]("cairo_copy_clip_rectangle_list")
         return f(cr)
 
-    fn rectangle_list_destroy(self, rectangle_list: __CairoRectangleListT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoRectangleListT) -> NoneType]("cairo_rectangle_list_destroy")
+    fn rectangle_list_destroy(self, rectangle_list: __CairoRectangleListT) -> None:
+        var f = self._lib.get_function[fn(__CairoRectangleListT) -> None]("cairo_rectangle_list_destroy")
         return f(rectangle_list)
 
-    fn tag_begin(self, cr: __CairoT, tag_name: UnsafePointer[c_char, ImmutExternalOrigin], attributes: UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType]("cairo_tag_begin")
+    fn tag_begin(self, cr: __CairoT, tag_name: UnsafePointer[c_char, ImmutExternalOrigin], attributes: UnsafePointer[c_char, ImmutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]) -> None]("cairo_tag_begin")
         return f(cr, tag_name, attributes)
 
-    fn tag_end(self, cr: __CairoT, tag_name: UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType]("cairo_tag_end")
+    fn tag_end(self, cr: __CairoT, tag_name: UnsafePointer[c_char, ImmutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> None]("cairo_tag_end")
         return f(cr, tag_name)
 
     fn glyph_allocate(self, num_glyphs: c_int) -> UnsafePointer[__CairoGlyphT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(c_int) -> UnsafePointer[__CairoGlyphT, MutExternalOrigin]]("cairo_glyph_allocate")
         return f(num_glyphs)
 
-    fn glyph_free(self, glyphs: UnsafePointer[__CairoGlyphT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoGlyphT, MutExternalOrigin]) -> NoneType]("cairo_glyph_free")
+    fn glyph_free(self, glyphs: UnsafePointer[__CairoGlyphT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoGlyphT, MutExternalOrigin]) -> None]("cairo_glyph_free")
         return f(glyphs)
 
     fn text_cluster_allocate(self, num_clusters: c_int) -> UnsafePointer[__CairoTextClusterT, MutExternalOrigin]:
         var f = self._lib.get_function[fn(c_int) -> UnsafePointer[__CairoTextClusterT, MutExternalOrigin]]("cairo_text_cluster_allocate")
         return f(num_clusters)
 
-    fn text_cluster_free(self, clusters: UnsafePointer[__CairoTextClusterT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(UnsafePointer[__CairoTextClusterT, MutExternalOrigin]) -> NoneType]("cairo_text_cluster_free")
+    fn text_cluster_free(self, clusters: UnsafePointer[__CairoTextClusterT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(UnsafePointer[__CairoTextClusterT, MutExternalOrigin]) -> None]("cairo_text_cluster_free")
         return f(clusters)
 
     fn font_options_create(self) -> __CairoFontOptionsT:
@@ -592,16 +595,16 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> __CairoFontOptionsT]("cairo_font_options_copy")
         return f(original)
 
-    fn font_options_destroy(self, options: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT) -> NoneType]("cairo_font_options_destroy")
+    fn font_options_destroy(self, options: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT) -> None]("cairo_font_options_destroy")
         return f(options)
 
     fn font_options_status(self, options: __CairoFontOptionsT) -> CairoStatusT:
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_int]("cairo_font_options_status")
         return CairoStatusT(f(options))
 
-    fn font_options_merge(self, options: __CairoFontOptionsT, other: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, __CairoFontOptionsT) -> NoneType]("cairo_font_options_merge")
+    fn font_options_merge(self, options: __CairoFontOptionsT, other: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, __CairoFontOptionsT) -> None]("cairo_font_options_merge")
         return f(options, other)
 
     fn font_options_equal(self, options: __CairoFontOptionsT, other: __CairoFontOptionsT) -> cairo_bool_t:
@@ -612,32 +615,32 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_ulong]("cairo_font_options_hash")
         return f(options)
 
-    fn font_options_set_antialias(self, options: __CairoFontOptionsT, antialias: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> NoneType]("cairo_font_options_set_antialias")
+    fn font_options_set_antialias(self, options: __CairoFontOptionsT, antialias: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> None]("cairo_font_options_set_antialias")
         return f(options, antialias)
 
     fn font_options_get_antialias(self, options: __CairoFontOptionsT) -> c_int:
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_int]("cairo_font_options_get_antialias")
         return f(options)
 
-    fn font_options_set_subpixel_order(self, options: __CairoFontOptionsT, subpixel_order: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> NoneType]("cairo_font_options_set_subpixel_order")
+    fn font_options_set_subpixel_order(self, options: __CairoFontOptionsT, subpixel_order: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> None]("cairo_font_options_set_subpixel_order")
         return f(options, subpixel_order)
 
     fn font_options_get_subpixel_order(self, options: __CairoFontOptionsT) -> c_int:
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_int]("cairo_font_options_get_subpixel_order")
         return f(options)
 
-    fn font_options_set_hint_style(self, options: __CairoFontOptionsT, hint_style: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> NoneType]("cairo_font_options_set_hint_style")
+    fn font_options_set_hint_style(self, options: __CairoFontOptionsT, hint_style: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> None]("cairo_font_options_set_hint_style")
         return f(options, hint_style)
 
     fn font_options_get_hint_style(self, options: __CairoFontOptionsT) -> c_int:
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_int]("cairo_font_options_get_hint_style")
         return f(options)
 
-    fn font_options_set_hint_metrics(self, options: __CairoFontOptionsT, hint_metrics: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> NoneType]("cairo_font_options_set_hint_metrics")
+    fn font_options_set_hint_metrics(self, options: __CairoFontOptionsT, hint_metrics: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> None]("cairo_font_options_set_hint_metrics")
         return f(options, hint_metrics)
 
     fn font_options_get_hint_metrics(self, options: __CairoFontOptionsT) -> c_int:
@@ -648,12 +651,12 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> UnsafePointer[c_char, ImmutExternalOrigin]]("cairo_font_options_get_variations")
         return f(options)
 
-    fn font_options_set_variations(self, options: __CairoFontOptionsT, variations: UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType]("cairo_font_options_set_variations")
+    fn font_options_set_variations(self, options: __CairoFontOptionsT, variations: UnsafePointer[c_char, ImmutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, UnsafePointer[c_char, ImmutExternalOrigin]) -> None]("cairo_font_options_set_variations")
         return f(options, variations)
 
-    fn font_options_set_color_mode(self, options: __CairoFontOptionsT, color_mode: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> NoneType]("cairo_font_options_set_color_mode")
+    fn font_options_set_color_mode(self, options: __CairoFontOptionsT, color_mode: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_int) -> None]("cairo_font_options_set_color_mode")
         return f(options, color_mode)
 
     fn font_options_get_color_mode(self, options: __CairoFontOptionsT) -> c_int:
@@ -664,96 +667,96 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoFontOptionsT) -> c_uint]("cairo_font_options_get_color_palette")
         return f(options)
 
-    fn font_options_set_color_palette(self, options: __CairoFontOptionsT, palette_index: c_uint) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_uint) -> NoneType]("cairo_font_options_set_color_palette")
+    fn font_options_set_color_palette(self, options: __CairoFontOptionsT, palette_index: c_uint) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_uint) -> None]("cairo_font_options_set_color_palette")
         return f(options, palette_index)
 
-    fn font_options_set_custom_palette_color(self, options: __CairoFontOptionsT, index: c_uint, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_uint, c_double, c_double, c_double, c_double) -> NoneType]("cairo_font_options_set_custom_palette_color")
+    fn font_options_set_custom_palette_color(self, options: __CairoFontOptionsT, index: c_uint, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoFontOptionsT, c_uint, c_double, c_double, c_double, c_double) -> None]("cairo_font_options_set_custom_palette_color")
         return f(options, index, red, green, blue, alpha)
 
     fn font_options_get_custom_palette_color(self, options: __CairoFontOptionsT, index: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) -> CairoStatusT:
         var f = self._lib.get_function[fn(__CairoFontOptionsT, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_font_options_get_custom_palette_color")
         return CairoStatusT(f(options, index, red, green, blue, alpha))
 
-    fn select_font_face(self, cr: __CairoT, family: UnsafePointer[c_char, ImmutExternalOrigin], slant: cairo_font_slant_t, weight: cairo_font_weight_t) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], cairo_font_slant_t, cairo_font_weight_t) -> NoneType]("cairo_select_font_face")
+    fn select_font_face(self, cr: __CairoT, family: UnsafePointer[c_char, ImmutExternalOrigin], slant: cairo_font_slant_t, weight: cairo_font_weight_t) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], cairo_font_slant_t, cairo_font_weight_t) -> None]("cairo_select_font_face")
         return f(cr, family, slant, weight)
 
-    fn set_font_size(self, cr: __CairoT, size: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, c_double) -> NoneType]("cairo_set_font_size")
+    fn set_font_size(self, cr: __CairoT, size: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoT, c_double) -> None]("cairo_set_font_size")
         return f(cr, size)
 
-    fn set_font_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> NoneType]("cairo_set_font_matrix")
+    fn set_font_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> None]("cairo_set_font_matrix")
         return f(cr, matrix)
 
-    fn get_font_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> NoneType]("cairo_get_font_matrix")
+    fn get_font_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> None]("cairo_get_font_matrix")
         return f(cr, matrix)
 
-    fn set_font_options(self, cr: __CairoT, options: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoFontOptionsT) -> NoneType]("cairo_set_font_options")
+    fn set_font_options(self, cr: __CairoT, options: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoFontOptionsT) -> None]("cairo_set_font_options")
         return f(cr, options)
 
-    fn get_font_options(self, cr: __CairoT, options: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoFontOptionsT) -> NoneType]("cairo_get_font_options")
+    fn get_font_options(self, cr: __CairoT, options: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoFontOptionsT) -> None]("cairo_get_font_options")
         return f(cr, options)
 
-    fn set_font_face(self, cr: __CairoT, font_face: __CairoFontFaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoFontFaceT) -> NoneType]("cairo_set_font_face")
+    fn set_font_face(self, cr: __CairoT, font_face: __CairoFontFaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoFontFaceT) -> None]("cairo_set_font_face")
         return f(cr, font_face)
 
     fn get_font_face(self, cr: __CairoT) -> __CairoFontFaceT:
         var f = self._lib.get_function[fn(__CairoT) -> __CairoFontFaceT]("cairo_get_font_face")
         return f(cr)
 
-    fn set_scaled_font(self, cr: __CairoT, scaled_font: __CairoScaledFontT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoScaledFontT) -> NoneType]("cairo_set_scaled_font")
+    fn set_scaled_font(self, cr: __CairoT, scaled_font: __CairoScaledFontT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoScaledFontT) -> None]("cairo_set_scaled_font")
         return f(cr, scaled_font)
 
     fn get_scaled_font(self, cr: __CairoT) -> __CairoScaledFontT:
         var f = self._lib.get_function[fn(__CairoT) -> __CairoScaledFontT]("cairo_get_scaled_font")
         return f(cr)
 
-    fn show_text(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType]("cairo_show_text")
+    fn show_text(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> None]("cairo_show_text")
         return f(cr, utf8)
 
-    fn show_glyphs(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int) -> NoneType]("cairo_show_glyphs")
+    fn show_glyphs(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int) -> None]("cairo_show_glyphs")
         return f(cr, glyphs, num_glyphs)
 
-    fn show_text_glyphs(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], utf8_len: c_int, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, clusters: UnsafePointer[__CairoTextClusterT, ImmutExternalOrigin], num_clusters: c_int, cluster_flags: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], c_int, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextClusterT, ImmutExternalOrigin], c_int, c_int) -> NoneType]("cairo_show_text_glyphs")
+    fn show_text_glyphs(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], utf8_len: c_int, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, clusters: UnsafePointer[__CairoTextClusterT, ImmutExternalOrigin], num_clusters: c_int, cluster_flags: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], c_int, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextClusterT, ImmutExternalOrigin], c_int, c_int) -> None]("cairo_show_text_glyphs")
         return f(cr, utf8, utf8_len, glyphs, num_glyphs, clusters, num_clusters, cluster_flags)
 
-    fn text_path(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> NoneType]("cairo_text_path")
+    fn text_path(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin]) -> None]("cairo_text_path")
         return f(cr, utf8)
 
-    fn glyph_path(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int) -> NoneType]("cairo_glyph_path")
+    fn glyph_path(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int) -> None]("cairo_glyph_path")
         return f(cr, glyphs, num_glyphs)
 
-    fn text_extents(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType]("cairo_text_extents")
+    fn text_extents(self, cr: __CairoT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None]("cairo_text_extents")
         return f(cr, utf8, extents)
 
-    fn glyph_extents(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType]("cairo_glyph_extents")
+    fn glyph_extents(self, cr: __CairoT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None]("cairo_glyph_extents")
         return f(cr, glyphs, num_glyphs, extents)
 
-    fn font_extents(self, cr: __CairoT, extents: UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType]("cairo_font_extents")
+    fn font_extents(self, cr: __CairoT, extents: UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> None]("cairo_font_extents")
         return f(cr, extents)
 
     fn font_face_reference(self, font_face: __CairoFontFaceT) -> __CairoFontFaceT:
         var f = self._lib.get_function[fn(__CairoFontFaceT) -> __CairoFontFaceT]("cairo_font_face_reference")
         return f(font_face)
 
-    fn font_face_destroy(self, font_face: __CairoFontFaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT) -> NoneType]("cairo_font_face_destroy")
+    fn font_face_destroy(self, font_face: __CairoFontFaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT) -> None]("cairo_font_face_destroy")
         return f(font_face)
 
     fn font_face_get_reference_count(self, font_face: __CairoFontFaceT) -> c_uint:
@@ -784,8 +787,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoScaledFontT) -> __CairoScaledFontT]("cairo_scaled_font_reference")
         return f(scaled_font)
 
-    fn scaled_font_destroy(self, scaled_font: __CairoScaledFontT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT) -> NoneType]("cairo_scaled_font_destroy")
+    fn scaled_font_destroy(self, scaled_font: __CairoScaledFontT) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT) -> None]("cairo_scaled_font_destroy")
         return f(scaled_font)
 
     fn scaled_font_get_reference_count(self, scaled_font: __CairoScaledFontT) -> c_uint:
@@ -808,16 +811,16 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_scaled_font_set_user_data")
         return CairoStatusT(f(scaled_font, key, user_data, destroy))
 
-    fn scaled_font_extents(self, scaled_font: __CairoScaledFontT, extents: UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> NoneType]("cairo_scaled_font_extents")
+    fn scaled_font_extents(self, scaled_font: __CairoScaledFontT, extents: UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[__CairoFontExtentsT, MutExternalOrigin]) -> None]("cairo_scaled_font_extents")
         return f(scaled_font, extents)
 
-    fn scaled_font_text_extents(self, scaled_font: __CairoScaledFontT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType]("cairo_scaled_font_text_extents")
+    fn scaled_font_text_extents(self, scaled_font: __CairoScaledFontT, utf8: UnsafePointer[c_char, ImmutExternalOrigin], extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None]("cairo_scaled_font_text_extents")
         return f(scaled_font, utf8, extents)
 
-    fn scaled_font_glyph_extents(self, scaled_font: __CairoScaledFontT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> NoneType]("cairo_scaled_font_glyph_extents")
+    fn scaled_font_glyph_extents(self, scaled_font: __CairoScaledFontT, glyphs: UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], num_glyphs: c_int, extents: UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, UnsafePointer[__CairoGlyphT, ImmutExternalOrigin], c_int, UnsafePointer[__CairoTextExtentsT, MutExternalOrigin]) -> None]("cairo_scaled_font_glyph_extents")
         return f(scaled_font, glyphs, num_glyphs, extents)
 
     fn scaled_font_text_to_glyphs(self, scaled_font: __CairoScaledFontT, x: c_double, y: c_double, utf8: UnsafePointer[c_char, ImmutExternalOrigin], utf8_len: c_int, glyphs: UnsafePointer[UnsafePointer[__CairoGlyphT, MutExternalOrigin], MutExternalOrigin], num_glyphs: UnsafePointer[c_int, MutExternalOrigin], clusters: UnsafePointer[UnsafePointer[__CairoTextClusterT, MutExternalOrigin], MutExternalOrigin], num_clusters: UnsafePointer[c_int, MutExternalOrigin], cluster_flags: UnsafePointer[c_int, MutExternalOrigin]) -> CairoStatusT:
@@ -828,20 +831,20 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoScaledFontT) -> __CairoFontFaceT]("cairo_scaled_font_get_font_face")
         return f(scaled_font)
 
-    fn scaled_font_get_font_matrix(self, scaled_font: __CairoScaledFontT, font_matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> NoneType]("cairo_scaled_font_get_font_matrix")
+    fn scaled_font_get_font_matrix(self, scaled_font: __CairoScaledFontT, font_matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> None]("cairo_scaled_font_get_font_matrix")
         return f(scaled_font, font_matrix)
 
-    fn scaled_font_get_ctm(self, scaled_font: __CairoScaledFontT, ctm: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> NoneType]("cairo_scaled_font_get_ctm")
+    fn scaled_font_get_ctm(self, scaled_font: __CairoScaledFontT, ctm: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> None]("cairo_scaled_font_get_ctm")
         return f(scaled_font, ctm)
 
-    fn scaled_font_get_scale_matrix(self, scaled_font: __CairoScaledFontT, scale_matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> NoneType]("cairo_scaled_font_get_scale_matrix")
+    fn scaled_font_get_scale_matrix(self, scaled_font: __CairoScaledFontT, scale_matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoMatrixT) -> None]("cairo_scaled_font_get_scale_matrix")
         return f(scaled_font, scale_matrix)
 
-    fn scaled_font_get_font_options(self, scaled_font: __CairoScaledFontT, options: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoFontOptionsT) -> NoneType]("cairo_scaled_font_get_font_options")
+    fn scaled_font_get_font_options(self, scaled_font: __CairoScaledFontT, options: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoScaledFontT, __CairoFontOptionsT) -> None]("cairo_scaled_font_get_font_options")
         return f(scaled_font, options)
 
     fn toy_font_face_create(self, family: UnsafePointer[c_char, ImmutExternalOrigin], slant: cairo_font_slant_t, weight: cairo_font_weight_t) -> __CairoFontFaceT:
@@ -864,24 +867,24 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn() -> __CairoFontFaceT]("cairo_user_font_face_create")
         return f()
 
-    fn user_font_face_set_init_func(self, font_face: __CairoFontFaceT, init_func: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_user_font_face_set_init_func")
+    fn user_font_face_set_init_func(self, font_face: __CairoFontFaceT, init_func: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_user_font_face_set_init_func")
         return f(font_face, init_func)
 
-    fn user_font_face_set_render_glyph_func(self, font_face: __CairoFontFaceT, render_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_user_font_face_set_render_glyph_func")
+    fn user_font_face_set_render_glyph_func(self, font_face: __CairoFontFaceT, render_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_user_font_face_set_render_glyph_func")
         return f(font_face, render_glyph_func)
 
-    fn user_font_face_set_render_color_glyph_func(self, font_face: __CairoFontFaceT, render_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_user_font_face_set_render_color_glyph_func")
+    fn user_font_face_set_render_color_glyph_func(self, font_face: __CairoFontFaceT, render_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_user_font_face_set_render_color_glyph_func")
         return f(font_face, render_glyph_func)
 
-    fn user_font_face_set_text_to_glyphs_func(self, font_face: __CairoFontFaceT, text_to_glyphs_func: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_user_font_face_set_text_to_glyphs_func")
+    fn user_font_face_set_text_to_glyphs_func(self, font_face: __CairoFontFaceT, text_to_glyphs_func: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_user_font_face_set_text_to_glyphs_func")
         return f(font_face, text_to_glyphs_func)
 
-    fn user_font_face_set_unicode_to_glyph_func(self, font_face: __CairoFontFaceT, unicode_to_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_user_font_face_set_unicode_to_glyph_func")
+    fn user_font_face_set_unicode_to_glyph_func(self, font_face: __CairoFontFaceT, unicode_to_glyph_func: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoFontFaceT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_user_font_face_set_unicode_to_glyph_func")
         return f(font_face, unicode_to_glyph_func)
 
     fn user_font_face_get_init_func(self, font_face: __CairoFontFaceT) -> UnsafePointer[NoneType, MutExternalOrigin]:
@@ -932,8 +935,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT) -> cairo_bool_t]("cairo_has_current_point")
         return f(cr)
 
-    fn get_current_point(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_get_current_point")
+    fn get_current_point(self, cr: __CairoT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_get_current_point")
         return f(cr, x, y)
 
     fn get_fill_rule(self, cr: __CairoT) -> c_int:
@@ -964,12 +967,12 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT) -> c_int]("cairo_get_dash_count")
         return f(cr)
 
-    fn get_dash(self, cr: __CairoT, dashes: UnsafePointer[c_double, MutExternalOrigin], offset: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_get_dash")
+    fn get_dash(self, cr: __CairoT, dashes: UnsafePointer[c_double, MutExternalOrigin], offset: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_get_dash")
         return f(cr, dashes, offset)
 
-    fn get_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> NoneType]("cairo_get_matrix")
+    fn get_matrix(self, cr: __CairoT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoMatrixT) -> None]("cairo_get_matrix")
         return f(cr, matrix)
 
     fn get_target(self, cr: __CairoT) -> __CairoSurfaceT:
@@ -988,12 +991,12 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoT) -> __CairoPathT]("cairo_copy_path_flat")
         return f(cr)
 
-    fn append_path(self, cr: __CairoT, path: __CairoPathT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoT, __CairoPathT) -> NoneType]("cairo_append_path")
+    fn append_path(self, cr: __CairoT, path: __CairoPathT) -> None:
+        var f = self._lib.get_function[fn(__CairoT, __CairoPathT) -> None]("cairo_append_path")
         return f(cr, path)
 
-    fn path_destroy(self, path: __CairoPathT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPathT) -> NoneType]("cairo_path_destroy")
+    fn path_destroy(self, path: __CairoPathT) -> None:
+        var f = self._lib.get_function[fn(__CairoPathT) -> None]("cairo_path_destroy")
         return f(path)
 
     fn status(self, cr: __CairoT) -> CairoStatusT:
@@ -1020,20 +1023,20 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoDeviceT) -> c_int]("cairo_device_acquire")
         return CairoStatusT(f(device))
 
-    fn device_release(self, device: __CairoDeviceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoDeviceT) -> NoneType]("cairo_device_release")
+    fn device_release(self, device: __CairoDeviceT) -> None:
+        var f = self._lib.get_function[fn(__CairoDeviceT) -> None]("cairo_device_release")
         return f(device)
 
-    fn device_flush(self, device: __CairoDeviceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoDeviceT) -> NoneType]("cairo_device_flush")
+    fn device_flush(self, device: __CairoDeviceT) -> None:
+        var f = self._lib.get_function[fn(__CairoDeviceT) -> None]("cairo_device_flush")
         return f(device)
 
-    fn device_finish(self, device: __CairoDeviceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoDeviceT) -> NoneType]("cairo_device_finish")
+    fn device_finish(self, device: __CairoDeviceT) -> None:
+        var f = self._lib.get_function[fn(__CairoDeviceT) -> None]("cairo_device_finish")
         return f(device)
 
-    fn device_destroy(self, device: __CairoDeviceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoDeviceT) -> NoneType]("cairo_device_destroy")
+    fn device_destroy(self, device: __CairoDeviceT) -> None:
+        var f = self._lib.get_function[fn(__CairoDeviceT) -> None]("cairo_device_destroy")
         return f(device)
 
     fn device_get_reference_count(self, device: __CairoDeviceT) -> c_uint:
@@ -1060,8 +1063,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoSurfaceT, __CairoRectangleIntT) -> __CairoSurfaceT]("cairo_surface_map_to_image")
         return f(surface, extents)
 
-    fn surface_unmap_image(self, surface: __CairoSurfaceT, image: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, __CairoSurfaceT) -> NoneType]("cairo_surface_unmap_image")
+    fn surface_unmap_image(self, surface: __CairoSurfaceT, image: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, __CairoSurfaceT) -> None]("cairo_surface_unmap_image")
         return f(surface, image)
 
     fn surface_create_for_rectangle(self, target: __CairoSurfaceT, x: c_double, y: c_double, width: c_double, height: c_double) -> __CairoSurfaceT:
@@ -1140,12 +1143,12 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoSurfaceT) -> __CairoSurfaceT]("cairo_surface_reference")
         return f(surface)
 
-    fn surface_finish(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_finish")
+    fn surface_finish(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_finish")
         return f(surface)
 
-    fn surface_destroy(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_destroy")
+    fn surface_destroy(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_destroy")
         return f(surface)
 
     fn surface_get_device(self, surface: __CairoSurfaceT) -> __CairoDeviceT:
@@ -1190,8 +1193,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[NoneType, ImmutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> c_int]("cairo_surface_set_user_data")
         return CairoStatusT(f(surface, key, user_data, destroy))
 
-    fn surface_get_mime_data(self, surface: __CairoSurfaceT, mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: UnsafePointer[c_ulong, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_ulong, MutExternalOrigin]) -> NoneType]("cairo_surface_get_mime_data")
+    fn surface_get_mime_data(self, surface: __CairoSurfaceT, mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: UnsafePointer[c_ulong, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_ulong, MutExternalOrigin]) -> None]("cairo_surface_get_mime_data")
         return f(surface, mime_type, data, length)
 
     fn surface_set_mime_data(self, surface: __CairoSurfaceT, mime_type: UnsafePointer[c_char, ImmutExternalOrigin], data: UnsafePointer[c_char, ImmutExternalOrigin], length: c_ulong, destroy: UnsafePointer[NoneType, MutExternalOrigin], closure: UnsafePointer[NoneType, MutExternalOrigin]) -> CairoStatusT:
@@ -1202,52 +1205,52 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_char, ImmutExternalOrigin]) -> cairo_bool_t]("cairo_surface_supports_mime_type")
         return f(surface, mime_type)
 
-    fn surface_get_font_options(self, surface: __CairoSurfaceT, options: __CairoFontOptionsT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, __CairoFontOptionsT) -> NoneType]("cairo_surface_get_font_options")
+    fn surface_get_font_options(self, surface: __CairoSurfaceT, options: __CairoFontOptionsT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, __CairoFontOptionsT) -> None]("cairo_surface_get_font_options")
         return f(surface, options)
 
-    fn surface_flush(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_flush")
+    fn surface_flush(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_flush")
         return f(surface)
 
-    fn surface_mark_dirty(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_mark_dirty")
+    fn surface_mark_dirty(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_mark_dirty")
         return f(surface)
 
-    fn surface_mark_dirty_rectangle(self, surface: __CairoSurfaceT, x: c_int, y: c_int, width: c_int, height: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, c_int, c_int, c_int, c_int) -> NoneType]("cairo_surface_mark_dirty_rectangle")
+    fn surface_mark_dirty_rectangle(self, surface: __CairoSurfaceT, x: c_int, y: c_int, width: c_int, height: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, c_int, c_int, c_int, c_int) -> None]("cairo_surface_mark_dirty_rectangle")
         return f(surface, x, y, width, height)
 
-    fn surface_set_device_scale(self, surface: __CairoSurfaceT, x_scale: c_double, y_scale: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> NoneType]("cairo_surface_set_device_scale")
+    fn surface_set_device_scale(self, surface: __CairoSurfaceT, x_scale: c_double, y_scale: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> None]("cairo_surface_set_device_scale")
         return f(surface, x_scale, y_scale)
 
-    fn surface_get_device_scale(self, surface: __CairoSurfaceT, x_scale: UnsafePointer[c_double, MutExternalOrigin], y_scale: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_surface_get_device_scale")
+    fn surface_get_device_scale(self, surface: __CairoSurfaceT, x_scale: UnsafePointer[c_double, MutExternalOrigin], y_scale: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_surface_get_device_scale")
         return f(surface, x_scale, y_scale)
 
-    fn surface_set_device_offset(self, surface: __CairoSurfaceT, x_offset: c_double, y_offset: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> NoneType]("cairo_surface_set_device_offset")
+    fn surface_set_device_offset(self, surface: __CairoSurfaceT, x_offset: c_double, y_offset: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> None]("cairo_surface_set_device_offset")
         return f(surface, x_offset, y_offset)
 
-    fn surface_get_device_offset(self, surface: __CairoSurfaceT, x_offset: UnsafePointer[c_double, MutExternalOrigin], y_offset: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_surface_get_device_offset")
+    fn surface_get_device_offset(self, surface: __CairoSurfaceT, x_offset: UnsafePointer[c_double, MutExternalOrigin], y_offset: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_surface_get_device_offset")
         return f(surface, x_offset, y_offset)
 
-    fn surface_set_fallback_resolution(self, surface: __CairoSurfaceT, x_pixels_per_inch: c_double, y_pixels_per_inch: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> NoneType]("cairo_surface_set_fallback_resolution")
+    fn surface_set_fallback_resolution(self, surface: __CairoSurfaceT, x_pixels_per_inch: c_double, y_pixels_per_inch: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, c_double, c_double) -> None]("cairo_surface_set_fallback_resolution")
         return f(surface, x_pixels_per_inch, y_pixels_per_inch)
 
-    fn surface_get_fallback_resolution(self, surface: __CairoSurfaceT, x_pixels_per_inch: UnsafePointer[c_double, MutExternalOrigin], y_pixels_per_inch: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_surface_get_fallback_resolution")
+    fn surface_get_fallback_resolution(self, surface: __CairoSurfaceT, x_pixels_per_inch: UnsafePointer[c_double, MutExternalOrigin], y_pixels_per_inch: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_surface_get_fallback_resolution")
         return f(surface, x_pixels_per_inch, y_pixels_per_inch)
 
-    fn surface_copy_page(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_copy_page")
+    fn surface_copy_page(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_copy_page")
         return f(surface)
 
-    fn surface_show_page(self, surface: __CairoSurfaceT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT) -> NoneType]("cairo_surface_show_page")
+    fn surface_show_page(self, surface: __CairoSurfaceT) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT) -> None]("cairo_surface_show_page")
         return f(surface)
 
     fn surface_has_show_text_glyphs(self, surface: __CairoSurfaceT) -> cairo_bool_t:
@@ -1298,8 +1301,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(c_int, __CairoRectangleT) -> __CairoSurfaceT]("cairo_recording_surface_create")
         return f(content, extents)
 
-    fn recording_surface_ink_extents(self, surface: __CairoSurfaceT, x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], width: UnsafePointer[c_double, MutExternalOrigin], height: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_recording_surface_ink_extents")
+    fn recording_surface_ink_extents(self, surface: __CairoSurfaceT, x0: UnsafePointer[c_double, MutExternalOrigin], y0: UnsafePointer[c_double, MutExternalOrigin], width: UnsafePointer[c_double, MutExternalOrigin], height: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoSurfaceT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_recording_surface_ink_extents")
         return f(surface, x0, y0, width, height)
 
     fn recording_surface_get_extents(self, surface: __CairoSurfaceT, extents: __CairoRectangleT) -> cairo_bool_t:
@@ -1310,40 +1313,40 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(UnsafePointer[NoneType, MutExternalOrigin], c_int, c_int, c_int) -> __CairoPatternT]("cairo_pattern_create_raster_source")
         return f(user_data, content, width, height)
 
-    fn raster_source_pattern_set_callback_data(self, pattern: __CairoPatternT, data: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_set_callback_data")
+    fn raster_source_pattern_set_callback_data(self, pattern: __CairoPatternT, data: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_set_callback_data")
         return f(pattern, data)
 
     fn raster_source_pattern_get_callback_data(self, pattern: __CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]:
         var f = self._lib.get_function[fn(__CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_raster_source_pattern_get_callback_data")
         return f(pattern)
 
-    fn raster_source_pattern_set_acquire(self, pattern: __CairoPatternT, acquire: UnsafePointer[NoneType, MutExternalOrigin], release: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_set_acquire")
+    fn raster_source_pattern_set_acquire(self, pattern: __CairoPatternT, acquire: UnsafePointer[NoneType, MutExternalOrigin], release: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_set_acquire")
         return f(pattern, acquire, release)
 
-    fn raster_source_pattern_get_acquire(self, pattern: __CairoPatternT, acquire: UnsafePointer[NoneType, MutExternalOrigin], release: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_get_acquire")
+    fn raster_source_pattern_get_acquire(self, pattern: __CairoPatternT, acquire: UnsafePointer[NoneType, MutExternalOrigin], release: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin], UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_get_acquire")
         return f(pattern, acquire, release)
 
-    fn raster_source_pattern_set_snapshot(self, pattern: __CairoPatternT, snapshot: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_set_snapshot")
+    fn raster_source_pattern_set_snapshot(self, pattern: __CairoPatternT, snapshot: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_set_snapshot")
         return f(pattern, snapshot)
 
     fn raster_source_pattern_get_snapshot(self, pattern: __CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]:
         var f = self._lib.get_function[fn(__CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_raster_source_pattern_get_snapshot")
         return f(pattern)
 
-    fn raster_source_pattern_set_copy(self, pattern: __CairoPatternT, copy: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_set_copy")
+    fn raster_source_pattern_set_copy(self, pattern: __CairoPatternT, copy: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_set_copy")
         return f(pattern, copy)
 
     fn raster_source_pattern_get_copy(self, pattern: __CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]:
         var f = self._lib.get_function[fn(__CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]]("cairo_raster_source_pattern_get_copy")
         return f(pattern)
 
-    fn raster_source_pattern_set_finish(self, pattern: __CairoPatternT, finish: UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> NoneType]("cairo_raster_source_pattern_set_finish")
+    fn raster_source_pattern_set_finish(self, pattern: __CairoPatternT, finish: UnsafePointer[NoneType, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, UnsafePointer[NoneType, MutExternalOrigin]) -> None]("cairo_raster_source_pattern_set_finish")
         return f(pattern, finish)
 
     fn raster_source_pattern_get_finish(self, pattern: __CairoPatternT) -> UnsafePointer[NoneType, MutExternalOrigin]:
@@ -1378,8 +1381,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoPatternT) -> __CairoPatternT]("cairo_pattern_reference")
         return f(pattern)
 
-    fn pattern_destroy(self, pattern: __CairoPatternT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT) -> NoneType]("cairo_pattern_destroy")
+    fn pattern_destroy(self, pattern: __CairoPatternT) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT) -> None]("cairo_pattern_destroy")
         return f(pattern)
 
     fn pattern_get_reference_count(self, pattern: __CairoPatternT) -> c_uint:
@@ -1402,64 +1405,64 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoPatternT) -> c_int]("cairo_pattern_get_type")
         return f(pattern)
 
-    fn pattern_add_color_stop_rgb(self, pattern: __CairoPatternT, offset: c_double, red: c_double, green: c_double, blue: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double) -> NoneType]("cairo_pattern_add_color_stop_rgb")
+    fn pattern_add_color_stop_rgb(self, pattern: __CairoPatternT, offset: c_double, red: c_double, green: c_double, blue: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double) -> None]("cairo_pattern_add_color_stop_rgb")
         return f(pattern, offset, red, green, blue)
 
-    fn pattern_add_color_stop_rgba(self, pattern: __CairoPatternT, offset: c_double, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_pattern_add_color_stop_rgba")
+    fn pattern_add_color_stop_rgba(self, pattern: __CairoPatternT, offset: c_double, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_pattern_add_color_stop_rgba")
         return f(pattern, offset, red, green, blue, alpha)
 
-    fn mesh_pattern_begin_patch(self, pattern: __CairoPatternT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT) -> NoneType]("cairo_mesh_pattern_begin_patch")
+    fn mesh_pattern_begin_patch(self, pattern: __CairoPatternT) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT) -> None]("cairo_mesh_pattern_begin_patch")
         return f(pattern)
 
-    fn mesh_pattern_end_patch(self, pattern: __CairoPatternT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT) -> NoneType]("cairo_mesh_pattern_end_patch")
+    fn mesh_pattern_end_patch(self, pattern: __CairoPatternT) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT) -> None]("cairo_mesh_pattern_end_patch")
         return f(pattern)
 
-    fn mesh_pattern_curve_to(self, pattern: __CairoPatternT, x1: c_double, y1: c_double, x2: c_double, y2: c_double, x3: c_double, y3: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_mesh_pattern_curve_to")
+    fn mesh_pattern_curve_to(self, pattern: __CairoPatternT, x1: c_double, y1: c_double, x2: c_double, y2: c_double, x3: c_double, y3: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_mesh_pattern_curve_to")
         return f(pattern, x1, y1, x2, y2, x3, y3)
 
-    fn mesh_pattern_line_to(self, pattern: __CairoPatternT, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double) -> NoneType]("cairo_mesh_pattern_line_to")
+    fn mesh_pattern_line_to(self, pattern: __CairoPatternT, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double) -> None]("cairo_mesh_pattern_line_to")
         return f(pattern, x, y)
 
-    fn mesh_pattern_move_to(self, pattern: __CairoPatternT, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double) -> NoneType]("cairo_mesh_pattern_move_to")
+    fn mesh_pattern_move_to(self, pattern: __CairoPatternT, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_double, c_double) -> None]("cairo_mesh_pattern_move_to")
         return f(pattern, x, y)
 
-    fn mesh_pattern_set_control_point(self, pattern: __CairoPatternT, point_num: c_uint, x: c_double, y: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double) -> NoneType]("cairo_mesh_pattern_set_control_point")
+    fn mesh_pattern_set_control_point(self, pattern: __CairoPatternT, point_num: c_uint, x: c_double, y: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double) -> None]("cairo_mesh_pattern_set_control_point")
         return f(pattern, point_num, x, y)
 
-    fn mesh_pattern_set_corner_color_rgb(self, pattern: __CairoPatternT, corner_num: c_uint, red: c_double, green: c_double, blue: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double, c_double) -> NoneType]("cairo_mesh_pattern_set_corner_color_rgb")
+    fn mesh_pattern_set_corner_color_rgb(self, pattern: __CairoPatternT, corner_num: c_uint, red: c_double, green: c_double, blue: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double, c_double) -> None]("cairo_mesh_pattern_set_corner_color_rgb")
         return f(pattern, corner_num, red, green, blue)
 
-    fn mesh_pattern_set_corner_color_rgba(self, pattern: __CairoPatternT, corner_num: c_uint, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double, c_double, c_double) -> NoneType]("cairo_mesh_pattern_set_corner_color_rgba")
+    fn mesh_pattern_set_corner_color_rgba(self, pattern: __CairoPatternT, corner_num: c_uint, red: c_double, green: c_double, blue: c_double, alpha: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_double, c_double, c_double, c_double) -> None]("cairo_mesh_pattern_set_corner_color_rgba")
         return f(pattern, corner_num, red, green, blue, alpha)
 
-    fn pattern_set_matrix(self, pattern: __CairoPatternT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, __CairoMatrixT) -> NoneType]("cairo_pattern_set_matrix")
+    fn pattern_set_matrix(self, pattern: __CairoPatternT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, __CairoMatrixT) -> None]("cairo_pattern_set_matrix")
         return f(pattern, matrix)
 
-    fn pattern_get_matrix(self, pattern: __CairoPatternT, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, __CairoMatrixT) -> NoneType]("cairo_pattern_get_matrix")
+    fn pattern_get_matrix(self, pattern: __CairoPatternT, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, __CairoMatrixT) -> None]("cairo_pattern_get_matrix")
         return f(pattern, matrix)
 
-    fn pattern_set_extend(self, pattern: __CairoPatternT, extend: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> NoneType]("cairo_pattern_set_extend")
+    fn pattern_set_extend(self, pattern: __CairoPatternT, extend: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> None]("cairo_pattern_set_extend")
         return f(pattern, extend)
 
     fn pattern_get_extend(self, pattern: __CairoPatternT) -> c_int:
         var f = self._lib.get_function[fn(__CairoPatternT) -> c_int]("cairo_pattern_get_extend")
         return f(pattern)
 
-    fn pattern_set_filter(self, pattern: __CairoPatternT, filter: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> NoneType]("cairo_pattern_set_filter")
+    fn pattern_set_filter(self, pattern: __CairoPatternT, filter: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoPatternT, c_int) -> None]("cairo_pattern_set_filter")
         return f(pattern, filter)
 
     fn pattern_get_filter(self, pattern: __CairoPatternT) -> c_int:
@@ -1506,52 +1509,52 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoPatternT, c_uint, c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> c_int]("cairo_mesh_pattern_get_control_point")
         return CairoStatusT(f(pattern, patch_num, point_num, x, y))
 
-    fn matrix_init(self, matrix: __CairoMatrixT, xx: c_double, yx: c_double, xy: c_double, yy: c_double, x0: c_double, y0: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double, c_double, c_double, c_double, c_double) -> NoneType]("cairo_matrix_init")
+    fn matrix_init(self, matrix: __CairoMatrixT, xx: c_double, yx: c_double, xy: c_double, yy: c_double, x0: c_double, y0: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double, c_double, c_double, c_double, c_double) -> None]("cairo_matrix_init")
         return f(matrix, xx, yx, xy, yy, x0, y0)
 
-    fn matrix_init_identity(self, matrix: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT) -> NoneType]("cairo_matrix_init_identity")
+    fn matrix_init_identity(self, matrix: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT) -> None]("cairo_matrix_init_identity")
         return f(matrix)
 
-    fn matrix_init_translate(self, matrix: __CairoMatrixT, tx: c_double, ty: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> NoneType]("cairo_matrix_init_translate")
+    fn matrix_init_translate(self, matrix: __CairoMatrixT, tx: c_double, ty: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> None]("cairo_matrix_init_translate")
         return f(matrix, tx, ty)
 
-    fn matrix_init_scale(self, matrix: __CairoMatrixT, sx: c_double, sy: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> NoneType]("cairo_matrix_init_scale")
+    fn matrix_init_scale(self, matrix: __CairoMatrixT, sx: c_double, sy: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> None]("cairo_matrix_init_scale")
         return f(matrix, sx, sy)
 
-    fn matrix_init_rotate(self, matrix: __CairoMatrixT, radians: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double) -> NoneType]("cairo_matrix_init_rotate")
+    fn matrix_init_rotate(self, matrix: __CairoMatrixT, radians: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double) -> None]("cairo_matrix_init_rotate")
         return f(matrix, radians)
 
-    fn matrix_translate(self, matrix: __CairoMatrixT, tx: c_double, ty: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> NoneType]("cairo_matrix_translate")
+    fn matrix_translate(self, matrix: __CairoMatrixT, tx: c_double, ty: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> None]("cairo_matrix_translate")
         return f(matrix, tx, ty)
 
-    fn matrix_scale(self, matrix: __CairoMatrixT, sx: c_double, sy: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> NoneType]("cairo_matrix_scale")
+    fn matrix_scale(self, matrix: __CairoMatrixT, sx: c_double, sy: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double, c_double) -> None]("cairo_matrix_scale")
         return f(matrix, sx, sy)
 
-    fn matrix_rotate(self, matrix: __CairoMatrixT, radians: c_double) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, c_double) -> NoneType]("cairo_matrix_rotate")
+    fn matrix_rotate(self, matrix: __CairoMatrixT, radians: c_double) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, c_double) -> None]("cairo_matrix_rotate")
         return f(matrix, radians)
 
     fn matrix_invert(self, matrix: __CairoMatrixT) -> CairoStatusT:
         var f = self._lib.get_function[fn(__CairoMatrixT) -> c_int]("cairo_matrix_invert")
         return CairoStatusT(f(matrix))
 
-    fn matrix_multiply(self, result: __CairoMatrixT, a: __CairoMatrixT, b: __CairoMatrixT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, __CairoMatrixT, __CairoMatrixT) -> NoneType]("cairo_matrix_multiply")
+    fn matrix_multiply(self, result: __CairoMatrixT, a: __CairoMatrixT, b: __CairoMatrixT) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, __CairoMatrixT, __CairoMatrixT) -> None]("cairo_matrix_multiply")
         return f(result, a, b)
 
-    fn matrix_transform_distance(self, matrix: __CairoMatrixT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_matrix_transform_distance")
+    fn matrix_transform_distance(self, matrix: __CairoMatrixT, dx: UnsafePointer[c_double, MutExternalOrigin], dy: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_matrix_transform_distance")
         return f(matrix, dx, dy)
 
-    fn matrix_transform_point(self, matrix: __CairoMatrixT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoMatrixT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> NoneType]("cairo_matrix_transform_point")
+    fn matrix_transform_point(self, matrix: __CairoMatrixT, x: UnsafePointer[c_double, MutExternalOrigin], y: UnsafePointer[c_double, MutExternalOrigin]) -> None:
+        var f = self._lib.get_function[fn(__CairoMatrixT, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]) -> None]("cairo_matrix_transform_point")
         return f(matrix, x, y)
 
     fn region_create(self) -> __CairoRegionT:
@@ -1574,8 +1577,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoRegionT) -> __CairoRegionT]("cairo_region_reference")
         return f(region)
 
-    fn region_destroy(self, region: __CairoRegionT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoRegionT) -> NoneType]("cairo_region_destroy")
+    fn region_destroy(self, region: __CairoRegionT) -> None:
+        var f = self._lib.get_function[fn(__CairoRegionT) -> None]("cairo_region_destroy")
         return f(region)
 
     fn region_equal(self, a: __CairoRegionT, b: __CairoRegionT) -> cairo_bool_t:
@@ -1586,16 +1589,16 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoRegionT) -> c_int]("cairo_region_status")
         return CairoStatusT(f(region))
 
-    fn region_get_extents(self, region: __CairoRegionT, extents: __CairoRectangleIntT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoRegionT, __CairoRectangleIntT) -> NoneType]("cairo_region_get_extents")
+    fn region_get_extents(self, region: __CairoRegionT, extents: __CairoRectangleIntT) -> None:
+        var f = self._lib.get_function[fn(__CairoRegionT, __CairoRectangleIntT) -> None]("cairo_region_get_extents")
         return f(region, extents)
 
     fn region_num_rectangles(self, region: __CairoRegionT) -> c_int:
         var f = self._lib.get_function[fn(__CairoRegionT) -> c_int]("cairo_region_num_rectangles")
         return f(region)
 
-    fn region_get_rectangle(self, region: __CairoRegionT, nth: c_int, rectangle: __CairoRectangleIntT) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoRegionT, c_int, __CairoRectangleIntT) -> NoneType]("cairo_region_get_rectangle")
+    fn region_get_rectangle(self, region: __CairoRegionT, nth: c_int, rectangle: __CairoRectangleIntT) -> None:
+        var f = self._lib.get_function[fn(__CairoRegionT, c_int, __CairoRectangleIntT) -> None]("cairo_region_get_rectangle")
         return f(region, nth, rectangle)
 
     fn region_is_empty(self, region: __CairoRegionT) -> cairo_bool_t:
@@ -1610,8 +1613,8 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoRegionT, c_int, c_int) -> cairo_bool_t]("cairo_region_contains_point")
         return f(region, x, y)
 
-    fn region_translate(self, region: __CairoRegionT, dx: c_int, dy: c_int) -> NoneType:
-        var f = self._lib.get_function[fn(__CairoRegionT, c_int, c_int) -> NoneType]("cairo_region_translate")
+    fn region_translate(self, region: __CairoRegionT, dx: c_int, dy: c_int) -> None:
+        var f = self._lib.get_function[fn(__CairoRegionT, c_int, c_int) -> None]("cairo_region_translate")
         return f(region, dx, dy)
 
     fn region_subtract(self, dst: __CairoRegionT, other: __CairoRegionT) -> CairoStatusT:
@@ -1646,6 +1649,6 @@ struct CairoLib(Movable):
         var f = self._lib.get_function[fn(__CairoRegionT, __CairoRectangleIntT) -> c_int]("cairo_region_xor_rectangle")
         return CairoStatusT(f(dst, rectangle))
 
-    fn debug_reset_static_data(self) -> NoneType:
-        var f = self._lib.get_function[fn() -> NoneType]("cairo_debug_reset_static_data")
+    fn debug_reset_static_data(self) -> None:
+        var f = self._lib.get_function[fn() -> None]("cairo_debug_reset_static_data")
         return f()
