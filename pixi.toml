@@ -37,8 +37,7 @@ cairo = ">=1.18,<2"
 build = "pixi build"
 package-artifacts = "pixi build --output-dir dist/conda"
 
-verify-import = "pixi run mojo run test/package_smoke_install.mojo"
-verify-install = "pixi run verify-import"
+verify = "pixi run mojo run test/package_smoke_install.mojo"
 
 test = "pixi run test-unit-install && pixi run test-functional"
 test-unit-install = "pixi run mojo run test/test_install_unit.mojo && pixi run mojo run test/package_smoke_install.mojo"

@@ -1,20 +1,18 @@
 # cairo-mojo
 
-`cairo-mojo` provides Mojo bindings and high-level wrappers for Cairo (`libcairo`).
-Wrappers are designed so most users can render images and shapes through typed Mojo APIs
-without working with raw C pointers.
-The API is inspired by [Pycairo](https://pycairo.readthedocs.io/en/latest/) and code written for Pycairo can be easily moved to mojo.
+cairo-mojo provides Mojo bindings and high-level wrappers for the [Cairo](https://www.cairographics.org/) graphics library (libcairo).
+The goal is to expose a safe, typed Mojo API for 2D rendering while still allowing low-level access when needed. The API design is inspired by [Pycairo](https://pycairo.readthedocs.io/en/latest/) with the goal of reaching parity, so existing Pycairo code translates naturally.
 
 ## What is included
 
-- low-level FFI bindings in `cairo_mojo/_ffi.mojo`
-- runtime library resolution in `cairo_mojo/cairo_runtime.mojo`
-- typed high-level API
+- low-level FFI bindings in `cairo_mojo/_binding.mojo`
+- High-level API → ergonomic wrappers (Context, ImageSurface, etc.)
+- Runtime loader (dynamic libcairo resolution) → `cairo_mojo/cairo_runtime.mojo`
 
 ## Prerequisites
 
 - [Pixi](https://pixi.sh/latest/)
-- a working Mojo toolchain available through your Pixi environment
+- a system installed `libcairo` (should be available on most Linux and OSX systems)
 
 ## Install
 
@@ -26,14 +24,34 @@ Use Pixi's git flag (`-g` / `--git`) to install directly from this repository:
 pixi add -g https://github.com/MoSafi2/cairo-mojo cairo-mojo
 ```
 
-## Run your first example
+## Quick start
 
-If you are working from this repository:
+Run an example:
 
-```bash
-pixi install
+```sh
 pixi run mojo run examples/red_rectangle_png.mojo
-pixi run mojo run examples/advanced_dashboard_card_png.mojo
+```
+
+## Basic usage
+
+```mojo
+from cairo_mojo import Context, ImageSurface
+def main() raises:
+    var surface = ImageSurface(width=256, height=256)
+    var ctx = Context(surface)
+
+    ctx.set_source_rgb(1.0, 1.0, 1.0)
+    ctx.paint()
+
+    ctx.set_source_rgb(0.92, 0.22, 0.22)
+    ctx.rectangle(48.0, 48.0, 160.0, 160.0)
+    ctx.fill()
+
+    surface.write_to_png("simple_example.png")
+```
+
+```sh
+pixi run mojo run simple_example.mojo
 ```
 
 ## Examples gallery
@@ -60,41 +78,22 @@ pixi run mojo run examples/<example_file>.mojo
 - `examples/pycairo_text_align_center_png.mojo` -> `pycairo_text_align_center.png`
 - `examples/pycairo_spiral_png.mojo` -> `pycairo_spiral.png`
 
-## Basic usage
-
-```mojo
-from cairo_mojo import Context, ImageSurface
-
-
-def main() raises:
-    var surface = ImageSurface(width=256, height=256)
-    var ctx = Context(surface)
-
-    ctx.set_source_rgb(1.0, 1.0, 1.0)
-    ctx.paint()
-
-    ctx.set_source_rgb(0.92, 0.22, 0.22)
-    ctx.rectangle(48.0, 48.0, 160.0, 160.0)
-    ctx.fill()
-
-    surface.write_to_png("simple_example.png")
-```
-
-Run it with:
-
-```bash
-pixi run mojo run simple_example.mojo
-```
-
-## Safety model
-
-`cairo_mojo` is a safe wrapper around `libcairo` and generated FFI bindings:
-
-- standard drawing workflows should use `Context`, `ImageSurface`, `Pattern`, and convenience helpers
-- most users should not need to construct or pass raw Cairo pointers
-- low-level pointer interop is available only through explicitly named `unsafe_*` APIs
-
 ## Development
+
+### Install developer environment
+
+```sh
+pixi install -e dev
+```
+
+This adds:
+
+- mojo-bindgen
+- libclang
+Use this only if you:
+- regenerate bindings
+- work on FFI/codegen
+- debug ABI issues
 
 ### Run tests
 
@@ -102,21 +101,18 @@ pixi run mojo run simple_example.mojo
 pixi run test
 ```
 
-`pixi run test` runs both install-safe unit tests and functional tests.
-The heavy functional suites (`test_ffi_smoke` and `test_high_level_api`) are development-only.
-
 ### Verify install/package behavior
 
 ```bash
-pixi run verify-package
+pixi run verify
 ```
 
-`pixi run verify-package` runs only install-time checks (`test_install_unit` and package smoke).
+`pixi run verify` runs only install-time checks (`test_install_unit` and package smoke).
 
 ### Build Conda package
 
 ```bash
-pixi run build-package
+pixi run build
 ```
 
 To write artifacts to `dist/conda`:
@@ -130,28 +126,4 @@ pixi run package-artifacts
 Current toolchain target:
 
 - Mojo: currently nightly and then starting with `mojo 26.3` stable
-
-## Pycairo parity snapshot
-
-`cairo-mojo` now includes high-level wrappers for most core pycairo families:
-
-- module constants and version helpers (`cairo_version()`, `cairo_version_string()`, `version_info()`, `HAS`, `TAG`, `MIME_TYPE`)
-- expanded enums and status values (including hinting/subpixel and text-cluster flags)
-- path object workflow (`copy_path`, `copy_path_flat`, `append_path`, `Path`)
-- region/device wrappers (`Region`, `RectangleInt`, `Device`)
-- advanced text wrappers (`ScaledFont`, glyph-based drawing via `show_glyphs`)
-- extended surface controls (`show_page`, `copy_page`, device scale/offset, fallback resolution)
-
-Backend-specific APIs (for example PS/Script/Tee and platform-native surfaces) depend on
-the linked Cairo build and remain capability-gated.
-
-## Strict parity tracking
-
-- Strict checklist: `docs/pycairo_strict_parity_checklist.md`
-- New strict parity tests:
-  - `test/test_parity_constants_enums.mojo`
-  - `test/test_parity_text_patterns.mojo`
-  - `test/test_parity_surfaces_linux.mojo`
-- Linux-first backend policy:
-  - backend wrappers not present in generated FFI are exposed as capability-gated placeholders
-  - APIs return explicit unsupported errors until corresponding FFI symbols are generated
+- Cairo >= 1.18
