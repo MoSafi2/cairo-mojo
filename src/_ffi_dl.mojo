@@ -4,9 +4,10 @@
 # FFI mode: owned_dl_handle
 from std.ffi import DEFAULT_RTLD, OwnedDLHandle, c_char, c_double, c_int, c_uchar, c_uint, c_ulong
 from std.memory import ImmutOpaquePointer, MutOpaquePointer
+from .cairo_runtime import ensure_cairo_loader_handle
 
 def _bindgen_dl() raises -> OwnedDLHandle:
-    return OwnedDLHandle("libcairo.so.2")
+    return ensure_cairo_loader_handle()
 
 # incomplete C struct `_cairo` — opaque; use only as pointer target
 @fieldwise_init

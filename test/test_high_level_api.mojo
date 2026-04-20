@@ -1,5 +1,6 @@
 import src._ffi_dl as ffi
-from std.ffi import OwnedDLHandle, RTLD
+from src.cairo_runtime import ensure_cairo_loader_handle
+from std.ffi import OwnedDLHandle
 from std.testing import TestSuite, assert_equal, assert_true
 
 from src.cairo_core import Context, ImageSurface, PDFSurface, Pattern, RecordingSurface, SVGSurface
@@ -35,7 +36,7 @@ from src.fonts import FontOptions
 
 def _ensure_cairo_loaded() raises -> OwnedDLHandle:
     # Keep libcairo loaded for the full test scope so opaque cairo handles remain valid.
-    var handle = OwnedDLHandle("/usr/lib/x86_64-linux-gnu/libcairo.so.2", RTLD.NOW | RTLD.GLOBAL)
+    var handle = ensure_cairo_loader_handle()
     return handle^
 
 

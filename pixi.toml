@@ -2,14 +2,20 @@
 authors = ["MoSafi2 <mohamed.mabrouk@rwth-aachen.de>"]
 channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
 name = "cairo-mojo"
-platforms = ["linux-64"]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
 version = "0.1.0"
 
 [tasks]
 
 [dependencies]
 mojo = ">=0.26.3.0.dev2026042005,<0.27"
-python = ">=3.14.4,<3.15"
 
-[pypi-dependencies]
+[feature.bindgen]
+
+
+[feature.bindgen.pypi-dependencies]
 mojo-bindgen = { git = "https://github.com/MoSafi2/mojo_bindgen" }
+libclang = "*"
+
+[environments]
+bindgen = ["default", "bindgen"]
