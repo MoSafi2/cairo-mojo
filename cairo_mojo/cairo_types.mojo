@@ -88,6 +88,109 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
             c_double(self.y0),
         )
 
+    def translated(self, tx: Float64, ty: Float64) raises -> Self:
+        """Return a copy translated by `(tx, ty)`."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        ffi.cairo_matrix_translate(matrix_ptr, c_double(tx), c_double(ty))
+        var out = Self.from_ffi(matrix_ptr[])
+        matrix_ptr.free()
+        return out^
+
+    def scaled(self, sx: Float64, sy: Float64) raises -> Self:
+        """Return a copy scaled by `(sx, sy)`."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        ffi.cairo_matrix_scale(matrix_ptr, c_double(sx), c_double(sy))
+        var out = Self.from_ffi(matrix_ptr[])
+        matrix_ptr.free()
+        return out^
+
+    def rotated(self, radians: Float64) raises -> Self:
+        """Return a copy rotated by `radians`."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        ffi.cairo_matrix_rotate(matrix_ptr, c_double(radians))
+        var out = Self.from_ffi(matrix_ptr[])
+        matrix_ptr.free()
+        return out^
+
+    def inverted(self) raises -> Self:
+        """Return the inverse matrix."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        var status = ffi.cairo_matrix_invert(matrix_ptr)
+        if status.value != ffi.cairo_status_t.CAIRO_STATUS_SUCCESS.value:
+            matrix_ptr.free()
+            raise Error("cairo_matrix_invert failed")
+        var out = Self.from_ffi(matrix_ptr[])
+        matrix_ptr.free()
+        return out^
+
+    def multiplied(self, other: Self) raises -> Self:
+        """Return `self * other`."""
+        var result_ptr = alloc[ffi.cairo_matrix_t](1)
+        var left_ptr = alloc[ffi.cairo_matrix_t](1)
+        var right_ptr = alloc[ffi.cairo_matrix_t](1)
+        left_ptr[] = self.to_ffi()
+        right_ptr[] = other.to_ffi()
+        ffi.cairo_matrix_multiply(
+            result_ptr,
+            left_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            right_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+        )
+        var out = Self.from_ffi(result_ptr[])
+        result_ptr.free()
+        left_ptr.free()
+        right_ptr.free()
+        return out^
+
+    def transform_point(self, point: Point2D) raises -> Point2D:
+        """Transform a point using this matrix."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        var x_ptr = alloc[c_double](1)
+        var y_ptr = alloc[c_double](1)
+        x_ptr[] = c_double(point.x)
+        y_ptr[] = c_double(point.y)
+        ffi.cairo_matrix_transform_point(
+            matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            x_ptr,
+            y_ptr,
+        )
+        var out = Point2D(x=Float64(x_ptr[]), y=Float64(y_ptr[]))
+        matrix_ptr.free()
+        x_ptr.free()
+        y_ptr.free()
+        return out
+
+    def transform_distance(self, delta: Point2D) raises -> Point2D:
+        """Transform a vector distance using this matrix."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = self.to_ffi()
+        var dx_ptr = alloc[c_double](1)
+        var dy_ptr = alloc[c_double](1)
+        dx_ptr[] = c_double(delta.x)
+        dy_ptr[] = c_double(delta.y)
+        ffi.cairo_matrix_transform_distance(
+            matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            dx_ptr,
+            dy_ptr,
+        )
+        var out = Point2D(x=Float64(dx_ptr[]), y=Float64(dy_ptr[]))
+        matrix_ptr.free()
+        dx_ptr.free()
+        dy_ptr.free()
+        return out
+
 
 @fieldwise_init
 struct Extents2D(Copyable, ImplicitlyCopyable, Movable):

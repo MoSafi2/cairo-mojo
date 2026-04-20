@@ -376,6 +376,13 @@ struct SurfaceObserverMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassab
     comptime NORMAL = Self(0)
     comptime RECORD_OPERATIONS = Self(1)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_surface_observer_mode_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_surface_observer_mode_t:
+        return ffi.cairo_surface_observer_mode_t(c_uint(self._value))
+
 
 @fieldwise_init
 struct PSLevel(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):

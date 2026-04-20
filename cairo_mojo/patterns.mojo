@@ -7,6 +7,7 @@ from cairo_mojo.cairo_types import Matrix2D
 from cairo_mojo.common import _ensure_success
 from cairo_mojo.paths import Path
 from cairo_mojo.surfaces import (
+    Surface,
     SurfaceLike,
 )
 
@@ -176,6 +177,96 @@ struct Pattern(Movable):
                 c_int(height),
             )
         )
+
+    def raster_set_callback_data(
+        self, data: MutOpaquePointer[MutExternalOrigin]
+    ) raises:
+        ffi.cairo_raster_source_pattern_set_callback_data(self._ptr, data)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_set_callback_data",
+        )
+
+    def raster_callback_data(self) raises -> MutOpaquePointer[MutExternalOrigin]:
+        return ffi.cairo_raster_source_pattern_get_callback_data(self._ptr)
+
+    def raster_set_acquire_release_unsafe(
+        self,
+        acquire: UnsafePointer[ffi.cairo_raster_source_acquire_func_t, MutExternalOrigin],
+        release: UnsafePointer[ffi.cairo_raster_source_release_func_t, MutExternalOrigin],
+    ) raises:
+        ffi.cairo_raster_source_pattern_set_acquire(self._ptr, acquire, release)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_set_acquire",
+        )
+
+    def raster_acquire_release_unsafe(
+        self,
+    ) raises -> List[MutOpaquePointer[MutExternalOrigin]]:
+        var acquire_ptr_ptr = alloc[
+            UnsafePointer[ffi.cairo_raster_source_acquire_func_t, MutExternalOrigin]
+        ](1)
+        var release_ptr_ptr = alloc[
+            UnsafePointer[ffi.cairo_raster_source_release_func_t, MutExternalOrigin]
+        ](1)
+        ffi.cairo_raster_source_pattern_get_acquire(
+            self._ptr, acquire_ptr_ptr, release_ptr_ptr
+        )
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_get_acquire",
+        )
+        var out: List[MutOpaquePointer[MutExternalOrigin]] = [
+            rebind[MutOpaquePointer[MutExternalOrigin]](acquire_ptr_ptr[]),
+            rebind[MutOpaquePointer[MutExternalOrigin]](release_ptr_ptr[]),
+        ]
+        acquire_ptr_ptr.free()
+        release_ptr_ptr.free()
+        return out^
+
+    def raster_set_snapshot_unsafe(
+        self,
+        snapshot: UnsafePointer[ffi.cairo_raster_source_snapshot_func_t, MutExternalOrigin],
+    ) raises:
+        ffi.cairo_raster_source_pattern_set_snapshot(self._ptr, snapshot)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_set_snapshot",
+        )
+
+    def raster_snapshot_unsafe(
+        self,
+    ) raises -> UnsafePointer[ffi.cairo_raster_source_snapshot_func_t, MutExternalOrigin]:
+        return ffi.cairo_raster_source_pattern_get_snapshot(self._ptr)
+
+    def raster_set_copy_unsafe(
+        self,
+        copy_cb: UnsafePointer[ffi.cairo_raster_source_copy_func_t, MutExternalOrigin],
+    ) raises:
+        ffi.cairo_raster_source_pattern_set_copy(self._ptr, copy_cb)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_raster_source_pattern_set_copy"
+        )
+
+    def raster_copy_unsafe(
+        self,
+    ) raises -> UnsafePointer[ffi.cairo_raster_source_copy_func_t, MutExternalOrigin]:
+        return ffi.cairo_raster_source_pattern_get_copy(self._ptr)
+
+    def raster_set_finish_unsafe(
+        self,
+        finish: UnsafePointer[ffi.cairo_raster_source_finish_func_t, MutExternalOrigin],
+    ) raises:
+        ffi.cairo_raster_source_pattern_set_finish(self._ptr, finish)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_raster_source_pattern_set_finish"
+        )
+
+    def raster_finish_unsafe(
+        self,
+    ) raises -> UnsafePointer[ffi.cairo_raster_source_finish_func_t, MutExternalOrigin]:
+        return ffi.cairo_raster_source_pattern_get_finish(self._ptr)
 
     @staticmethod
     def unsafe_from_borrowed(
@@ -429,6 +520,91 @@ struct Pattern(Movable):
         alpha_ptr.free()
         return out^
 
+    def rgba(self) raises -> List[Float64]:
+        var red_ptr = alloc[c_double](1)
+        var green_ptr = alloc[c_double](1)
+        var blue_ptr = alloc[c_double](1)
+        var alpha_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_rgba(
+                self._ptr, red_ptr, green_ptr, blue_ptr, alpha_ptr
+            ),
+            "cairo_pattern_get_rgba",
+        )
+        var out: List[Float64] = [
+            Float64(red_ptr[]),
+            Float64(green_ptr[]),
+            Float64(blue_ptr[]),
+            Float64(alpha_ptr[]),
+        ]
+        red_ptr.free()
+        green_ptr.free()
+        blue_ptr.free()
+        alpha_ptr.free()
+        return out^
+
+    def surface(self) raises -> Surface:
+        var surface_ptr_ptr = alloc[UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_surface(self._ptr, surface_ptr_ptr),
+            "cairo_pattern_get_surface",
+        )
+        var out = Surface.unsafe_from_borrowed(surface_ptr_ptr[])
+        surface_ptr_ptr.free()
+        return out^
+
+    def linear_points(self) raises -> List[Float64]:
+        var x0_ptr = alloc[c_double](1)
+        var y0_ptr = alloc[c_double](1)
+        var x1_ptr = alloc[c_double](1)
+        var y1_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_linear_points(
+                self._ptr, x0_ptr, y0_ptr, x1_ptr, y1_ptr
+            ),
+            "cairo_pattern_get_linear_points",
+        )
+        var out: List[Float64] = [
+            Float64(x0_ptr[]),
+            Float64(y0_ptr[]),
+            Float64(x1_ptr[]),
+            Float64(y1_ptr[]),
+        ]
+        x0_ptr.free()
+        y0_ptr.free()
+        x1_ptr.free()
+        y1_ptr.free()
+        return out^
+
+    def radial_circles(self) raises -> List[Float64]:
+        var x0_ptr = alloc[c_double](1)
+        var y0_ptr = alloc[c_double](1)
+        var r0_ptr = alloc[c_double](1)
+        var x1_ptr = alloc[c_double](1)
+        var y1_ptr = alloc[c_double](1)
+        var r1_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_radial_circles(
+                self._ptr, x0_ptr, y0_ptr, r0_ptr, x1_ptr, y1_ptr, r1_ptr
+            ),
+            "cairo_pattern_get_radial_circles",
+        )
+        var out: List[Float64] = [
+            Float64(x0_ptr[]),
+            Float64(y0_ptr[]),
+            Float64(r0_ptr[]),
+            Float64(x1_ptr[]),
+            Float64(y1_ptr[]),
+            Float64(r1_ptr[]),
+        ]
+        x0_ptr.free()
+        y0_ptr.free()
+        r0_ptr.free()
+        x1_ptr.free()
+        y1_ptr.free()
+        r1_ptr.free()
+        return out^
+
     def mesh_patch_count(self) raises -> Int:
         var count_ptr = alloc[c_uint](1)
         _ensure_success(
@@ -443,3 +619,50 @@ struct Pattern(Movable):
         return Path.unsafe_from_owned_raw(
             ffi.cairo_mesh_pattern_get_path(self._ptr, c_uint(patch_num))
         )
+
+    def mesh_control_point(
+        self, patch_num: Int, point_num: Int
+    ) raises -> List[Float64]:
+        var x_ptr = alloc[c_double](1)
+        var y_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_mesh_pattern_get_control_point(
+                self._ptr, c_uint(patch_num), c_uint(point_num), x_ptr, y_ptr
+            ),
+            "cairo_mesh_pattern_get_control_point",
+        )
+        var out: List[Float64] = [Float64(x_ptr[]), Float64(y_ptr[])]
+        x_ptr.free()
+        y_ptr.free()
+        return out^
+
+    def mesh_corner_color_rgba(
+        self, patch_num: Int, corner_num: Int
+    ) raises -> List[Float64]:
+        var red_ptr = alloc[c_double](1)
+        var green_ptr = alloc[c_double](1)
+        var blue_ptr = alloc[c_double](1)
+        var alpha_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_mesh_pattern_get_corner_color_rgba(
+                self._ptr,
+                c_uint(patch_num),
+                c_uint(corner_num),
+                red_ptr,
+                green_ptr,
+                blue_ptr,
+                alpha_ptr,
+            ),
+            "cairo_mesh_pattern_get_corner_color_rgba",
+        )
+        var out: List[Float64] = [
+            Float64(red_ptr[]),
+            Float64(green_ptr[]),
+            Float64(blue_ptr[]),
+            Float64(alpha_ptr[]),
+        ]
+        red_ptr.free()
+        green_ptr.free()
+        blue_ptr.free()
+        alpha_ptr.free()
+        return out^

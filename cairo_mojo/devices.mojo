@@ -53,5 +53,5 @@ struct ScriptDevice(Movable):
     def __init__(out self, filename: String) raises:
         _ = filename
         raise Error(
-            "ScriptDevice is not available in current generated FFI; enable cairo script backend bindings."
+            "ScriptDevice is not available: generated FFI does not expose cairo_script_create/cairo_script_create_for_stream."
         )

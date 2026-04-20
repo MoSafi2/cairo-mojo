@@ -567,6 +567,8 @@ def test_parity_additions_paths_regions_and_scaled_fonts() raises:
     ctx.new_path()
     ctx.append_path(copied)
     assert_true(copied.num_data() > 0)
+    var copied_segments = copied.segments()
+    assert_true(len(copied_segments) > 0)
 
     var region = Region(RectangleInt(x=0, y=0, width=8, height=8))
     assert_equal(region.is_empty(), False)

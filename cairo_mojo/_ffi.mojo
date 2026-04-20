@@ -1606,7 +1606,6 @@ comptime CAIRO_MIME_TYPE_EPS_PARAMS = "application/x-cairo.eps.params"
 # struct _cairo_matrix - size=48 align=8 (verify packed/aligned ABI)
 @align(8)
 @fieldwise_init
-
 struct _cairo_dither(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_DITHER_NONE = Self(c_uint(0))
@@ -1628,7 +1627,6 @@ def cairo_set_hairline(cr: UnsafePointer[cairo_t, MutExternalOrigin], set_hairli
 
 # enum _cairo_line_cap - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_color_mode(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_COLOR_MODE_DEFAULT = Self(c_uint(0))
@@ -1685,7 +1683,6 @@ comptime CAIRO_PDF_OUTLINE_ROOT = c_int(0)
 
 # enum _cairo_pdf_version - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_pdf_version(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_PDF_VERSION_1_4 = Self(c_uint(0))
@@ -1721,7 +1718,6 @@ def cairo_pdf_surface_add_outline(surface: UnsafePointer[_cairo_surface, MutExte
 
 # enum _cairo_pdf_metadata - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_pdf_metadata(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_PDF_METADATA_TITLE = Self(c_uint(0))
@@ -1753,7 +1749,6 @@ comptime cairo_ps_surface_create_for_stream_write_func_cb = def (arg0: MutOpaque
 
 # enum _cairo_ps_level - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_ps_level(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_PS_LEVEL_2 = Self(c_uint(0))
@@ -1801,7 +1796,6 @@ comptime cairo_svg_surface_create_for_stream_write_func_cb = def (arg0: MutOpaqu
 
 # enum _cairo_svg_version - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_svg_version(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_SVG_VERSION_1_1 = Self(c_uint(0))
@@ -1811,7 +1805,6 @@ comptime cairo_svg_version_t = _cairo_svg_version
 
 # enum _cairo_svg_unit - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-
 struct _cairo_svg_unit(Copyable, Movable, RegisterPassable):
     var value: c_uint
     comptime CAIRO_SVG_UNIT_USER = Self(c_uint(0))

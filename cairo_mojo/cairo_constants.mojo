@@ -53,17 +53,18 @@ struct HAS(Copyable, ImplicitlyCopyable, Movable):
     comptime SVG_SURFACE = True
     comptime RECORDING_SURFACE = True
     comptime PS_SURFACE = True
-    comptime SCRIPT_SURFACE = True
-    comptime TEE_SURFACE = True
+    # High-level wrappers for script/tee are currently guarded placeholders.
+    comptime SCRIPT_SURFACE = False
+    comptime TEE_SURFACE = False
     comptime MIME_SURFACE = True
     comptime USER_FONT = True
-    comptime PNG_FUNCTIONS = True
+    comptime PNG_FUNCTIONS = Int(ffi.CAIRO_HAS_PNG_FUNCTIONS) != 0
     comptime ATSUI_FONT = False
-    comptime FT_FONT = False
+    comptime FT_FONT = Int(ffi.CAIRO_HAS_FT_FONT) != 0
     comptime GLITZ_SURFACE = False
     comptime QUARTZ_SURFACE = False
-    comptime WIN32_FONT = False
-    comptime WIN32_SURFACE = False
+    comptime WIN32_FONT = Int(ffi.CAIRO_HAS_WIN32_FONT) != 0
+    comptime WIN32_SURFACE = Int(ffi.CAIRO_HAS_WIN32_SURFACE) != 0
     comptime XCB_SURFACE = False
     comptime XLIB_SURFACE = False
     comptime DWRITE_FONT = False

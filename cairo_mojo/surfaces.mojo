@@ -27,6 +27,13 @@ trait SurfaceLike:
         ...
 
 
+@fieldwise_init
+struct MimeDataView(Copyable, ImplicitlyCopyable, Movable):
+    """Borrowed MIME payload view returned by Cairo."""
+    var data: UnsafePointer[c_uchar, ImmutExternalOrigin]
+    var length: Int
+
+
 struct Surface(Movable, SurfaceLike):
     """Owning wrapper around a `cairo_surface_t` handle.
 
@@ -135,6 +142,49 @@ struct Surface(Movable, SurfaceLike):
     def content(self) raises -> Content:
         """Return the content type supported by this surface."""
         return Content._from_ffi(ffi.cairo_surface_get_content(self._ptr))
+
+    def supports_mime_type(self, mime_type: String) raises -> Bool:
+        """Return True when this surface backend supports `mime_type`."""
+        var mime_type_mut = mime_type.copy()
+        var mime_type_ptr = (
+            mime_type_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        return Int(ffi.cairo_surface_supports_mime_type(self._ptr, mime_type_ptr)) != 0
+
+    def set_mime_data_unsafe(
+        self,
+        mime_type: String,
+        data: UnsafePointer[c_uchar, ImmutExternalOrigin],
+        length: Int,
+        destroy: UnsafePointer[ffi.cairo_destroy_func_t, MutExternalOrigin] = UnsafePointer[ffi.cairo_destroy_func_t, MutExternalOrigin](),
+        closure: MutOpaquePointer[MutExternalOrigin] = MutOpaquePointer[MutExternalOrigin](),
+    ) raises:
+        """Attach raw MIME payload bytes to the surface."""
+        var mime_type_mut = mime_type.copy()
+        var mime_type_ptr = (
+            mime_type_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        _ensure_success(
+            ffi.cairo_surface_set_mime_data(
+                self._ptr, mime_type_ptr, data, c_ulong(length), destroy, closure
+            ),
+            "cairo_surface_set_mime_data",
+        )
+
+    def mime_data_unsafe(self, mime_type: String) raises -> MimeDataView:
+        """Return borrowed MIME payload pointer/length for `mime_type`."""
+        var mime_type_mut = mime_type.copy()
+        var mime_type_ptr = (
+            mime_type_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        var data_ptr_ptr = alloc[UnsafePointer[c_uchar, ImmutExternalOrigin]](1)
+        var length_ptr = alloc[c_ulong](1)
+        ffi.cairo_surface_get_mime_data(self._ptr, mime_type_ptr, data_ptr_ptr, length_ptr)
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_get_mime_data")
+        var out = MimeDataView(data=data_ptr_ptr[], length=Int(length_ptr[]))
+        data_ptr_ptr.free()
+        length_ptr.free()
+        return out
 
     def copy_page(self) raises:
         ffi.cairo_surface_copy_page(self._ptr)
@@ -749,7 +799,7 @@ struct ScriptSurface(Movable, SurfaceLike):
 
     def __init__(out self) raises:
         raise Error(
-            "ScriptSurface is not available in current generated FFI; enable cairo script backend bindings."
+            "ScriptSurface is not available: generated FFI does not expose cairo_script_surface_create/cairo_script_surface_create_for_target."
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
@@ -761,7 +811,7 @@ struct TeeSurface(Movable, SurfaceLike):
 
     def __init__(out self) raises:
         raise Error(
-            "TeeSurface is not available in current generated FFI; enable cairo tee backend bindings."
+            "TeeSurface is not available: generated FFI does not expose cairo_tee_surface_create/cairo_tee_surface_add/cairo_tee_surface_remove."
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:

@@ -7,9 +7,12 @@ from .cairo_types import Point2D
 from .common import _ensure_success
 
 @fieldwise_init
-struct PathSegment(Movable):
+struct PathSegment(Copyable, ImplicitlyCopyable, Movable):
     var kind: PathDataType
-    var points: List[Point2D]
+    var point_count: Int
+    var p0: Point2D
+    var p1: Point2D
+    var p2: Point2D
 
 
 struct Path(Movable):
@@ -40,19 +43,35 @@ struct Path(Movable):
         var out: List[PathSegment] = []
         var i = 0
         while i < self.num_data():
-            var header = rebind[ffi.cairo_path_data_t__anon_struct_1](self._ptr[].data[i])
+            var header = rebind[ffi.cairo_path_data_t__anon_struct_1](self._ptr[].data[i]).copy()
             var kind = PathDataType._from_ffi(header.type)
-            var points: List[Point2D] = []
+            var point_count = 0
+            var p0 = Point2D(x=0.0, y=0.0)
+            var p1 = Point2D(x=0.0, y=0.0)
+            var p2 = Point2D(x=0.0, y=0.0)
             if kind._value == PathDataType.MOVE_TO._value or kind._value == PathDataType.LINE_TO._value:
-                var p1 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 1])
-                points.append(Point2D(x=Float64(p1.x), y=Float64(p1.y)))
+                var raw_p0 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 1]).copy()
+                p0 = Point2D(x=Float64(raw_p0.x), y=Float64(raw_p0.y))
+                point_count = 1
             elif kind._value == PathDataType.CURVE_TO._value:
-                for j in range(1, 4):
-                    var p = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + j])
-                    points.append(Point2D(x=Float64(p.x), y=Float64(p.y)))
-            out.append(PathSegment(kind=kind, points=points^))
+                var cp0 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 1]).copy()
+                var cp1 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 2]).copy()
+                var cp2 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 3]).copy()
+                p0 = Point2D(x=Float64(cp0.x), y=Float64(cp0.y))
+                p1 = Point2D(x=Float64(cp1.x), y=Float64(cp1.y))
+                p2 = Point2D(x=Float64(cp2.x), y=Float64(cp2.y))
+                point_count = 3
+            out.append(
+                PathSegment(
+                    kind=kind,
+                    point_count=point_count,
+                    p0=p0,
+                    p1=p1,
+                    p2=p2,
+                )
+            )
             i = i + Int(header.length)
-        return out
+        return out^
 
     def unsafe_raw_ptr(self) -> UnsafePointer[ffi.cairo_path_t, MutExternalOrigin]:
         return self._ptr

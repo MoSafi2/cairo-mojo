@@ -35,19 +35,19 @@ Status keys:
 ## matrix
 
 - Matrix value type and conversion: implemented
-- matrix object helper methods (invert/multiply/etc): missing
+- matrix object helper methods (invert/multiply/etc): implemented
 
 ## paths
 
 - Path wrapper ownership: implemented
-- iterable path segments: missing
+- iterable path segments: implemented
 
 ## patterns
 
 - solid/surface/linear/radial: implemented
 - mesh create + begin/end patch: implemented
 - mesh advanced getters/setters and gradient introspection: implemented_with_deviation
-- raster callback API management: missing
+- raster callback API management: implemented_with_deviation
 - pattern dither get/set: implemented
 
 ## region
@@ -59,7 +59,7 @@ Status keys:
 
 - Surface/ImageSurface/PDFSurface/SVGSurface/RecordingSurface: implemented
 - page controls/device scale/offset/fallback controls: implemented
-- MIME data APIs: missing
+- MIME data APIs: implemented_with_deviation
 - PSSurface: implemented
 - ScriptSurface/TeeSurface: implemented_with_deviation
 - Xlib/XCB/Win32 surfaces: deferred_platform_specific
