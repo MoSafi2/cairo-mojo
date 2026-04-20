@@ -1,4 +1,5 @@
 import src._ffi_dl as ffi
+from std.ffi import OwnedDLHandle, RTLD
 from std.testing import TestSuite, assert_equal, assert_true
 
 from src.cairo_core import Context, ImageSurface, PDFSurface, Pattern, RecordingSurface, SVGSurface
@@ -32,8 +33,15 @@ from src.cairo_convenience import (
 from src.fonts import FontOptions
 
 
+def _ensure_cairo_loaded() raises -> OwnedDLHandle:
+    # Keep libcairo loaded for the full test scope so opaque cairo handles remain valid.
+    var handle = OwnedDLHandle("/usr/lib/x86_64-linux-gnu/libcairo.so.2", RTLD.NOW | RTLD.GLOBAL)
+    return handle^
+
+
 
 def test_can_draw_and_export_png() raises:
+    var handle = _ensure_cairo_loaded()
     var surface = ImageSurface(width=64, height=64)
     var ctx = Context(surface)
 
@@ -53,9 +61,11 @@ def test_can_draw_and_export_png() raises:
         surface.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_extended_context_and_surface_api() raises:
+    var handle = _ensure_cairo_loaded()
     var surface = ImageSurface(width=96, height=80)
     var ctx = Context(surface)
 
@@ -105,9 +115,11 @@ def test_extended_context_and_surface_api() raises:
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
     assert_equal(surface.stride() > 0, True)
+    _ = handle
 
 
 def test_pattern_text_and_composite_helpers() raises:
+    var handle = _ensure_cairo_loaded()
     var surface = ImageSurface(width=128, height=96)
     var ctx = Context(surface)
     var options = FontOptions()
@@ -157,9 +169,11 @@ def test_pattern_text_and_composite_helpers() raises:
         surface.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_context_parity_and_shape_helpers() raises:
+    var handle = _ensure_cairo_loaded()
     var surface = ImageSurface(width=128, height=128)
     var ctx = Context(surface)
 
@@ -224,9 +238,11 @@ def test_context_parity_and_shape_helpers() raises:
         surface.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_image_surface_parity_helpers() raises:
+    var handle = _ensure_cairo_loaded()
     var source = ImageSurface(width=32, height=24)
     var source_ctx = Context(source)
     clear_rgba(source_ctx, 0.1, 0.2, 0.3, 1.0)
@@ -265,9 +281,11 @@ def test_image_surface_parity_helpers() raises:
         .value,
     )
     assert_true(similar.stride() > 0)
+    _ = handle
 
 
 def test_advanced_context_surface_pattern_text_parity() raises:
+    var handle = _ensure_cairo_loaded()
     var surface = ImageSurface(width=96, height=72)
     var ctx = Context(surface)
     clear_rgba(ctx, 1.0, 1.0, 1.0, 1.0)
@@ -373,9 +391,11 @@ def test_advanced_context_surface_pattern_text_parity() raises:
         ctx.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_pdf_surface_smoke_and_finish() raises:
+    var handle = _ensure_cairo_loaded()
     var pdf = PDFSurface("test_high_level_api_backend.pdf", 120.0, 90.0)
     var ctx = Context(pdf)
     ctx.set_source_rgb(1.0, 1.0, 1.0)
@@ -397,9 +417,11 @@ def test_pdf_surface_smoke_and_finish() raises:
         ctx.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_svg_surface_smoke_and_finish() raises:
+    var handle = _ensure_cairo_loaded()
     var svg = SVGSurface("test_high_level_api_backend.svg", 100.0, 80.0)
     var ctx = Context(svg)
     ctx.set_source_rgba(1.0, 1.0, 1.0, 1.0)
@@ -420,9 +442,11 @@ def test_svg_surface_smoke_and_finish() raises:
         ctx.status()._to_ffi().value,
         Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
     )
+    _ = handle
 
 
 def test_recording_surface_extents_and_context_target() raises:
+    var handle = _ensure_cairo_loaded()
     var recording = RecordingSurface(
         content=Content.COLOR_ALPHA,
         x=0.0,
@@ -463,6 +487,7 @@ def test_recording_surface_extents_and_context_target() raises:
         ._to_ffi()
         .value,
     )
+    _ = handle
 
 
 def main() raises:
