@@ -1,12 +1,13 @@
 """Typed enum wrappers for Cairo constants and status values."""
 
 from std.ffi import c_int, c_uint
-from . import _ffi as ffi
+from . import _bindings as bindings
 
 
 @fieldwise_init
 struct Status(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Cairo status/error codes."""
+
     var _value: Int
 
     comptime SUCCESS = Self(0)
@@ -55,16 +56,17 @@ struct Status(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime LAST_STATUS = Self(43)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_status_t) -> Self:
+    def _from_ffi(value: bindings.cairo_status_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_status_t:
-        return ffi.cairo_status_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_status_t:
+        return bindings.cairo_status_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct Format(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Pixel formats used by Cairo image surfaces."""
+
     var _value: Int
 
     comptime ARGB32 = Self(0)
@@ -75,16 +77,17 @@ struct Format(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime RGB30 = Self(5)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_format_t) -> Self:
+    def _from_ffi(value: bindings.cairo_format_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_format_t:
-        return ffi.cairo_format_t(c_int(self._value))
+    def _to_ffi(self) -> bindings.cairo_format_t:
+        return bindings.cairo_format_t(c_int(self._value))
 
 
 @fieldwise_init
 struct Operator(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Compositing operators used for drawing."""
+
     var _value: Int
 
     comptime SOURCE = Self(1)
@@ -94,16 +97,17 @@ struct Operator(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime SCREEN = Self(15)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_operator_t) -> Self:
+    def _from_ffi(value: bindings.cairo_operator_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_operator_t:
-        return ffi.cairo_operator_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_operator_t:
+        return bindings.cairo_operator_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct Antialias(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Antialiasing modes for rasterization."""
+
     var _value: Int
 
     comptime DEFAULT = Self(0)
@@ -112,16 +116,17 @@ struct Antialias(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime BEST = Self(6)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_antialias_t) -> Self:
+    def _from_ffi(value: bindings.cairo_antialias_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_antialias_t:
-        return ffi.cairo_antialias_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_antialias_t:
+        return bindings.cairo_antialias_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct LineCap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Stroke line-cap styles."""
+
     var _value: Int
 
     comptime BUTT = Self(0)
@@ -129,16 +134,17 @@ struct LineCap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime SQUARE = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_line_cap_t) -> Self:
+    def _from_ffi(value: bindings.cairo_line_cap_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_line_cap_t:
-        return ffi.cairo_line_cap_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_line_cap_t:
+        return bindings.cairo_line_cap_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct LineJoin(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Stroke line-join styles."""
+
     var _value: Int
 
     comptime MITER = Self(0)
@@ -146,32 +152,34 @@ struct LineJoin(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime BEVEL = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_line_join_t) -> Self:
+    def _from_ffi(value: bindings.cairo_line_join_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_line_join_t:
-        return ffi.cairo_line_join_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_line_join_t:
+        return bindings.cairo_line_join_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct FillRule(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Rules for determining filled interior regions."""
+
     var _value: Int
 
     comptime WINDING = Self(0)
     comptime EVEN_ODD = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_fill_rule_t) -> Self:
+    def _from_ffi(value: bindings.cairo_fill_rule_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_fill_rule_t:
-        return ffi.cairo_fill_rule_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_fill_rule_t:
+        return bindings.cairo_fill_rule_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct Content(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Surface content types (color and/or alpha)."""
+
     var _value: Int
 
     comptime COLOR = Self(4096)
@@ -179,16 +187,17 @@ struct Content(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime COLOR_ALPHA = Self(12288)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_content_t) -> Self:
+    def _from_ffi(value: bindings.cairo_content_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_content_t:
-        return ffi.cairo_content_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_content_t:
+        return bindings.cairo_content_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct PatternType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Kinds of Cairo source patterns."""
+
     var _value: Int
 
     comptime SOLID = Self(0)
@@ -199,16 +208,17 @@ struct PatternType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime RASTER_SOURCE = Self(5)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_pattern_type_t) -> Self:
+    def _from_ffi(value: bindings.cairo_pattern_type_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_pattern_type_t:
-        return ffi.cairo_pattern_type_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_pattern_type_t:
+        return bindings.cairo_pattern_type_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct FontSlant(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Font slant styles for toy text API."""
+
     var _value: Int
 
     comptime NORMAL = Self(0)
@@ -216,32 +226,34 @@ struct FontSlant(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime OBLIQUE = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_font_slant_t) -> Self:
+    def _from_ffi(value: bindings.cairo_font_slant_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_font_slant_t:
-        return ffi.cairo_font_slant_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_font_slant_t:
+        return bindings.cairo_font_slant_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct FontWeight(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Font weight styles for toy text API."""
+
     var _value: Int
 
     comptime NORMAL = Self(0)
     comptime BOLD = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_font_weight_t) -> Self:
+    def _from_ffi(value: bindings.cairo_font_weight_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_font_weight_t:
-        return ffi.cairo_font_weight_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_font_weight_t:
+        return bindings.cairo_font_weight_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct Extend(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Out-of-bounds extension behavior for patterns."""
+
     var _value: Int
 
     comptime NONE = Self(0)
@@ -250,16 +262,17 @@ struct Extend(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime PAD = Self(3)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_extend_t) -> Self:
+    def _from_ffi(value: bindings.cairo_extend_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_extend_t:
-        return ffi.cairo_extend_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_extend_t:
+        return bindings.cairo_extend_t(c_uint(self._value))
 
 
 @fieldwise_init
 struct Filter(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     """Sampling filters applied when patterns are transformed."""
+
     var _value: Int
 
     comptime FAST = Self(0)
@@ -269,11 +282,11 @@ struct Filter(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime BILINEAR = Self(4)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_filter_t) -> Self:
+    def _from_ffi(value: bindings.cairo_filter_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_filter_t:
-        return ffi.cairo_filter_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_filter_t:
+        return bindings.cairo_filter_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -286,11 +299,11 @@ struct SubpixelOrder(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime VBGR = Self(4)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_subpixel_order_t) -> Self:
+    def _from_ffi(value: bindings.cairo_subpixel_order_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_subpixel_order_t:
-        return ffi.cairo_subpixel_order_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_subpixel_order_t:
+        return bindings.cairo_subpixel_order_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -303,11 +316,11 @@ struct HintStyle(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime FULL = Self(4)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_hint_style_t) -> Self:
+    def _from_ffi(value: bindings.cairo_hint_style_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_hint_style_t:
-        return ffi.cairo_hint_style_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_hint_style_t:
+        return bindings.cairo_hint_style_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -318,11 +331,11 @@ struct HintMetrics(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime ON = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_hint_metrics_t) -> Self:
+    def _from_ffi(value: bindings.cairo_hint_metrics_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_hint_metrics_t:
-        return ffi.cairo_hint_metrics_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_hint_metrics_t:
+        return bindings.cairo_hint_metrics_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -334,11 +347,11 @@ struct PathDataType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime CLOSE_PATH = Self(3)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_path_data_type_t) -> Self:
+    def _from_ffi(value: bindings.cairo_path_data_type_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_path_data_type_t:
-        return ffi.cairo_path_data_type_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_path_data_type_t:
+        return bindings.cairo_path_data_type_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -349,39 +362,43 @@ struct RegionOverlap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime PART = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_region_overlap_t) -> Self:
+    def _from_ffi(value: bindings.cairo_region_overlap_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_region_overlap_t:
-        return ffi.cairo_region_overlap_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_region_overlap_t:
+        return bindings.cairo_region_overlap_t(c_uint(self._value))
 
 
 @fieldwise_init
-struct TextClusterFlags(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+struct TextClusterFlags(
+    Copyable, ImplicitlyCopyable, Movable, RegisterPassable
+):
     var _value: Int
     comptime NONE = Self(0)
     comptime BACKWARD = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_text_cluster_flags_t) -> Self:
+    def _from_ffi(value: bindings.cairo_text_cluster_flags_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_text_cluster_flags_t:
-        return ffi.cairo_text_cluster_flags_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_text_cluster_flags_t:
+        return bindings.cairo_text_cluster_flags_t(c_uint(self._value))
 
 
 @fieldwise_init
-struct SurfaceObserverMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+struct SurfaceObserverMode(
+    Copyable, ImplicitlyCopyable, Movable, RegisterPassable
+):
     var _value: Int
     comptime NORMAL = Self(0)
     comptime RECORD_OPERATIONS = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_surface_observer_mode_t) -> Self:
+    def _from_ffi(value: bindings.cairo_surface_observer_mode_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_surface_observer_mode_t:
-        return ffi.cairo_surface_observer_mode_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_surface_observer_mode_t:
+        return bindings.cairo_surface_observer_mode_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -391,11 +408,11 @@ struct PSLevel(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime LEVEL_3 = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_ps_level_t) -> Self:
+    def _from_ffi(value: bindings.cairo_ps_level_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_ps_level_t:
-        return ffi.cairo_ps_level_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_ps_level_t:
+        return bindings.cairo_ps_level_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -407,11 +424,11 @@ struct PDFVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime V1_7 = Self(3)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_pdf_version_t) -> Self:
+    def _from_ffi(value: bindings.cairo_pdf_version_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_pdf_version_t:
-        return ffi.cairo_pdf_version_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_pdf_version_t:
+        return bindings.cairo_pdf_version_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -421,11 +438,11 @@ struct SVGVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime V1_2 = Self(1)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_svg_version_t) -> Self:
+    def _from_ffi(value: bindings.cairo_svg_version_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_svg_version_t:
-        return ffi.cairo_svg_version_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_svg_version_t:
+        return bindings.cairo_svg_version_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -443,11 +460,11 @@ struct PDFOutlineFlags(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime ITALIC = Self(4)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_pdf_outline_flags_t) -> Self:
+    def _from_ffi(value: bindings.cairo_pdf_outline_flags_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_pdf_outline_flags_t:
-        return ffi.cairo_pdf_outline_flags_t(value=c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_pdf_outline_flags_t:
+        return bindings.cairo_pdf_outline_flags_t(value=c_uint(self._value))
 
 
 @fieldwise_init
@@ -465,11 +482,11 @@ struct SVGUnit(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime PERCENT = Self(9)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_svg_unit_t) -> Self:
+    def _from_ffi(value: bindings.cairo_svg_unit_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_svg_unit_t:
-        return ffi.cairo_svg_unit_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_svg_unit_t:
+        return bindings.cairo_svg_unit_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -484,11 +501,11 @@ struct PDFMetadata(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime MOD_DATE = Self(6)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_pdf_metadata_t) -> Self:
+    def _from_ffi(value: bindings.cairo_pdf_metadata_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_pdf_metadata_t:
-        return ffi.cairo_pdf_metadata_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_pdf_metadata_t:
+        return bindings.cairo_pdf_metadata_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -499,11 +516,11 @@ struct ColorMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime GRAY = Self(2)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_color_mode_t) -> Self:
+    def _from_ffi(value: bindings.cairo_color_mode_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_color_mode_t:
-        return ffi.cairo_color_mode_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_color_mode_t:
+        return bindings.cairo_color_mode_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -516,8 +533,8 @@ struct Dither(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime BEST = Self(4)
 
     @staticmethod
-    def _from_ffi(value: ffi.cairo_dither_t) -> Self:
+    def _from_ffi(value: bindings.cairo_dither_t) -> Self:
         return Self(Int(value.value))
 
-    def _to_ffi(self) -> ffi.cairo_dither_t:
-        return ffi.cairo_dither_t(c_uint(self._value))
+    def _to_ffi(self) -> bindings.cairo_dither_t:
+        return bindings.cairo_dither_t(c_uint(self._value))

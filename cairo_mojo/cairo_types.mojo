@@ -1,12 +1,13 @@
 """Value types shared across Cairo contexts, fonts, and surfaces."""
 
 from std.ffi import c_double, c_int, c_ulong
-from . import _ffi as ffi
+from . import _bindings as bindings
 
 
 @fieldwise_init
 struct TextExtents(Copyable, ImplicitlyCopyable, Movable):
     """Text measurement results returned by Cairo."""
+
     var x_bearing: Float64
     var y_bearing: Float64
     var width: Float64
@@ -15,7 +16,7 @@ struct TextExtents(Copyable, ImplicitlyCopyable, Movable):
     var y_advance: Float64
 
     @staticmethod
-    def from_ffi(extents: ffi.cairo_text_extents_t) -> Self:
+    def from_ffi(extents: bindings.cairo_text_extents_t) -> Self:
         """Convert a raw Cairo text extents struct to `TextExtents`."""
         return Self(
             Float64(extents.x_bearing),
@@ -30,6 +31,7 @@ struct TextExtents(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct FontExtents(Copyable, ImplicitlyCopyable, Movable):
     """Font-wide metrics reported by Cairo."""
+
     var ascent: Float64
     var descent: Float64
     var height: Float64
@@ -37,7 +39,7 @@ struct FontExtents(Copyable, ImplicitlyCopyable, Movable):
     var max_y_advance: Float64
 
     @staticmethod
-    def from_ffi(extents: ffi.cairo_font_extents_t) -> Self:
+    def from_ffi(extents: bindings.cairo_font_extents_t) -> Self:
         """Convert a raw Cairo font extents struct to `FontExtents`."""
         return Self(
             Float64(extents.ascent),
@@ -51,6 +53,7 @@ struct FontExtents(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Point2D(Copyable, ImplicitlyCopyable, Movable):
     """A two-dimensional point in user or device space."""
+
     var x: Float64
     var y: Float64
 
@@ -58,6 +61,7 @@ struct Point2D(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
     """A 2D affine transform matrix in Cairo layout order."""
+
     var xx: Float64
     var yx: Float64
     var xy: Float64
@@ -66,7 +70,7 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
     var y0: Float64
 
     @staticmethod
-    def from_ffi(matrix: ffi.cairo_matrix_t) -> Self:
+    def from_ffi(matrix: bindings.cairo_matrix_t) -> Self:
         """Convert a raw Cairo matrix value to `Matrix2D`."""
         return Self(
             Float64(matrix.xx),
@@ -77,9 +81,9 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
             Float64(matrix.y0),
         )
 
-    def to_ffi(self) -> ffi.cairo_matrix_t:
+    def to_ffi(self) -> bindings.cairo_matrix_t:
         """Convert this matrix to Cairo's FFI matrix type."""
-        return ffi.cairo_matrix_t(
+        return bindings.cairo_matrix_t(
             c_double(self.xx),
             c_double(self.yx),
             c_double(self.xy),
@@ -90,37 +94,37 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
 
     def translated(self, tx: Float64, ty: Float64) raises -> Self:
         """Return a copy translated by `(tx, ty)`."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
-        ffi.cairo_matrix_translate(matrix_ptr, c_double(tx), c_double(ty))
+        bindings.cairo_matrix_translate(matrix_ptr, c_double(tx), c_double(ty))
         var out = Self.from_ffi(matrix_ptr[])
         matrix_ptr.free()
         return out^
 
     def scaled(self, sx: Float64, sy: Float64) raises -> Self:
         """Return a copy scaled by `(sx, sy)`."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
-        ffi.cairo_matrix_scale(matrix_ptr, c_double(sx), c_double(sy))
+        bindings.cairo_matrix_scale(matrix_ptr, c_double(sx), c_double(sy))
         var out = Self.from_ffi(matrix_ptr[])
         matrix_ptr.free()
         return out^
 
     def rotated(self, radians: Float64) raises -> Self:
         """Return a copy rotated by `radians`."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
-        ffi.cairo_matrix_rotate(matrix_ptr, c_double(radians))
+        bindings.cairo_matrix_rotate(matrix_ptr, c_double(radians))
         var out = Self.from_ffi(matrix_ptr[])
         matrix_ptr.free()
         return out^
 
     def inverted(self) raises -> Self:
         """Return the inverse matrix."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
-        var status = ffi.cairo_matrix_invert(matrix_ptr)
-        if status.value != ffi.cairo_status_t.CAIRO_STATUS_SUCCESS.value:
+        var status = bindings.cairo_matrix_invert(matrix_ptr)
+        if status.value != bindings.cairo_status_t.CAIRO_STATUS_SUCCESS.value:
             matrix_ptr.free()
             raise Error("cairo_matrix_invert failed")
         var out = Self.from_ffi(matrix_ptr[])
@@ -129,12 +133,12 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
 
     def multiplied(self, other: Self) raises -> Self:
         """Return `self * other`."""
-        var result_ptr = alloc[ffi.cairo_matrix_t](1)
-        var left_ptr = alloc[ffi.cairo_matrix_t](1)
-        var right_ptr = alloc[ffi.cairo_matrix_t](1)
+        var result_ptr = alloc[bindings.cairo_matrix_t](1)
+        var left_ptr = alloc[bindings.cairo_matrix_t](1)
+        var right_ptr = alloc[bindings.cairo_matrix_t](1)
         left_ptr[] = self.to_ffi()
         right_ptr[] = other.to_ffi()
-        ffi.cairo_matrix_multiply(
+        bindings.cairo_matrix_multiply(
             result_ptr,
             left_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
                 ImmutExternalOrigin
@@ -151,13 +155,13 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
 
     def transform_point(self, point: Point2D) raises -> Point2D:
         """Transform a point using this matrix."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
         var x_ptr = alloc[c_double](1)
         var y_ptr = alloc[c_double](1)
         x_ptr[] = c_double(point.x)
         y_ptr[] = c_double(point.y)
-        ffi.cairo_matrix_transform_point(
+        bindings.cairo_matrix_transform_point(
             matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
                 ImmutExternalOrigin
             ](),
@@ -172,13 +176,13 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
 
     def transform_distance(self, delta: Point2D) raises -> Point2D:
         """Transform a vector distance using this matrix."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = self.to_ffi()
         var dx_ptr = alloc[c_double](1)
         var dy_ptr = alloc[c_double](1)
         dx_ptr[] = c_double(delta.x)
         dy_ptr[] = c_double(delta.y)
-        ffi.cairo_matrix_transform_distance(
+        bindings.cairo_matrix_transform_distance(
             matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
                 ImmutExternalOrigin
             ](),
@@ -195,6 +199,7 @@ struct Matrix2D(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Extents2D(Copyable, ImplicitlyCopyable, Movable):
     """Axis-aligned extents represented as `(x1, y1, x2, y2)`."""
+
     var x1: Float64
     var y1: Float64
     var x2: Float64
@@ -204,6 +209,7 @@ struct Extents2D(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Rectangle(Copyable, ImplicitlyCopyable, Movable):
     """Floating-point rectangle used by surface and path APIs."""
+
     var x: Float64
     var y: Float64
     var width: Float64
@@ -213,13 +219,14 @@ struct Rectangle(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct RectangleInt(Copyable, ImplicitlyCopyable, Movable):
     """Integer rectangle used by region APIs."""
+
     var x: Int
     var y: Int
     var width: Int
     var height: Int
 
     @staticmethod
-    def from_ffi(rect: ffi.cairo_rectangle_int_t) -> Self:
+    def from_ffi(rect: bindings.cairo_rectangle_int_t) -> Self:
         return Self(
             x=Int(rect.x),
             y=Int(rect.y),
@@ -227,8 +234,8 @@ struct RectangleInt(Copyable, ImplicitlyCopyable, Movable):
             height=Int(rect.height),
         )
 
-    def to_ffi(self) -> ffi.cairo_rectangle_int_t:
-        return ffi.cairo_rectangle_int_t(
+    def to_ffi(self) -> bindings.cairo_rectangle_int_t:
+        return bindings.cairo_rectangle_int_t(
             x=c_int(self.x),
             y=c_int(self.y),
             width=c_int(self.width),
@@ -239,16 +246,19 @@ struct RectangleInt(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Glyph(Copyable, ImplicitlyCopyable, Movable):
     """Glyph id and placement used by low-level text APIs."""
+
     var index: Int
     var x: Float64
     var y: Float64
 
     @staticmethod
-    def from_ffi(glyph: ffi.cairo_glyph_t) -> Self:
-        return Self(index=Int(glyph.index), x=Float64(glyph.x), y=Float64(glyph.y))
+    def from_ffi(glyph: bindings.cairo_glyph_t) -> Self:
+        return Self(
+            index=Int(glyph.index), x=Float64(glyph.x), y=Float64(glyph.y)
+        )
 
-    def to_ffi(self) -> ffi.cairo_glyph_t:
-        return ffi.cairo_glyph_t(
+    def to_ffi(self) -> bindings.cairo_glyph_t:
+        return bindings.cairo_glyph_t(
             index=c_ulong(self.index), x=c_double(self.x), y=c_double(self.y)
         )
 
@@ -256,18 +266,19 @@ struct Glyph(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct TextCluster(Copyable, ImplicitlyCopyable, Movable):
     """Text-to-glyph cluster mapping information."""
+
     var num_bytes: Int
     var num_glyphs: Int
 
     @staticmethod
-    def from_ffi(cluster: ffi.cairo_text_cluster_t) -> Self:
+    def from_ffi(cluster: bindings.cairo_text_cluster_t) -> Self:
         return Self(
             num_bytes=Int(cluster.num_bytes),
             num_glyphs=Int(cluster.num_glyphs),
         )
 
-    def to_ffi(self) -> ffi.cairo_text_cluster_t:
-        return ffi.cairo_text_cluster_t(
+    def to_ffi(self) -> bindings.cairo_text_cluster_t:
+        return bindings.cairo_text_cluster_t(
             num_bytes=c_int(self.num_bytes),
             num_glyphs=c_int(self.num_glyphs),
         )
@@ -276,6 +287,7 @@ struct TextCluster(Copyable, ImplicitlyCopyable, Movable):
 @fieldwise_init
 struct Color(Copyable, ImplicitlyCopyable, Movable):
     """RGBA color value used by convenience helpers."""
+
     var r: Float64
     var g: Float64
     var b: Float64

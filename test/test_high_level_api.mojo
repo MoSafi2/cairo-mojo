@@ -1,4 +1,4 @@
-import cairo_mojo._ffi as ffi
+import cairo_mojo._ffi as bindings
 from cairo_mojo.cairo_runtime import ensure_cairo_loader_handle
 from std.ffi import OwnedDLHandle
 from std.testing import TestSuite, assert_equal, assert_true
@@ -42,7 +42,11 @@ from cairo_mojo.cairo_convenience import (
     stroke_rounded_rectangle,
 )
 from cairo_mojo.fonts import FontOptions
-from cairo_mojo.cairo_constants import cairo_version, cairo_version_string, version_info
+from cairo_mojo.cairo_constants import (
+    cairo_version,
+    cairo_version_string,
+    version_info,
+)
 
 
 def _ensure_cairo_loaded() raises -> OwnedDLHandle:
@@ -70,7 +74,7 @@ def test_can_draw_and_export_png() raises:
     assert_equal(surface.height(), 64)
     assert_equal(
         surface.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -121,13 +125,13 @@ def test_extended_context_and_surface_api() raises:
     )
     assert_equal(
         surface.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -176,19 +180,19 @@ def test_pattern_text_and_composite_helpers() raises:
     assert_true(font_metrics.height > 0.0)
     assert_equal(
         options.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         source.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         surface.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -255,13 +259,13 @@ def test_context_parity_and_shape_helpers() raises:
     surface.write_to_png("test_high_level_api_shapes.png")
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         surface.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -282,7 +286,9 @@ def test_image_surface_parity_helpers() raises:
     assert_equal(
         loaded.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
@@ -302,7 +308,9 @@ def test_image_surface_parity_helpers() raises:
     assert_equal(
         similar.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
@@ -397,7 +405,9 @@ def test_advanced_context_surface_pattern_text_parity() raises:
     assert_equal(
         face.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
@@ -412,13 +422,13 @@ def test_advanced_context_surface_pattern_text_parity() raises:
     surface.write_to_png("test_high_level_api_advanced_parity.png")
     assert_equal(
         surface.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -429,7 +439,7 @@ def test_pdf_surface_smoke_and_finish() raises:
     var handle = _ensure_cairo_loaded()
     var pdf = PDFSurface("test_high_level_api_backend.pdf", 120.0, 90.0)
     var ctx = Context(pdf)
-    ctx.set_source_rgb(1.0, 1.0, 1.0)
+    ctx.set_source_rgb(0, 0, 0)
     ctx.paint()
     ctx.set_source_rgb(0.2, 0.3, 0.8)
     ctx.rectangle(10.0, 10.0, 80.0, 45.0)
@@ -439,14 +449,16 @@ def test_pdf_surface_smoke_and_finish() raises:
     assert_equal(
         pdf.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
     )
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -466,14 +478,16 @@ def test_svg_surface_smoke_and_finish() raises:
     assert_equal(
         svg.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
     )
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
@@ -505,21 +519,25 @@ def test_recording_surface_extents_and_context_target() raises:
     assert_equal(
         recording.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
     )
     assert_equal(
         ctx.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         target.status()._to_ffi().value,
         Status._from_ffi(
-            Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi()
+            Status._from_ffi(
+                bindings.cairo_status_t.CAIRO_STATUS_SUCCESS
+            )._to_ffi()
         )
         ._to_ffi()
         .value,
@@ -537,13 +555,13 @@ def test_explicit_unsafe_interop_entrypoints() raises:
 
     assert_equal(
         image.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )
     assert_equal(
         pattern.status()._to_ffi().value,
-        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)
+        Status._from_ffi(bindings.cairo_status_t.CAIRO_STATUS_SUCCESS)
         ._to_ffi()
         .value,
     )

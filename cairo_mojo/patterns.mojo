@@ -1,7 +1,7 @@
 """Cairo pattern creation and configuration wrappers."""
 
 from std.ffi import c_double, c_int, c_uint
-from cairo_mojo import _ffi as ffi
+from cairo_mojo import _bindings as bindings
 from cairo_mojo.cairo_enums import Dither, Extend, Filter, PatternType, Status
 from cairo_mojo.cairo_types import Matrix2D
 from cairo_mojo.common import _ensure_success
@@ -23,28 +23,33 @@ struct Pattern(Movable):
     `gradient.add_color_stop_rgb(0.0, 0.1, 0.2, 0.8)`
     `gradient.add_color_stop_rgb(1.0, 0.8, 0.9, 1.0)`
     """
-    var _ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+
+    var _ptr: UnsafePointer[bindings.cairo_pattern_t, MutExternalOrigin]
 
     def __init__(
         out self,
         *,
-        unsafe_raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin],
+        unsafe_raw_ptr: UnsafePointer[
+            bindings.cairo_pattern_t, MutExternalOrigin
+        ],
     ) raises:
         self._ptr = unsafe_raw_ptr
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_create"
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_create"
         )
 
     @staticmethod
     def unsafe_from_owned_raw(
-        unsafe_raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+        unsafe_raw_ptr: UnsafePointer[
+            bindings.cairo_pattern_t, MutExternalOrigin
+        ]
     ) raises -> Self:
         """Wrap an owned raw Cairo pattern pointer."""
         return Self(unsafe_raw_ptr=unsafe_raw_ptr)
 
     def __del__(deinit self):
         try:
-            ffi.cairo_pattern_destroy(self._ptr)
+            bindings.cairo_pattern_destroy(self._ptr)
         except _:
             pass
 
@@ -61,7 +66,7 @@ struct Pattern(Movable):
             Pattern: Opaque solid-color pattern.
         """
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_rgb(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_rgb(
                 c_double(r), c_double(g), c_double(b)
             )
         )
@@ -82,25 +87,29 @@ struct Pattern(Movable):
             Pattern: Alpha-aware solid-color pattern.
         """
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_rgba(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_rgba(
                 c_double(r), c_double(g), c_double(b), c_double(a)
             )
         )
 
     @staticmethod
     def unsafe_create_for_surface_ptr(
-        unsafe_surface_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
+        unsafe_surface_ptr: UnsafePointer[
+            bindings.cairo_surface_t, MutExternalOrigin
+        ]
     ) raises -> Self:
         """Create a surface pattern from a raw surface pointer."""
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_for_surface(unsafe_surface_ptr)
+            unsafe_raw_ptr=bindings.cairo_pattern_create_for_surface(
+                unsafe_surface_ptr
+            )
         )
 
     @staticmethod
     def create_for_surface[T: SurfaceLike](ref surface: T) raises -> Self:
         """Create a surface pattern from a `SurfaceLike` object."""
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_for_surface(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_for_surface(
                 surface.unsafe_raw_surface_ptr()
             )
         )
@@ -121,7 +130,7 @@ struct Pattern(Movable):
             Pattern: Linear gradient pattern.
         """
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_linear(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_linear(
                 c_double(x0), c_double(y0), c_double(x1), c_double(y1)
             )
         )
@@ -149,7 +158,7 @@ struct Pattern(Movable):
             Pattern: Radial gradient pattern.
         """
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_radial(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_radial(
                 c_double(cx0),
                 c_double(cy0),
                 c_double(radius0),
@@ -162,7 +171,7 @@ struct Pattern(Movable):
     @staticmethod
     def create_mesh() raises -> Self:
         """Create a mesh pattern."""
-        return Self(unsafe_raw_ptr=ffi.cairo_pattern_create_mesh())
+        return Self(unsafe_raw_ptr=bindings.cairo_pattern_create_mesh())
 
     @staticmethod
     def create_raster_source(
@@ -170,9 +179,9 @@ struct Pattern(Movable):
     ) raises -> Self:
         """Create a raster source pattern placeholder."""
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_create_raster_source(
+            unsafe_raw_ptr=bindings.cairo_pattern_create_raster_source(
                 MutOpaquePointer[MutExternalOrigin](),
-                ffi.cairo_content_t(c_uint(content)),
+                bindings.cairo_content_t(c_uint(content)),
                 c_int(width),
                 c_int(height),
             )
@@ -181,23 +190,31 @@ struct Pattern(Movable):
     def raster_set_callback_data(
         self, data: MutOpaquePointer[MutExternalOrigin]
     ) raises:
-        ffi.cairo_raster_source_pattern_set_callback_data(self._ptr, data)
+        bindings.cairo_raster_source_pattern_set_callback_data(self._ptr, data)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_raster_source_pattern_set_callback_data",
         )
 
-    def raster_callback_data(self) raises -> MutOpaquePointer[MutExternalOrigin]:
-        return ffi.cairo_raster_source_pattern_get_callback_data(self._ptr)
+    def raster_callback_data(
+        self,
+    ) raises -> MutOpaquePointer[MutExternalOrigin]:
+        return bindings.cairo_raster_source_pattern_get_callback_data(self._ptr)
 
     def raster_set_acquire_release_unsafe(
         self,
-        acquire: UnsafePointer[ffi.cairo_raster_source_acquire_func_t, MutExternalOrigin],
-        release: UnsafePointer[ffi.cairo_raster_source_release_func_t, MutExternalOrigin],
+        acquire: UnsafePointer[
+            bindings.cairo_raster_source_acquire_func_t, MutExternalOrigin
+        ],
+        release: UnsafePointer[
+            bindings.cairo_raster_source_release_func_t, MutExternalOrigin
+        ],
     ) raises:
-        ffi.cairo_raster_source_pattern_set_acquire(self._ptr, acquire, release)
+        bindings.cairo_raster_source_pattern_set_acquire(
+            self._ptr, acquire, release
+        )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_raster_source_pattern_set_acquire",
         )
 
@@ -205,16 +222,20 @@ struct Pattern(Movable):
         self,
     ) raises -> List[MutOpaquePointer[MutExternalOrigin]]:
         var acquire_ptr_ptr = alloc[
-            UnsafePointer[ffi.cairo_raster_source_acquire_func_t, MutExternalOrigin]
+            UnsafePointer[
+                bindings.cairo_raster_source_acquire_func_t, MutExternalOrigin
+            ]
         ](1)
         var release_ptr_ptr = alloc[
-            UnsafePointer[ffi.cairo_raster_source_release_func_t, MutExternalOrigin]
+            UnsafePointer[
+                bindings.cairo_raster_source_release_func_t, MutExternalOrigin
+            ]
         ](1)
-        ffi.cairo_raster_source_pattern_get_acquire(
+        bindings.cairo_raster_source_pattern_get_acquire(
             self._ptr, acquire_ptr_ptr, release_ptr_ptr
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_raster_source_pattern_get_acquire",
         )
         var out: List[MutOpaquePointer[MutExternalOrigin]] = [
@@ -227,69 +248,85 @@ struct Pattern(Movable):
 
     def raster_set_snapshot_unsafe(
         self,
-        snapshot: UnsafePointer[ffi.cairo_raster_source_snapshot_func_t, MutExternalOrigin],
+        snapshot: UnsafePointer[
+            bindings.cairo_raster_source_snapshot_func_t, MutExternalOrigin
+        ],
     ) raises:
-        ffi.cairo_raster_source_pattern_set_snapshot(self._ptr, snapshot)
+        bindings.cairo_raster_source_pattern_set_snapshot(self._ptr, snapshot)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_raster_source_pattern_set_snapshot",
         )
 
     def raster_snapshot_unsafe(
         self,
-    ) raises -> UnsafePointer[ffi.cairo_raster_source_snapshot_func_t, MutExternalOrigin]:
-        return ffi.cairo_raster_source_pattern_get_snapshot(self._ptr)
+    ) raises -> UnsafePointer[
+        bindings.cairo_raster_source_snapshot_func_t, MutExternalOrigin
+    ]:
+        return bindings.cairo_raster_source_pattern_get_snapshot(self._ptr)
 
     def raster_set_copy_unsafe(
         self,
-        copy_cb: UnsafePointer[ffi.cairo_raster_source_copy_func_t, MutExternalOrigin],
+        copy_cb: UnsafePointer[
+            bindings.cairo_raster_source_copy_func_t, MutExternalOrigin
+        ],
     ) raises:
-        ffi.cairo_raster_source_pattern_set_copy(self._ptr, copy_cb)
+        bindings.cairo_raster_source_pattern_set_copy(self._ptr, copy_cb)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_raster_source_pattern_set_copy"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_set_copy",
         )
 
     def raster_copy_unsafe(
         self,
-    ) raises -> UnsafePointer[ffi.cairo_raster_source_copy_func_t, MutExternalOrigin]:
-        return ffi.cairo_raster_source_pattern_get_copy(self._ptr)
+    ) raises -> UnsafePointer[
+        bindings.cairo_raster_source_copy_func_t, MutExternalOrigin
+    ]:
+        return bindings.cairo_raster_source_pattern_get_copy(self._ptr)
 
     def raster_set_finish_unsafe(
         self,
-        finish: UnsafePointer[ffi.cairo_raster_source_finish_func_t, MutExternalOrigin],
+        finish: UnsafePointer[
+            bindings.cairo_raster_source_finish_func_t, MutExternalOrigin
+        ],
     ) raises:
-        ffi.cairo_raster_source_pattern_set_finish(self._ptr, finish)
+        bindings.cairo_raster_source_pattern_set_finish(self._ptr, finish)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_raster_source_pattern_set_finish"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_raster_source_pattern_set_finish",
         )
 
     def raster_finish_unsafe(
         self,
-    ) raises -> UnsafePointer[ffi.cairo_raster_source_finish_func_t, MutExternalOrigin]:
-        return ffi.cairo_raster_source_pattern_get_finish(self._ptr)
+    ) raises -> UnsafePointer[
+        bindings.cairo_raster_source_finish_func_t, MutExternalOrigin
+    ]:
+        return bindings.cairo_raster_source_pattern_get_finish(self._ptr)
 
     @staticmethod
     def unsafe_from_borrowed(
-        unsafe_borrowed_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+        unsafe_borrowed_ptr: UnsafePointer[
+            bindings.cairo_pattern_t, MutExternalOrigin
+        ]
     ) raises -> Self:
         """Create a managed pattern from a borrowed pointer."""
         return Self(
-            unsafe_raw_ptr=ffi.cairo_pattern_reference(unsafe_borrowed_ptr)
+            unsafe_raw_ptr=bindings.cairo_pattern_reference(unsafe_borrowed_ptr)
         )
 
     def unsafe_raw_ptr(
         self,
-    ) -> UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]:
+    ) -> UnsafePointer[bindings.cairo_pattern_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo pattern pointer."""
         return self._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this pattern."""
-        return Status._from_ffi(ffi.cairo_pattern_status(self._ptr))
+        return Status._from_ffi(bindings.cairo_pattern_status(self._ptr))
 
     def kind(self) raises -> PatternType:
         """Return the pattern type."""
-        return PatternType._from_ffi(ffi.cairo_pattern_get_type(self._ptr))
+        return PatternType._from_ffi(bindings.cairo_pattern_get_type(self._ptr))
 
     def add_color_stop_rgb(
         self, offset: Float64, red: Float64, green: Float64, blue: Float64
@@ -305,7 +342,7 @@ struct Pattern(Movable):
         Raises:
             Error: If this pattern type does not accept color stops.
         """
-        ffi.cairo_pattern_add_color_stop_rgb(
+        bindings.cairo_pattern_add_color_stop_rgb(
             self._ptr,
             c_double(offset),
             c_double(red),
@@ -313,7 +350,7 @@ struct Pattern(Movable):
             c_double(blue),
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_pattern_add_color_stop_rgb",
         )
 
@@ -337,7 +374,7 @@ struct Pattern(Movable):
         Raises:
             Error: If this pattern type does not accept color stops.
         """
-        ffi.cairo_pattern_add_color_stop_rgba(
+        bindings.cairo_pattern_add_color_stop_rgba(
             self._ptr,
             c_double(offset),
             c_double(red),
@@ -346,7 +383,7 @@ struct Pattern(Movable):
             c_double(alpha),
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr),
+            bindings.cairo_pattern_status(self._ptr),
             "cairo_pattern_add_color_stop_rgba",
         )
 
@@ -359,9 +396,9 @@ struct Pattern(Movable):
         Raises:
             Error: If Cairo rejects the new mode.
         """
-        ffi.cairo_pattern_set_extend(self._ptr, extend._to_ffi())
+        bindings.cairo_pattern_set_extend(self._ptr, extend._to_ffi())
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_extend"
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_set_extend"
         )
 
     def set_filter(self, filter: Filter) raises:
@@ -373,76 +410,94 @@ struct Pattern(Movable):
         Raises:
             Error: If Cairo rejects the new filter.
         """
-        ffi.cairo_pattern_set_filter(self._ptr, filter._to_ffi())
+        bindings.cairo_pattern_set_filter(self._ptr, filter._to_ffi())
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_filter"
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_set_filter"
         )
 
     def extend(self) raises -> Extend:
         """Get the current extension behavior."""
-        return Extend._from_ffi(ffi.cairo_pattern_get_extend(self._ptr))
+        return Extend._from_ffi(bindings.cairo_pattern_get_extend(self._ptr))
 
     def filter(self) raises -> Filter:
         """Get the current sampling filter."""
-        return Filter._from_ffi(ffi.cairo_pattern_get_filter(self._ptr))
+        return Filter._from_ffi(bindings.cairo_pattern_get_filter(self._ptr))
 
     def set_dither(self, dither: Dither) raises:
         """Set raster dither mode for pattern sampling."""
-        ffi.cairo_pattern_set_dither(self._ptr, dither._to_ffi())
+        bindings.cairo_pattern_set_dither(self._ptr, dither._to_ffi())
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_dither"
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_set_dither"
         )
 
     def dither(self) raises -> Dither:
         """Get raster dither mode for pattern sampling."""
-        return Dither._from_ffi(ffi.cairo_pattern_get_dither(self._ptr))
+        return Dither._from_ffi(bindings.cairo_pattern_get_dither(self._ptr))
 
     def matrix(self) raises -> Matrix2D:
         """Get the pattern matrix."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
-        ffi.cairo_pattern_get_matrix(self._ptr, matrix_ptr)
-        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_pattern_get_matrix")
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
+        bindings.cairo_pattern_get_matrix(self._ptr, matrix_ptr)
+        _ensure_success(
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_get_matrix"
+        )
         var out = Matrix2D.from_ffi(matrix_ptr[])
         matrix_ptr.free()
         return out^
 
     def set_matrix(self, matrix: Matrix2D) raises:
         """Set the pattern matrix."""
-        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        var matrix_ptr = alloc[bindings.cairo_matrix_t](1)
         matrix_ptr[] = matrix.to_ffi()
-        ffi.cairo_pattern_set_matrix(
+        bindings.cairo_pattern_set_matrix(
             self._ptr,
             matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
                 ImmutExternalOrigin
             ](),
         )
-        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_matrix")
+        _ensure_success(
+            bindings.cairo_pattern_status(self._ptr), "cairo_pattern_set_matrix"
+        )
         matrix_ptr.free()
 
     def mesh_begin_patch(self) raises:
-        ffi.cairo_mesh_pattern_begin_patch(self._ptr)
+        bindings.cairo_mesh_pattern_begin_patch(self._ptr)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_begin_patch"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_begin_patch",
         )
 
     def mesh_end_patch(self) raises:
-        ffi.cairo_mesh_pattern_end_patch(self._ptr)
+        bindings.cairo_mesh_pattern_end_patch(self._ptr)
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_end_patch"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_end_patch",
         )
 
     def mesh_move_to(self, x: Float64, y: Float64) raises:
-        ffi.cairo_mesh_pattern_move_to(self._ptr, c_double(x), c_double(y))
-        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_move_to")
+        bindings.cairo_mesh_pattern_move_to(self._ptr, c_double(x), c_double(y))
+        _ensure_success(
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_move_to",
+        )
 
     def mesh_line_to(self, x: Float64, y: Float64) raises:
-        ffi.cairo_mesh_pattern_line_to(self._ptr, c_double(x), c_double(y))
-        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_line_to")
+        bindings.cairo_mesh_pattern_line_to(self._ptr, c_double(x), c_double(y))
+        _ensure_success(
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_line_to",
+        )
 
     def mesh_curve_to(
-        self, x1: Float64, y1: Float64, x2: Float64, y2: Float64, x3: Float64, y3: Float64
+        self,
+        x1: Float64,
+        y1: Float64,
+        x2: Float64,
+        y2: Float64,
+        x3: Float64,
+        y3: Float64,
     ) raises:
-        ffi.cairo_mesh_pattern_curve_to(
+        bindings.cairo_mesh_pattern_curve_to(
             self._ptr,
             c_double(x1),
             c_double(y1),
@@ -451,22 +506,31 @@ struct Pattern(Movable):
             c_double(x3),
             c_double(y3),
         )
-        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_curve_to")
+        _ensure_success(
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_curve_to",
+        )
 
     def mesh_set_control_point(
         self, point_num: Int, x: Float64, y: Float64
     ) raises:
-        ffi.cairo_mesh_pattern_set_control_point(
+        bindings.cairo_mesh_pattern_set_control_point(
             self._ptr, c_uint(point_num), c_double(x), c_double(y)
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_set_control_point"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_set_control_point",
         )
 
     def mesh_set_corner_color_rgba(
-        self, corner_num: Int, red: Float64, green: Float64, blue: Float64, alpha: Float64
+        self,
+        corner_num: Int,
+        red: Float64,
+        green: Float64,
+        blue: Float64,
+        alpha: Float64,
     ) raises:
-        ffi.cairo_mesh_pattern_set_corner_color_rgba(
+        bindings.cairo_mesh_pattern_set_corner_color_rgba(
             self._ptr,
             c_uint(corner_num),
             c_double(red),
@@ -475,13 +539,14 @@ struct Pattern(Movable):
             c_double(alpha),
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_set_corner_color_rgba"
+            bindings.cairo_pattern_status(self._ptr),
+            "cairo_mesh_pattern_set_corner_color_rgba",
         )
 
     def color_stop_count(self) raises -> Int:
         var count_ptr = alloc[c_int](1)
         _ensure_success(
-            ffi.cairo_pattern_get_color_stop_count(self._ptr, count_ptr),
+            bindings.cairo_pattern_get_color_stop_count(self._ptr, count_ptr),
             "cairo_pattern_get_color_stop_count",
         )
         var out = Int(count_ptr[])
@@ -495,7 +560,7 @@ struct Pattern(Movable):
         var blue_ptr = alloc[c_double](1)
         var alpha_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_pattern_get_color_stop_rgba(
+            bindings.cairo_pattern_get_color_stop_rgba(
                 self._ptr,
                 c_int(index),
                 offset_ptr,
@@ -526,7 +591,7 @@ struct Pattern(Movable):
         var blue_ptr = alloc[c_double](1)
         var alpha_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_pattern_get_rgba(
+            bindings.cairo_pattern_get_rgba(
                 self._ptr, red_ptr, green_ptr, blue_ptr, alpha_ptr
             ),
             "cairo_pattern_get_rgba",
@@ -544,9 +609,11 @@ struct Pattern(Movable):
         return out^
 
     def surface(self) raises -> Surface:
-        var surface_ptr_ptr = alloc[UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]](1)
+        var surface_ptr_ptr = alloc[
+            UnsafePointer[bindings.cairo_surface_t, MutExternalOrigin]
+        ](1)
         _ensure_success(
-            ffi.cairo_pattern_get_surface(self._ptr, surface_ptr_ptr),
+            bindings.cairo_pattern_get_surface(self._ptr, surface_ptr_ptr),
             "cairo_pattern_get_surface",
         )
         var out = Surface.unsafe_from_borrowed(surface_ptr_ptr[])
@@ -559,7 +626,7 @@ struct Pattern(Movable):
         var x1_ptr = alloc[c_double](1)
         var y1_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_pattern_get_linear_points(
+            bindings.cairo_pattern_get_linear_points(
                 self._ptr, x0_ptr, y0_ptr, x1_ptr, y1_ptr
             ),
             "cairo_pattern_get_linear_points",
@@ -584,7 +651,7 @@ struct Pattern(Movable):
         var y1_ptr = alloc[c_double](1)
         var r1_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_pattern_get_radial_circles(
+            bindings.cairo_pattern_get_radial_circles(
                 self._ptr, x0_ptr, y0_ptr, r0_ptr, x1_ptr, y1_ptr, r1_ptr
             ),
             "cairo_pattern_get_radial_circles",
@@ -608,7 +675,7 @@ struct Pattern(Movable):
     def mesh_patch_count(self) raises -> Int:
         var count_ptr = alloc[c_uint](1)
         _ensure_success(
-            ffi.cairo_mesh_pattern_get_patch_count(self._ptr, count_ptr),
+            bindings.cairo_mesh_pattern_get_patch_count(self._ptr, count_ptr),
             "cairo_mesh_pattern_get_patch_count",
         )
         var out = Int(count_ptr[])
@@ -617,7 +684,7 @@ struct Pattern(Movable):
 
     def mesh_patch_path(self, patch_num: Int) raises -> Path:
         return Path.unsafe_from_owned_raw(
-            ffi.cairo_mesh_pattern_get_path(self._ptr, c_uint(patch_num))
+            bindings.cairo_mesh_pattern_get_path(self._ptr, c_uint(patch_num))
         )
 
     def mesh_control_point(
@@ -626,7 +693,7 @@ struct Pattern(Movable):
         var x_ptr = alloc[c_double](1)
         var y_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_mesh_pattern_get_control_point(
+            bindings.cairo_mesh_pattern_get_control_point(
                 self._ptr, c_uint(patch_num), c_uint(point_num), x_ptr, y_ptr
             ),
             "cairo_mesh_pattern_get_control_point",
@@ -644,7 +711,7 @@ struct Pattern(Movable):
         var blue_ptr = alloc[c_double](1)
         var alpha_ptr = alloc[c_double](1)
         _ensure_success(
-            ffi.cairo_mesh_pattern_get_corner_color_rgba(
+            bindings.cairo_mesh_pattern_get_corner_color_rgba(
                 self._ptr,
                 c_uint(patch_num),
                 c_uint(corner_num),
