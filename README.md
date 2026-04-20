@@ -1,23 +1,61 @@
 # cairo-mojo
 
-Mojo bindings and high-level wrappers for Cairo (`libcairo`) with:
+`cairo-mojo` provides Mojo bindings and high-level wrappers for Cairo (`libcairo`).
+It is designed so most users can render images and shapes through typed Mojo APIs
+without working with raw C pointers.
+
+## What is included
 
 - low-level FFI bindings in `cairo_mojo/_ffi.mojo`
-- runtime library resolution helpers in `cairo_mojo/cairo_runtime.mojo`
-- typed high-level API in `cairo_mojo/cairo_core.mojo`, `cairo_mojo/cairo_enums.mojo`, `cairo_mojo/cairo_types.mojo`, and `cairo_mojo/cairo_convenience.mojo`
+- runtime library resolution in `cairo_mojo/cairo_runtime.mojo`
+- typed high-level API in `cairo_mojo/cairo_core.mojo`, `cairo_mojo/cairo_enums.mojo`,
+  `cairo_mojo/cairo_types.mojo`, and `cairo_mojo/cairo_convenience.mojo`
 
-This repository is configured to build a Conda package with Pixi's `pixi-build-mojo` backend.
+## Prerequisites
 
-## Development quickstart
+- [Pixi](https://pixi.sh/latest/)
+- a working Mojo toolchain available through your Pixi environment
+
+## Install
+
+### Option 1: Install from modular-community channel
+
+Add the channel to your `pixi.toml`:
+
+```toml
+[workspace]
+channels = [
+  "https://conda.modular.com/max-nightly",
+  "https://repo.prefix.dev/modular-community",
+  "conda-forge",
+]
+```
+
+Then install:
+
+```bash
+pixi add cairo-mojo
+```
+
+### Option 2: Install from source (git)
+
+Use Pixi's git flag (`-g` / `--git`) to install directly from this repository:
+
+```bash
+pixi add -g https://github.com/modular/cairo-mojo cairo-mojo
+```
+
+## Run your first example
+
+If you are working from this repository:
 
 ```bash
 pixi install
-pixi run test
 pixi run mojo run examples/red_rectangle_png.mojo
 pixi run mojo run examples/advanced_dashboard_card_png.mojo
 ```
 
-## Simple high-level API example
+## Basic usage
 
 ```mojo
 from cairo_mojo import Context, ImageSurface
@@ -45,13 +83,32 @@ pixi run mojo run simple_example.mojo
 
 ## Safety model
 
-`cairo_mojo` is safe-by-default at the wrapper level:
+`cairo_mojo` is a safe wrapper around `libcairo` and generated FFI bindings:
 
 - standard drawing workflows should use `Context`, `ImageSurface`, `Pattern`, and convenience helpers
-- most users should never need to construct or pass raw Cairo pointers
+- most users should not need to construct or pass raw Cairo pointers
 - low-level pointer interop is available only through explicitly named `unsafe_*` APIs
 
-## Build Conda package
+## Development
+
+### Run tests
+
+```bash
+pixi run test
+```
+
+`pixi run test` runs both install-safe unit tests and functional tests.
+The heavy functional suites (`test_ffi_smoke` and `test_high_level_api`) are development-only.
+
+### Verify install/package behavior
+
+```bash
+pixi run verify-package
+```
+
+`pixi run verify-package` runs only install-time checks (`test_install_unit` and package smoke).
+
+### Build Conda package
 
 ```bash
 pixi run build-package
@@ -63,58 +120,8 @@ To write artifacts to `dist/conda`:
 pixi run package-artifacts
 ```
 
-## Local package verification
-
-Run tests and package smoke checks:
-
-```bash
-pixi run test
-pixi run verify-package
-```
-
-`pixi run test` runs both install-safe unit tests and functional tests.
-`pixi run verify-package` runs only install-time checks (`test_install_unit` and package smoke).
-The heavy functional suites (`test_ffi_smoke` and `test_high_level_api`) are development-only.
-
-## Install from modular-community channel
-
-Add the channel to your `pixi.toml`:
-
-```toml
-[workspace]
-channels = [
-  "https://conda.modular.com/max-nightly",
-  "https://repo.prefix.dev/modular-community",
-  "conda-forge",
-]
-```
-
-Then install:
-
-```bash
-pixi add cairo-mojo
-```
-
-## Publishing to modular-community
-
-The `modular-community` channel is curated through PRs against the
-[`modular/modular-community`](https://github.com/modular/modular-community) repository.
-
-This repo includes a starter recipe scaffold in `packaging/modular-community/recipe.yaml`.
-To publish:
-
-1. build and verify this package locally
-2. fork `modular/modular-community`
-3. add `recipes/cairo-mojo/recipe.yaml` using the scaffold
-4. open a PR to upstream
-
 ## Version compatibility
 
 Current toolchain target:
 
-- Mojo `>=0.26.3.0.dev2026042005,<0.27`
-- Cairo `>=1.18,<2`
-
-## Project status
-
-This project is under active development. Expect API and packaging refinements between releases.
+- Mojo: currently nightly and then starting with `mojo 26.3` stable
