@@ -144,17 +144,43 @@ def resolve_cairo_library_from_candidates(
     raise Error(message)
 
 
+def open_cairo_library_from_candidates(
+    ref candidates: List[String],
+) raises -> OwnedDLHandle:
+    var errors: List[String] = []
+
+    for candidate in candidates:
+        try:
+            return try_open_cairo(candidate)
+        except err:
+            errors.append(String(candidate, " -> ", String(err)))
+
+    var message = String(
+        "Unable to load libcairo. Tried candidates discovered from ",
+        _CAIRO_LIB_ENV_VAR,
+        ", platform defaults, and optional platform hints.",
+    )
+    for error_text in errors:
+        message = String(message, "\n - ", error_text)
+    raise Error(message)
+
+
 def resolve_cairo_library() raises -> String:
     var candidates = discover_cairo_candidates()
     return resolve_cairo_library_from_candidates(candidates)
 
 
 def open_cairo_library() raises -> OwnedDLHandle:
-    var library_name = resolve_cairo_library()
-    return try_open_cairo(library_name)
+    var candidates = discover_cairo_candidates()
+    return open_cairo_library_from_candidates(candidates)
+
+
+def ensure_cairo_loader_handle() raises -> OwnedDLHandle:
+    # Compatibility shim used by existing FFI/high-level call sites.
+    return open_cairo_library()
 
 
 def ensure_runtime_ready() raises:
     # Verifies that libcairo can be resolved and opened now.
-    var handle = open_cairo_library()
+    var handle = ensure_cairo_loader_handle()
     _ = handle

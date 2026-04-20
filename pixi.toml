@@ -3,12 +3,45 @@ authors = ["MoSafi2 <mohamed.mabrouk@rwth-aachen.de>"]
 channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
 name = "cairo-mojo"
 platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
+preview = ["pixi-build"]
 version = "0.1.0"
 
+[package]
+name = "cairo-mojo"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-mojo", version = "0.*" }
+source = { path = "." }
+
+[package.build.config]
+extra-input-globs = ["README.md", "LICENSE", "CHANGELOG.md", "examples/**/*.mojo", "test/**/*.mojo"]
+
+[package.build.config.pkg]
+name = "cairo_mojo"
+path = "$RECIPE_DIR/src"
+
 [tasks]
+test = "pixi run mojo run test/test_ffi_smoke.mojo && pixi run mojo run test/test_high_level_api.mojo"
+build-package = "pixi build"
+package-artifacts = "pixi build --output-dir dist/conda"
+verify-package = "pixi run verify-packaged-import"
+verify-packaged-import = "pixi run mojo run test/package_smoke_install.mojo"
 
 [dependencies]
 mojo = ">=0.26.3.0.dev2026042005,<0.27"
+
+[package.host-dependencies]
+mojo = ">=0.26.3.0.dev2026042005,<0.27"
+cairo = ">=1.18,<2"
+
+[package.build-dependencies]
+mojo = ">=0.26.3.0.dev2026042005,<0.27"
+cairo = ">=1.18,<2"
+
+[package.run-dependencies]
+mojo = ">=0.26.3.0.dev2026042005,<0.27"
+cairo = ">=1.18,<2"
 
 [feature.bindgen]
 

@@ -1,0 +1,44 @@
+context:
+  version: "0.1.0"
+
+package:
+  name: cairo-mojo
+  version: ${{ version }}
+
+source:
+  - path: ../..
+
+build:
+  number: 0
+  script:
+    - mojo package src -o ${{ PREFIX }}/lib/mojo/cairo_mojo.mojopkg
+
+requirements:
+  host:
+    - mojo >=0.26.3.0.dev2026042005,<0.27
+    - cairo >=1.18,<2
+  run:
+    - mojo >=0.26.3.0.dev2026042005,<0.27
+    - cairo >=1.18,<2
+
+tests:
+  - script:
+      - if: unix
+        then:
+          - mojo run test/package_smoke_install.mojo
+    files:
+      recipe:
+        - test/package_smoke_install.mojo
+        - src
+
+about:
+  homepage: https://github.com/MoSafi2/cairo-mojo
+  repository: https://github.com/MoSafi2/cairo-mojo
+  summary: Cairo graphics bindings and high-level drawing APIs for Mojo.
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  maintainers:
+    - MoSafi2
+  project_name: Cairo Mojo
