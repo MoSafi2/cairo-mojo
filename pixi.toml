@@ -9,6 +9,8 @@ version = "0.1.0"
 [package]
 name = "cairo-mojo"
 version = "0.1.0"
+description = "Mojo bindings and higher-level wrapper for cairo"
+license = "MIT"
 
 [package.build]
 backend = { name = "pixi-build-mojo", version = "0.*" }
@@ -27,36 +29,44 @@ extra-input-globs = [
 name = "cairo_mojo"
 path = "$RECIPE_DIR/cairo_mojo"
 
+[dependencies]
+mojo = "<0.27"
+cairo = ">=1.18,<2"
+
 [tasks]
+build = "pixi build"
+package-artifacts = "pixi build --output-dir dist/conda"
+
+verify-import = "pixi run mojo run test/package_smoke_install.mojo"
+verify-install = "pixi run verify-import"
+
 test = "pixi run test-unit-install && pixi run test-functional"
 test-unit-install = "pixi run mojo run test/test_install_unit.mojo && pixi run mojo run test/package_smoke_install.mojo"
 test-functional = "pixi run mojo run test/test_ffi_smoke.mojo && pixi run mojo run test/test_high_level_api.mojo"
-build = "pixi build"
-package-artifacts = "pixi build --output-dir dist/conda"
-verify-install = "pixi run test-unit-install"
-verify-import = "pixi run mojo run test/package_smoke_install.mojo"
-
-[dependencies]
-mojo = ">=0.26.3.0.dev2026042005,<0.27"
 
 [package.host-dependencies]
-mojo = ">=0.26.3.0.dev2026042005,<0.27"
+mojo = "<0.27"
 cairo = ">=1.18,<2"
 
 [package.build-dependencies]
-mojo = ">=0.26.3.0.dev2026042005,<0.27"
+mojo = "<0.27"
 cairo = ">=1.18,<2"
 
 [package.run-dependencies]
-mojo = ">=0.26.3.0.dev2026042005,<0.27"
+mojo = "<0.27"
 cairo = ">=1.18,<2"
 
-[feature.bindgen]
+[feature.dev.dependencies]
+# keep the runtime stack explicit in the dev env too
+mojo = "<0.27"
+cairo = ">=1.18,<2"
 
-
-[feature.bindgen.pypi-dependencies]
+[feature.dev.pypi-dependencies]
 mojo-bindgen = { git = "https://github.com/MoSafi2/mojo_bindgen" }
-libclang = "*"
+
+[feature.dev.dependencies.libclang]
+version = "*"
 
 [environments]
-bindgen = ["default", "bindgen"]
+default = []
+dev = ["dev"]

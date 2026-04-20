@@ -1,15 +1,15 @@
 # cairo-mojo
 
 `cairo-mojo` provides Mojo bindings and high-level wrappers for Cairo (`libcairo`).
-It is designed so most users can render images and shapes through typed Mojo APIs
+Wrappers are designed so most users can render images and shapes through typed Mojo APIs
 without working with raw C pointers.
+The API is inspired by [Pycairo](https://pycairo.readthedocs.io/en/latest/) and code written for Pycairo can be easily moved to mojo.
 
 ## What is included
 
 - low-level FFI bindings in `cairo_mojo/_ffi.mojo`
 - runtime library resolution in `cairo_mojo/cairo_runtime.mojo`
-- typed high-level API in `cairo_mojo/cairo_core.mojo`, `cairo_mojo/cairo_enums.mojo`,
-  `cairo_mojo/cairo_types.mojo`, and `cairo_mojo/cairo_convenience.mojo`
+- typed high-level API
 
 ## Prerequisites
 
@@ -18,31 +18,12 @@ without working with raw C pointers.
 
 ## Install
 
-### Option 1: Install from modular-community channel
-
-Add the channel to your `pixi.toml`:
-
-```toml
-[workspace]
-channels = [
-  "https://conda.modular.com/max-nightly",
-  "https://repo.prefix.dev/modular-community",
-  "conda-forge",
-]
-```
-
-Then install:
-
-```bash
-pixi add cairo-mojo
-```
-
-### Option 2: Install from source (git)
+### Install from source (git)
 
 Use Pixi's git flag (`-g` / `--git`) to install directly from this repository:
 
 ```bash
-pixi add -g https://github.com/modular/cairo-mojo cairo-mojo
+pixi add -g https://github.com/MoSafi2/cairo-mojo cairo-mojo
 ```
 
 ## Run your first example
