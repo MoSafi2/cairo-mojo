@@ -8,4 +8,8 @@ version = "0.1.0"
 [tasks]
 
 [dependencies]
-mojo = "==0.26.1.0"
+mojo = ">=0.26.3.0.dev2026042005,<0.27"
+python = ">=3.14.4,<3.15"
+
+[pypi-dependencies]
+mojo-bindgen = { git = "https://github.com/MoSafi2/mojo_bindgen" }
