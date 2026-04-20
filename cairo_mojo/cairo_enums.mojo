@@ -383,6 +383,13 @@ struct PSLevel(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime LEVEL_2 = Self(0)
     comptime LEVEL_3 = Self(1)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_ps_level_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_ps_level_t:
+        return ffi.cairo_ps_level_t(c_uint(self._value))
+
 
 @fieldwise_init
 struct PDFVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
@@ -392,12 +399,26 @@ struct PDFVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime V1_6 = Self(2)
     comptime V1_7 = Self(3)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_pdf_version_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_pdf_version_t:
+        return ffi.cairo_pdf_version_t(c_uint(self._value))
+
 
 @fieldwise_init
 struct SVGVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
     comptime V1_1 = Self(0)
     comptime V1_2 = Self(1)
+
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_svg_version_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_svg_version_t:
+        return ffi.cairo_svg_version_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -414,6 +435,13 @@ struct PDFOutlineFlags(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime BOLD = Self(2)
     comptime ITALIC = Self(4)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_pdf_outline_flags_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_pdf_outline_flags_t:
+        return ffi.cairo_pdf_outline_flags_t(value=c_uint(self._value))
+
 
 @fieldwise_init
 struct SVGUnit(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
@@ -429,6 +457,13 @@ struct SVGUnit(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime PC = Self(8)
     comptime PERCENT = Self(9)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_svg_unit_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_svg_unit_t:
+        return ffi.cairo_svg_unit_t(c_uint(self._value))
+
 
 @fieldwise_init
 struct PDFMetadata(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
@@ -441,6 +476,13 @@ struct PDFMetadata(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime CREATE_DATE = Self(5)
     comptime MOD_DATE = Self(6)
 
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_pdf_metadata_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_pdf_metadata_t:
+        return ffi.cairo_pdf_metadata_t(c_uint(self._value))
+
 
 @fieldwise_init
 struct ColorMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
@@ -448,6 +490,13 @@ struct ColorMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime DEFAULT = Self(0)
     comptime RGB = Self(1)
     comptime GRAY = Self(2)
+
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_color_mode_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_color_mode_t:
+        return ffi.cairo_color_mode_t(c_uint(self._value))
 
 
 @fieldwise_init
@@ -458,3 +507,10 @@ struct Dither(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     comptime FAST = Self(2)
     comptime GOOD = Self(3)
     comptime BEST = Self(4)
+
+    @staticmethod
+    def _from_ffi(value: ffi.cairo_dither_t) -> Self:
+        return Self(Int(value.value))
+
+    def _to_ffi(self) -> ffi.cairo_dither_t:
+        return ffi.cairo_dither_t(c_uint(self._value))

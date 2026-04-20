@@ -1,9 +1,10 @@
 """Font face, scaled font, and font option wrappers for Cairo text rendering."""
 
-from std.ffi import c_double, c_int, c_uint
+from std.ffi import c_char, c_double, c_int, c_uint
 from . import _ffi as ffi
 from .cairo_enums import (
     Antialias,
+    ColorMode,
     HintMetrics,
     HintStyle,
     Status,
@@ -101,6 +102,81 @@ struct FontOptions(Movable):
         return HintMetrics._from_ffi(
             ffi.cairo_font_options_get_hint_metrics(self._ptr)
         )
+
+    def set_variations(self, variations: String) raises:
+        var variations_mut = variations.copy()
+        var variations_ptr = (
+            variations_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_font_options_set_variations(self._ptr, variations_ptr)
+        _ensure_success(
+            ffi.cairo_font_options_status(self._ptr),
+            "cairo_font_options_set_variations",
+        )
+
+    def variations(self) raises -> UnsafePointer[c_char, ImmutExternalOrigin]:
+        return ffi.cairo_font_options_get_variations(self._ptr)
+
+    def set_color_mode(self, mode: ColorMode) raises:
+        ffi.cairo_font_options_set_color_mode(self._ptr, mode._to_ffi())
+        _ensure_success(
+            ffi.cairo_font_options_status(self._ptr),
+            "cairo_font_options_set_color_mode",
+        )
+
+    def color_mode(self) raises -> ColorMode:
+        return ColorMode._from_ffi(ffi.cairo_font_options_get_color_mode(self._ptr))
+
+    def set_color_palette(self, index: Int) raises:
+        ffi.cairo_font_options_set_color_palette(self._ptr, c_uint(index))
+        _ensure_success(
+            ffi.cairo_font_options_status(self._ptr),
+            "cairo_font_options_set_color_palette",
+        )
+
+    def color_palette(self) raises -> Int:
+        return Int(ffi.cairo_font_options_get_color_palette(self._ptr))
+
+    def set_custom_palette_color(
+        self, index: Int, red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8
+    ) raises:
+        ffi.cairo_font_options_set_custom_palette_color(
+            self._ptr,
+            c_uint(index),
+            c_double(Float64(red) / 255.0),
+            c_double(Float64(green) / 255.0),
+            c_double(Float64(blue) / 255.0),
+            c_double(Float64(alpha) / 255.0),
+        )
+        _ensure_success(
+            ffi.cairo_font_options_status(self._ptr),
+            "cairo_font_options_set_custom_palette_color",
+        )
+
+    def custom_palette_color(self, index: Int) raises -> List[Float64]:
+        var red_ptr = alloc[c_double](1)
+        var green_ptr = alloc[c_double](1)
+        var blue_ptr = alloc[c_double](1)
+        var alpha_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_font_options_get_custom_palette_color(
+                self._ptr, c_uint(index), red_ptr, green_ptr, blue_ptr, alpha_ptr
+            ),
+            "cairo_font_options_get_custom_palette_color",
+        )
+        var out: List[Float64] = [
+            Float64(red_ptr[]),
+            Float64(green_ptr[]),
+            Float64(blue_ptr[]),
+            Float64(alpha_ptr[]),
+        ]
+        red_ptr.free()
+        green_ptr.free()
+        blue_ptr.free()
+        alpha_ptr.free()
+        return out^
 
     def unsafe_raw_ptr(
         self,

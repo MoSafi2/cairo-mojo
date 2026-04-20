@@ -1583,3 +1583,303 @@ def cairo_region_xor_rectangle(dst: UnsafePointer[cairo_region_t, MutExternalOri
 def cairo_debug_reset_static_data() raises -> None:
     _bindgen_dl().call["cairo_debug_reset_static_data", NoneType]()
 
+comptime CAIRO_TAG_CONTENT = "cairo.content"
+
+comptime CAIRO_TAG_CONTENT_REF = "cairo.content_ref"
+
+comptime CAIRO_COLOR_PALETTE_DEFAULT = c_int(0)
+
+comptime CAIRO_MIME_TYPE_CCITT_FAX = "image/g3fax"
+
+comptime CAIRO_MIME_TYPE_CCITT_FAX_PARAMS = "application/x-cairo.ccitt.params"
+
+comptime CAIRO_MIME_TYPE_EPS = "application/postscript"
+
+comptime CAIRO_MIME_TYPE_EPS_PARAMS = "application/x-cairo.eps.params"
+
+# -- C union `_cairo_path_data_t` - not emitted as a struct.
+# By-value uses InlineArray[UInt8, 16] unless you wrap a manual UnsafeUnion (unique trivial members).
+# C size=16 bytes, align=8.
+# Members (reference only):
+#   header: cairo_path_data_t__anon_struct_1
+#   point: cairo_path_data_t__anon_struct_2
+# struct _cairo_matrix - size=48 align=8 (verify packed/aligned ABI)
+@align(8)
+@fieldwise_init
+
+struct _cairo_dither(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_DITHER_NONE = Self(c_uint(0))
+    comptime CAIRO_DITHER_DEFAULT = Self(c_uint(1))
+    comptime CAIRO_DITHER_FAST = Self(c_uint(2))
+    comptime CAIRO_DITHER_GOOD = Self(c_uint(3))
+    comptime CAIRO_DITHER_BEST = Self(c_uint(4))
+
+comptime cairo_dither_t = _cairo_dither
+
+def cairo_pattern_set_dither(pattern: UnsafePointer[cairo_pattern_t, MutExternalOrigin], dither: cairo_dither_t) raises -> None:
+    _bindgen_dl().call["cairo_pattern_set_dither", NoneType, UnsafePointer[cairo_pattern_t, MutExternalOrigin], cairo_dither_t](pattern, dither)
+
+def cairo_pattern_get_dither(pattern: UnsafePointer[cairo_pattern_t, MutExternalOrigin]) raises -> cairo_dither_t:
+    return _bindgen_dl().call["cairo_pattern_get_dither", _cairo_dither, UnsafePointer[cairo_pattern_t, MutExternalOrigin]](pattern)
+
+def cairo_set_hairline(cr: UnsafePointer[cairo_t, MutExternalOrigin], set_hairline: cairo_bool_t) raises -> None:
+    _bindgen_dl().call["cairo_set_hairline", NoneType, UnsafePointer[cairo_t, MutExternalOrigin], cairo_bool_t](cr, set_hairline)
+
+# enum _cairo_line_cap - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_color_mode(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_COLOR_MODE_DEFAULT = Self(c_uint(0))
+    comptime CAIRO_COLOR_MODE_NO_COLOR = Self(c_uint(1))
+    comptime CAIRO_COLOR_MODE_COLOR = Self(c_uint(2))
+
+comptime cairo_color_mode_t = _cairo_color_mode
+
+def cairo_font_options_get_variations(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin]) raises -> UnsafePointer[c_char, ImmutExternalOrigin]:
+    return _bindgen_dl().call["cairo_font_options_get_variations", UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[cairo_font_options_t, MutExternalOrigin]](options)
+
+def cairo_font_options_set_variations(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin], variations: UnsafePointer[c_char, ImmutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_font_options_set_variations", NoneType, UnsafePointer[cairo_font_options_t, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]](options, variations)
+
+def cairo_font_options_set_color_mode(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin], color_mode: cairo_color_mode_t) raises -> None:
+    _bindgen_dl().call["cairo_font_options_set_color_mode", NoneType, UnsafePointer[cairo_font_options_t, MutExternalOrigin], cairo_color_mode_t](options, color_mode)
+
+def cairo_font_options_get_color_mode(options: UnsafePointer[cairo_font_options_t, ImmutExternalOrigin]) raises -> cairo_color_mode_t:
+    return _bindgen_dl().call["cairo_font_options_get_color_mode", _cairo_color_mode, UnsafePointer[cairo_font_options_t, ImmutExternalOrigin]](options)
+
+def cairo_font_options_get_color_palette(options: UnsafePointer[cairo_font_options_t, ImmutExternalOrigin]) raises -> c_uint:
+    return _bindgen_dl().call["cairo_font_options_get_color_palette", c_uint, UnsafePointer[cairo_font_options_t, ImmutExternalOrigin]](options)
+
+def cairo_font_options_set_color_palette(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin], palette_index: c_uint) raises -> None:
+    _bindgen_dl().call["cairo_font_options_set_color_palette", NoneType, UnsafePointer[cairo_font_options_t, MutExternalOrigin], c_uint](options, palette_index)
+
+def cairo_font_options_set_custom_palette_color(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin], index: c_uint, red: c_double, green: c_double, blue: c_double, alpha: c_double) raises -> None:
+    _bindgen_dl().call["cairo_font_options_set_custom_palette_color", NoneType, UnsafePointer[cairo_font_options_t, MutExternalOrigin], c_uint, c_double, c_double, c_double, c_double](options, index, red, green, blue, alpha)
+
+def cairo_font_options_get_custom_palette_color(options: UnsafePointer[cairo_font_options_t, MutExternalOrigin], index: c_uint, red: UnsafePointer[c_double, MutExternalOrigin], green: UnsafePointer[c_double, MutExternalOrigin], blue: UnsafePointer[c_double, MutExternalOrigin], alpha: UnsafePointer[c_double, MutExternalOrigin]) raises -> cairo_status_t:
+    return _bindgen_dl().call["cairo_font_options_get_custom_palette_color", _cairo_status, UnsafePointer[cairo_font_options_t, MutExternalOrigin], c_uint, UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin], UnsafePointer[c_double, MutExternalOrigin]](options, index, red, green, blue, alpha)
+
+def cairo_user_font_face_set_render_color_glyph_func(font_face: UnsafePointer[cairo_font_face_t, MutExternalOrigin], render_glyph_func: UnsafePointer[cairo_user_scaled_font_render_glyph_func_t, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_user_font_face_set_render_color_glyph_func", NoneType, UnsafePointer[cairo_font_face_t, MutExternalOrigin], UnsafePointer[cairo_user_scaled_font_render_glyph_func_t, MutExternalOrigin]](font_face, render_glyph_func)
+
+def cairo_user_font_face_get_render_color_glyph_func(font_face: UnsafePointer[cairo_font_face_t, MutExternalOrigin]) raises -> UnsafePointer[cairo_user_scaled_font_render_glyph_func_t, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_user_font_face_get_render_color_glyph_func", UnsafePointer[cairo_user_scaled_font_render_glyph_func_t, MutExternalOrigin], UnsafePointer[cairo_font_face_t, MutExternalOrigin]](font_face)
+
+def cairo_user_scaled_font_get_foreground_marker(scaled_font: UnsafePointer[cairo_scaled_font_t, MutExternalOrigin]) raises -> UnsafePointer[cairo_pattern_t, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_user_scaled_font_get_foreground_marker", UnsafePointer[_cairo_pattern, MutExternalOrigin], UnsafePointer[cairo_scaled_font_t, MutExternalOrigin]](scaled_font)
+
+def cairo_user_scaled_font_get_foreground_source(scaled_font: UnsafePointer[cairo_scaled_font_t, MutExternalOrigin]) raises -> UnsafePointer[cairo_pattern_t, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_user_scaled_font_get_foreground_source", UnsafePointer[_cairo_pattern, MutExternalOrigin], UnsafePointer[cairo_scaled_font_t, MutExternalOrigin]](scaled_font)
+
+def cairo_get_hairline(cr: UnsafePointer[cairo_t, MutExternalOrigin]) raises -> cairo_bool_t:
+    return _bindgen_dl().call["cairo_get_hairline", c_int, UnsafePointer[cairo_t, MutExternalOrigin]](cr)
+
+comptime cairo_pdf_surface_create_for_stream_write_func_cb = def (arg0: MutOpaquePointer[MutExternalOrigin], arg1: UnsafePointer[c_uchar, ImmutExternalOrigin], arg2: c_uint) thin abi("C") -> _cairo_status
+
+# macro CAIRO_PDF_H: empty macro body
+# define CAIRO_PDF_H
+
+comptime CAIRO_PDF_OUTLINE_ROOT = c_int(0)
+
+# enum _cairo_pdf_version - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_pdf_version(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_PDF_VERSION_1_4 = Self(c_uint(0))
+    comptime CAIRO_PDF_VERSION_1_5 = Self(c_uint(1))
+    comptime CAIRO_PDF_VERSION_1_6 = Self(c_uint(2))
+    comptime CAIRO_PDF_VERSION_1_7 = Self(c_uint(3))
+
+comptime cairo_pdf_version_t = _cairo_pdf_version
+
+def cairo_pdf_surface_create_for_stream(write_func: UnsafePointer[cairo_pdf_surface_create_for_stream_write_func_cb, MutExternalOrigin], closure: MutOpaquePointer[MutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[_cairo_surface, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_pdf_surface_create_for_stream", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[cairo_pdf_surface_create_for_stream_write_func_cb, MutExternalOrigin], MutOpaquePointer[MutExternalOrigin], c_double, c_double](write_func, closure, width_in_points, height_in_points)
+
+def cairo_pdf_surface_restrict_to_version(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], version: cairo_pdf_version_t) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_restrict_to_version", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], cairo_pdf_version_t](surface, version)
+
+def cairo_pdf_get_versions(versions: UnsafePointer[UnsafePointer[cairo_pdf_version_t, ImmutExternalOrigin], MutExternalOrigin], num_versions: UnsafePointer[c_int, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_pdf_get_versions", NoneType, UnsafePointer[UnsafePointer[cairo_pdf_version_t, ImmutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]](versions, num_versions)
+
+def cairo_pdf_version_to_string(version: cairo_pdf_version_t) raises -> UnsafePointer[c_char, ImmutExternalOrigin]:
+    return _bindgen_dl().call["cairo_pdf_version_to_string", UnsafePointer[c_char, ImmutExternalOrigin], cairo_pdf_version_t](version)
+
+@fieldwise_init
+struct _cairo_pdf_outline_flags(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_PDF_OUTLINE_FLAG_OPEN = Self(c_uint(1))
+    comptime CAIRO_PDF_OUTLINE_FLAG_BOLD = Self(c_uint(2))
+    comptime CAIRO_PDF_OUTLINE_FLAG_ITALIC = Self(c_uint(4))
+
+comptime cairo_pdf_outline_flags_t = _cairo_pdf_outline_flags
+
+def cairo_pdf_surface_add_outline(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], parent_id: c_int, utf8: UnsafePointer[c_char, ImmutExternalOrigin], link_attribs: UnsafePointer[c_char, ImmutExternalOrigin], flags: cairo_pdf_outline_flags_t) raises -> c_int:
+    return _bindgen_dl().call["cairo_pdf_surface_add_outline", c_int, UnsafePointer[_cairo_surface, MutExternalOrigin], c_int, UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], cairo_pdf_outline_flags_t](surface, parent_id, utf8, link_attribs, flags)
+
+# enum _cairo_pdf_metadata - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_pdf_metadata(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_PDF_METADATA_TITLE = Self(c_uint(0))
+    comptime CAIRO_PDF_METADATA_AUTHOR = Self(c_uint(1))
+    comptime CAIRO_PDF_METADATA_SUBJECT = Self(c_uint(2))
+    comptime CAIRO_PDF_METADATA_KEYWORDS = Self(c_uint(3))
+    comptime CAIRO_PDF_METADATA_CREATOR = Self(c_uint(4))
+    comptime CAIRO_PDF_METADATA_CREATE_DATE = Self(c_uint(5))
+    comptime CAIRO_PDF_METADATA_MOD_DATE = Self(c_uint(6))
+
+comptime cairo_pdf_metadata_t = _cairo_pdf_metadata
+
+def cairo_pdf_surface_set_metadata(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], metadata: cairo_pdf_metadata_t, utf8: UnsafePointer[c_char, ImmutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_set_metadata", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], cairo_pdf_metadata_t, UnsafePointer[c_char, ImmutExternalOrigin]](surface, metadata, utf8)
+
+def cairo_pdf_surface_set_custom_metadata(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], name: UnsafePointer[c_char, ImmutExternalOrigin], value: UnsafePointer[c_char, ImmutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_set_custom_metadata", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]](surface, name, value)
+
+def cairo_pdf_surface_set_page_label(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], utf8: UnsafePointer[c_char, ImmutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_set_page_label", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]](surface, utf8)
+
+def cairo_pdf_surface_set_thumbnail_size(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], width: c_int, height: c_int) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_set_thumbnail_size", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], c_int, c_int](surface, width, height)
+
+comptime cairo_ps_surface_create_for_stream_write_func_cb = def (arg0: MutOpaquePointer[MutExternalOrigin], arg1: UnsafePointer[c_uchar, ImmutExternalOrigin], arg2: c_uint) thin abi("C") -> _cairo_status
+
+# macro CAIRO_PS_H: empty macro body
+# define CAIRO_PS_H
+
+# enum _cairo_ps_level - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_ps_level(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_PS_LEVEL_2 = Self(c_uint(0))
+    comptime CAIRO_PS_LEVEL_3 = Self(c_uint(1))
+
+comptime cairo_ps_level_t = _cairo_ps_level
+
+def cairo_ps_surface_create(filename: UnsafePointer[c_char, ImmutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[_cairo_surface, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ps_surface_create", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], c_double, c_double](filename, width_in_points, height_in_points)
+
+def cairo_ps_surface_create_for_stream(write_func: UnsafePointer[cairo_ps_surface_create_for_stream_write_func_cb, MutExternalOrigin], closure: MutOpaquePointer[MutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[_cairo_surface, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ps_surface_create_for_stream", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[cairo_ps_surface_create_for_stream_write_func_cb, MutExternalOrigin], MutOpaquePointer[MutExternalOrigin], c_double, c_double](write_func, closure, width_in_points, height_in_points)
+
+def cairo_ps_surface_restrict_to_level(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], level: cairo_ps_level_t) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_restrict_to_level", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], cairo_ps_level_t](surface, level)
+
+def cairo_ps_get_levels(levels: UnsafePointer[UnsafePointer[cairo_ps_level_t, ImmutExternalOrigin], MutExternalOrigin], num_levels: UnsafePointer[c_int, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ps_get_levels", NoneType, UnsafePointer[UnsafePointer[cairo_ps_level_t, ImmutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]](levels, num_levels)
+
+def cairo_ps_level_to_string(level: cairo_ps_level_t) raises -> UnsafePointer[c_char, ImmutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ps_level_to_string", UnsafePointer[c_char, ImmutExternalOrigin], cairo_ps_level_t](level)
+
+def cairo_ps_surface_set_eps(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], eps: c_int) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_set_eps", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], c_int](surface, eps)
+
+def cairo_ps_surface_get_eps(surface: UnsafePointer[_cairo_surface, MutExternalOrigin]) raises -> c_int:
+    return _bindgen_dl().call["cairo_ps_surface_get_eps", c_int, UnsafePointer[_cairo_surface, MutExternalOrigin]](surface)
+
+def cairo_ps_surface_set_size(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_set_size", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], c_double, c_double](surface, width_in_points, height_in_points)
+
+def cairo_ps_surface_dsc_comment(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], comment: UnsafePointer[c_char, ImmutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_dsc_comment", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin]](surface, comment)
+
+def cairo_ps_surface_dsc_begin_setup(surface: UnsafePointer[_cairo_surface, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_dsc_begin_setup", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin]](surface)
+
+def cairo_ps_surface_dsc_begin_page_setup(surface: UnsafePointer[_cairo_surface, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ps_surface_dsc_begin_page_setup", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin]](surface)
+
+comptime cairo_svg_surface_create_for_stream_write_func_cb = def (arg0: MutOpaquePointer[MutExternalOrigin], arg1: UnsafePointer[c_uchar, ImmutExternalOrigin], arg2: c_uint) thin abi("C") -> _cairo_status
+
+# macro CAIRO_SVG_H: empty macro body
+# define CAIRO_SVG_H
+
+# enum _cairo_svg_version - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_svg_version(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_SVG_VERSION_1_1 = Self(c_uint(0))
+    comptime CAIRO_SVG_VERSION_1_2 = Self(c_uint(1))
+
+comptime cairo_svg_version_t = _cairo_svg_version
+
+# enum _cairo_svg_unit - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct _cairo_svg_unit(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_SVG_UNIT_USER = Self(c_uint(0))
+    comptime CAIRO_SVG_UNIT_EM = Self(c_uint(1))
+    comptime CAIRO_SVG_UNIT_EX = Self(c_uint(2))
+    comptime CAIRO_SVG_UNIT_PX = Self(c_uint(3))
+    comptime CAIRO_SVG_UNIT_IN = Self(c_uint(4))
+    comptime CAIRO_SVG_UNIT_CM = Self(c_uint(5))
+    comptime CAIRO_SVG_UNIT_MM = Self(c_uint(6))
+    comptime CAIRO_SVG_UNIT_PT = Self(c_uint(7))
+    comptime CAIRO_SVG_UNIT_PC = Self(c_uint(8))
+    comptime CAIRO_SVG_UNIT_PERCENT = Self(c_uint(9))
+
+comptime cairo_svg_unit_t = _cairo_svg_unit
+
+def cairo_svg_surface_create_for_stream(write_func: UnsafePointer[cairo_svg_surface_create_for_stream_write_func_cb, MutExternalOrigin], closure: MutOpaquePointer[MutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[_cairo_surface, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_svg_surface_create_for_stream", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[cairo_svg_surface_create_for_stream_write_func_cb, MutExternalOrigin], MutOpaquePointer[MutExternalOrigin], c_double, c_double](write_func, closure, width_in_points, height_in_points)
+
+def cairo_svg_surface_restrict_to_version(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], version: cairo_svg_version_t) raises -> None:
+    _bindgen_dl().call["cairo_svg_surface_restrict_to_version", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], cairo_svg_version_t](surface, version)
+
+def cairo_svg_get_versions(versions: UnsafePointer[UnsafePointer[cairo_svg_version_t, ImmutExternalOrigin], MutExternalOrigin], num_versions: UnsafePointer[c_int, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_svg_get_versions", NoneType, UnsafePointer[UnsafePointer[cairo_svg_version_t, ImmutExternalOrigin], MutExternalOrigin], UnsafePointer[c_int, MutExternalOrigin]](versions, num_versions)
+
+def cairo_svg_version_to_string(version: cairo_svg_version_t) raises -> UnsafePointer[c_char, ImmutExternalOrigin]:
+    return _bindgen_dl().call["cairo_svg_version_to_string", UnsafePointer[c_char, ImmutExternalOrigin], cairo_svg_version_t](version)
+
+def cairo_svg_surface_set_document_unit(surface: UnsafePointer[_cairo_surface, MutExternalOrigin], unit: cairo_svg_unit_t) raises -> None:
+    _bindgen_dl().call["cairo_svg_surface_set_document_unit", NoneType, UnsafePointer[_cairo_surface, MutExternalOrigin], cairo_svg_unit_t](surface, unit)
+
+def cairo_svg_surface_get_document_unit(surface: UnsafePointer[_cairo_surface, MutExternalOrigin]) raises -> cairo_svg_unit_t:
+    return _bindgen_dl().call["cairo_svg_surface_get_document_unit", _cairo_svg_unit, UnsafePointer[_cairo_surface, MutExternalOrigin]](surface)
+
+struct FT_FaceRec_(Copyable, Movable):
+    pass
+# incomplete C struct `_FcPattern` — opaque; use only as pointer target
+@fieldwise_init
+
+struct _FcPattern(Copyable, Movable):
+    pass
+def cairo_ft_font_face_create_for_ft_face(face: UnsafePointer[FT_FaceRec_, MutExternalOrigin], load_flags: c_int) raises -> UnsafePointer[_cairo_font_face, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ft_font_face_create_for_ft_face", UnsafePointer[_cairo_font_face, MutExternalOrigin], UnsafePointer[FT_FaceRec_, MutExternalOrigin], c_int](face, load_flags)
+
+# enum cairo_ft_synthesize_t - underlying UINT -> c_uint (verify C ABI)
+@fieldwise_init
+
+struct cairo_ft_synthesize_t(Copyable, Movable, RegisterPassable):
+    var value: c_uint
+    comptime CAIRO_FT_SYNTHESIZE_BOLD = Self(c_uint(1))
+    comptime CAIRO_FT_SYNTHESIZE_OBLIQUE = Self(c_uint(2))
+
+def cairo_ft_font_face_set_synthesize(font_face: UnsafePointer[_cairo_font_face, MutExternalOrigin], synth_flags: c_uint) raises -> None:
+    _bindgen_dl().call["cairo_ft_font_face_set_synthesize", NoneType, UnsafePointer[_cairo_font_face, MutExternalOrigin], c_uint](font_face, synth_flags)
+
+def cairo_ft_font_face_unset_synthesize(font_face: UnsafePointer[_cairo_font_face, MutExternalOrigin], synth_flags: c_uint) raises -> None:
+    _bindgen_dl().call["cairo_ft_font_face_unset_synthesize", NoneType, UnsafePointer[_cairo_font_face, MutExternalOrigin], c_uint](font_face, synth_flags)
+
+def cairo_ft_font_face_get_synthesize(font_face: UnsafePointer[_cairo_font_face, MutExternalOrigin]) raises -> c_uint:
+    return _bindgen_dl().call["cairo_ft_font_face_get_synthesize", c_uint, UnsafePointer[_cairo_font_face, MutExternalOrigin]](font_face)
+
+def cairo_ft_scaled_font_lock_face(scaled_font: UnsafePointer[_cairo_scaled_font, MutExternalOrigin]) raises -> UnsafePointer[FT_FaceRec_, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ft_scaled_font_lock_face", UnsafePointer[FT_FaceRec_, MutExternalOrigin], UnsafePointer[_cairo_scaled_font, MutExternalOrigin]](scaled_font)
+
+def cairo_ft_scaled_font_unlock_face(scaled_font: UnsafePointer[_cairo_scaled_font, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ft_scaled_font_unlock_face", NoneType, UnsafePointer[_cairo_scaled_font, MutExternalOrigin]](scaled_font)
+
+def cairo_ft_font_face_create_for_pattern(pattern: UnsafePointer[_FcPattern, MutExternalOrigin]) raises -> UnsafePointer[_cairo_font_face, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_ft_font_face_create_for_pattern", UnsafePointer[_cairo_font_face, MutExternalOrigin], UnsafePointer[_FcPattern, MutExternalOrigin]](pattern)
+
+def cairo_ft_font_options_substitute(options: UnsafePointer[_cairo_font_options, ImmutExternalOrigin], pattern: UnsafePointer[_FcPattern, MutExternalOrigin]) raises -> None:
+    _bindgen_dl().call["cairo_ft_font_options_substitute", NoneType, UnsafePointer[_cairo_font_options, ImmutExternalOrigin], UnsafePointer[_FcPattern, MutExternalOrigin]](options, pattern)

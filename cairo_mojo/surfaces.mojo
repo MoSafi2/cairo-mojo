@@ -1,8 +1,18 @@
 """Surface abstractions and concrete Cairo surface implementations."""
 
-from std.ffi import c_double, c_int, c_uchar
+from std.ffi import c_char, c_double, c_int, c_uchar, c_uint
 from . import _ffi as ffi
-from .cairo_enums import Content, Format, Status 
+from .cairo_enums import (
+    Content,
+    Format,
+    PDFMetadata,
+    PDFOutlineFlags,
+    PDFVersion,
+    PSLevel,
+    Status,
+    SVGUnit,
+    SVGVersion,
+)
 from .cairo_types import Extents2D, Point2D
 from .common import _alloc_double_quad, _ensure_success
 from .devices import Device
@@ -426,6 +436,63 @@ struct PDFSurface(Movable, SurfaceLike):
             ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()), "cairo_pdf_surface_set_size"
         )
 
+    def restrict_to_version(self, version: PDFVersion) raises:
+        ffi.cairo_pdf_surface_restrict_to_version(self._surface._ptr, version._to_ffi())
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_pdf_surface_restrict_to_version",
+        )
+
+    def set_metadata(self, key: PDFMetadata, value: String) raises:
+        var value_mut = value.copy()
+        var value_ptr = (
+            value_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_pdf_surface_set_metadata(self._surface._ptr, key._to_ffi(), value_ptr)
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_pdf_surface_set_metadata",
+        )
+
+    def set_page_label(self, label: String) raises:
+        var label_mut = label.copy()
+        var label_ptr = (
+            label_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_pdf_surface_set_page_label(self._surface._ptr, label_ptr)
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_pdf_surface_set_page_label",
+        )
+
+    def set_thumbnail_size(self, width: Int, height: Int) raises:
+        ffi.cairo_pdf_surface_set_thumbnail_size(self._surface._ptr, c_int(width), c_int(height))
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_pdf_surface_set_thumbnail_size",
+        )
+
+    def add_outline(
+        self, parent_id: Int, utf8: String, link_attributes: String, flags: PDFOutlineFlags
+    ) raises -> Int:
+        var utf8_mut = utf8.copy()
+        var link_mut = link_attributes.copy()
+        var utf8_ptr = (
+            utf8_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        var link_ptr = (
+            link_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        return Int(
+            ffi.cairo_pdf_surface_add_outline(
+                self._surface._ptr,
+                c_int(parent_id),
+                utf8_ptr,
+                link_ptr,
+                flags._to_ffi(),
+            )
+        )
+
     def as_surface(self) raises -> Surface:
         """View this PDF surface as the generic `Surface` wrapper."""
         return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())
@@ -478,6 +545,23 @@ struct SVGSurface(Movable, SurfaceLike):
     def flush(self) raises:
         """Flush pending drawing operations."""
         self._surface.flush()
+
+    def restrict_to_version(self, version: SVGVersion) raises:
+        ffi.cairo_svg_surface_restrict_to_version(self._surface._ptr, version._to_ffi())
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_svg_surface_restrict_to_version",
+        )
+
+    def set_document_unit(self, unit: SVGUnit) raises:
+        ffi.cairo_svg_surface_set_document_unit(self._surface._ptr, unit._to_ffi())
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_svg_surface_set_document_unit",
+        )
+
+    def document_unit(self) raises -> SVGUnit:
+        return SVGUnit._from_ffi(ffi.cairo_svg_surface_get_document_unit(self._surface._ptr))
 
     def as_surface(self) raises -> Surface:
         """View this SVG surface as the generic `Surface` wrapper."""
@@ -616,15 +700,48 @@ struct PSSurface(Movable, SurfaceLike):
     def __init__(
         out self, filename: String, width_points: Float64, height_points: Float64
     ) raises:
-        _ = filename
-        _ = width_points
-        _ = height_points
-        raise Error(
-            "PSSurface is not available in current generated FFI; enable cairo PS backend bindings."
+        var filename_mut = filename.copy()
+        var filename_ptr = (
+            filename_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        self._surface = Surface(
+            unsafe_raw_ptr=ffi.cairo_ps_surface_create(
+                filename_ptr, c_double(width_points), c_double(height_points)
+            )
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         return self._surface.unsafe_raw_surface_ptr()
+
+    def set_size(self, width_points: Float64, height_points: Float64) raises:
+        ffi.cairo_ps_surface_set_size(
+            self._surface._ptr, c_double(width_points), c_double(height_points)
+        )
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_ps_surface_set_size",
+        )
+
+    def restrict_to_level(self, level: PSLevel) raises:
+        ffi.cairo_ps_surface_restrict_to_level(self._surface._ptr, level._to_ffi())
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_ps_surface_restrict_to_level",
+        )
+
+    def set_eps(self, enabled: Bool) raises:
+        ffi.cairo_ps_surface_set_eps(
+            self._surface._ptr, ffi.cairo_bool_t(c_int(1 if enabled else 0))
+        )
+        _ensure_success(
+            ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
+            "cairo_ps_surface_set_eps",
+        )
+
+    def eps(self) raises -> Bool:
+        return Int(ffi.cairo_ps_surface_get_eps(self._surface._ptr)) != 0
 
 
 struct ScriptSurface(Movable, SurfaceLike):

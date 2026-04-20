@@ -279,6 +279,15 @@ struct Context(Movable):
     def line_width(self) raises -> Float64:
         return Float64(ffi.cairo_get_line_width(self.ptr))
 
+    def set_hairline(self, enabled: Bool) raises:
+        """Enable or disable hairline stroke mode."""
+        ffi.cairo_set_hairline(self.ptr, ffi.cairo_bool_t(c_int(1 if enabled else 0)))
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_hairline")
+
+    def hairline(self) raises -> Bool:
+        """Return whether hairline stroke mode is enabled."""
+        return Int(ffi.cairo_get_hairline(self.ptr)) != 0
+
     def set_line_cap(self, line_cap: LineCap) raises:
         """Set stroke line-cap style."""
         ffi.cairo_set_line_cap(self.ptr, line_cap._to_ffi())

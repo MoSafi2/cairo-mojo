@@ -48,6 +48,7 @@ Status keys:
 - mesh create + begin/end patch: implemented
 - mesh advanced getters/setters and gradient introspection: implemented_with_deviation
 - raster callback API management: missing
+- pattern dither get/set: implemented
 
 ## region
 
@@ -59,12 +60,14 @@ Status keys:
 - Surface/ImageSurface/PDFSurface/SVGSurface/RecordingSurface: implemented
 - page controls/device scale/offset/fallback controls: implemented
 - MIME data APIs: missing
-- PSSurface/ScriptSurface/TeeSurface: implemented_with_deviation
+- PSSurface: implemented
+- ScriptSurface/TeeSurface: implemented_with_deviation
 - Xlib/XCB/Win32 surfaces: deferred_platform_specific
 
 ## text
 
 - FontFace/FontOptions/ScaledFont: implemented
+- FontOptions color/variation APIs (Cairo 1.18): implemented_with_deviation
 - scaled font text_to_glyphs wrapper: implemented
 - glyph clusters round-trip wrappers: implemented_with_deviation
 

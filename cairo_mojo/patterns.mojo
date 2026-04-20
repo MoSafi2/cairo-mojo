@@ -2,7 +2,7 @@
 
 from std.ffi import c_double, c_int, c_uint
 from cairo_mojo import _ffi as ffi
-from cairo_mojo.cairo_enums import Extend, Filter, PatternType, Status
+from cairo_mojo.cairo_enums import Dither, Extend, Filter, PatternType, Status
 from cairo_mojo.cairo_types import Matrix2D
 from cairo_mojo.common import _ensure_success
 from cairo_mojo.paths import Path
@@ -294,6 +294,17 @@ struct Pattern(Movable):
     def filter(self) raises -> Filter:
         """Get the current sampling filter."""
         return Filter._from_ffi(ffi.cairo_pattern_get_filter(self._ptr))
+
+    def set_dither(self, dither: Dither) raises:
+        """Set raster dither mode for pattern sampling."""
+        ffi.cairo_pattern_set_dither(self._ptr, dither._to_ffi())
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_dither"
+        )
+
+    def dither(self) raises -> Dither:
+        """Get raster dither mode for pattern sampling."""
+        return Dither._from_ffi(ffi.cairo_pattern_get_dither(self._ptr))
 
     def matrix(self) raises -> Matrix2D:
         """Get the pattern matrix."""
