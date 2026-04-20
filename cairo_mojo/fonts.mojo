@@ -1,4 +1,4 @@
-from . import _ffi_dl as ffi
+from . import _ffi as ffi
 from .cairo_enums import Antialias, Status
 from .common import _ensure_success
 

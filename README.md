@@ -2,9 +2,9 @@
 
 Mojo bindings and high-level wrappers for Cairo (`libcairo`) with:
 
-- low-level FFI bindings in `src/_ffi.mojo` and `src/_ffi_dl.mojo`
-- runtime library resolution helpers in `src/cairo_runtime.mojo`
-- typed high-level API in `src/cairo_core.mojo`, `src/cairo_enums.mojo`, `src/cairo_types.mojo`, and `src/cairo_convenience.mojo`
+- low-level FFI bindings in `cairo_mojo/_ffi.mojo` 
+- runtime library resolution helpers in `cairo_mojo/cairo_runtime.mojo`
+- typed high-level API in `cairo_mojo/cairo_core.mojo`, `cairo_mojo/cairo_enums.mojo`, `cairo_mojo/cairo_types.mojo`, and `cairo_mojo/cairo_convenience.mojo`
 
 This repository is configured to build a Conda package with Pixi's `pixi-build-mojo` backend.
 
@@ -14,6 +14,33 @@ This repository is configured to build a Conda package with Pixi's `pixi-build-m
 pixi install
 pixi run test
 pixi run mojo run examples/red_rectangle_png.mojo
+pixi run mojo run examples/advanced_dashboard_card_png.mojo
+```
+
+## Simple high-level API example
+
+```mojo
+from cairo_mojo import Context, ImageSurface
+
+
+def main() raises:
+    var surface = ImageSurface(width=256, height=256)
+    var ctx = Context(surface)
+
+    ctx.set_source_rgb(1.0, 1.0, 1.0)
+    ctx.paint()
+
+    ctx.set_source_rgb(0.92, 0.22, 0.22)
+    ctx.rectangle(48.0, 48.0, 160.0, 160.0)
+    ctx.fill()
+
+    surface.write_to_png("simple_example.png")
+```
+
+Run it with:
+
+```bash
+pixi run mojo run simple_example.mojo
 ```
 
 ## Build Conda package
@@ -37,7 +64,9 @@ pixi run test
 pixi run verify-package
 ```
 
-The package smoke test validates that core APIs can be imported and used from the packaged layout.
+`pixi run test` runs both install-safe unit tests and functional tests.
+`pixi run verify-package` runs only install-time checks (`test_install_unit` and package smoke).
+The heavy functional suites (`test_ffi_smoke` and `test_high_level_api`) are development-only.
 
 ## Install from modular-community channel
 

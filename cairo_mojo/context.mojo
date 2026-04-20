@@ -1,5 +1,5 @@
 from std.ffi import c_double, c_int
-from . import _ffi_dl as ffi
+from . import _ffi as ffi
 from .cairo_enums import (
     Antialias,
     FillRule,

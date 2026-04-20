@@ -1,4 +1,4 @@
-from src._ffi_dl import (
+from cairo_mojo._ffi import (
     cairo_antialias_t,
     cairo_arc,
     cairo_close_path,
@@ -62,7 +62,7 @@ from src._ffi_dl import (
     cairo_filter_t,
     cairo_version,
 )
-from src.cairo_runtime import (
+from cairo_mojo.cairo_runtime import (
     discover_cairo_candidates,
     ensure_cairo_loader_handle,
     resolve_cairo_library_from_candidates,

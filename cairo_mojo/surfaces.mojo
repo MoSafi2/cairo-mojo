@@ -1,6 +1,6 @@
 from std.ffi import c_double, c_int, c_uchar
-from . import _ffi_dl as ffi
-from .cairo_enums import Content, Format, Status
+from . import _ffi as ffi
+from .cairo_enums import Content, Format, Status 
 from .cairo_types import Extents2D
 from .common import _alloc_double_quad, _ensure_success
 

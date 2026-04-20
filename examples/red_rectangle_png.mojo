@@ -5,7 +5,7 @@ Run:
   pixi run mojo run examples/red_rectangle_png.mojo
 """
 
-from src import Context, ImageSurface
+from cairo_mojo import Context, ImageSurface
 
 
 def main() raises:

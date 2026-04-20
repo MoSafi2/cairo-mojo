@@ -1,10 +1,10 @@
-import src._ffi_dl as ffi
-from src.cairo_runtime import ensure_cairo_loader_handle
+import cairo_mojo._ffi as ffi
+from cairo_mojo.cairo_runtime import ensure_cairo_loader_handle
 from std.ffi import OwnedDLHandle
 from std.testing import TestSuite, assert_equal, assert_true
 
-from src.cairo_core import Context, ImageSurface, PDFSurface, Pattern, RecordingSurface, SVGSurface
-from src.cairo_enums import (
+from cairo_mojo.cairo_core import Context, ImageSurface, PDFSurface, Pattern, RecordingSurface, SVGSurface
+from cairo_mojo.cairo_enums import (
     Antialias,
     Content,
     Extend,
@@ -17,8 +17,8 @@ from src.cairo_enums import (
     Operator,
     Status,
 )
-from src.cairo_types import Matrix2D, Point2D
-from src.cairo_convenience import (
+from cairo_mojo.cairo_types import Matrix2D, Point2D
+from cairo_mojo.cairo_convenience import (
     clear_rgba,
     draw_text,
     fill_circle,
@@ -31,7 +31,7 @@ from src.cairo_convenience import (
     stroke_polyline,
     stroke_rounded_rectangle,
 )
-from src.fonts import FontOptions
+from cairo_mojo.fonts import FontOptions
 
 
 def _ensure_cairo_loaded() raises -> OwnedDLHandle:

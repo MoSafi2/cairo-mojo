@@ -118,7 +118,9 @@ def discover_cairo_candidates() raises -> List[String]:
 
 
 def try_open_cairo(candidate: String) raises -> OwnedDLHandle:
-    return OwnedDLHandle(candidate, RTLD.NOW | RTLD.GLOBAL)
+    return OwnedDLHandle(
+        candidate, RTLD.NOW | RTLD.GLOBAL | RTLD.NODELETE
+    )
 
 
 def resolve_cairo_library_from_candidates(

@@ -11,7 +11,7 @@ source:
 build:
   number: 0
   script:
-    - mojo package src -o ${{ PREFIX }}/lib/mojo/cairo_mojo.mojopkg
+    - mojo package cairo_mojo -o ${{ PREFIX }}/lib/mojo/cairo_mojo.mojopkg
 
 requirements:
   host:
@@ -25,11 +25,13 @@ tests:
   - script:
       - if: unix
         then:
+          - mojo run test/test_install_unit.mojo
           - mojo run test/package_smoke_install.mojo
     files:
       recipe:
+        - test/test_install_unit.mojo
         - test/package_smoke_install.mojo
-        - src
+        - cairo_mojo
 
 about:
   homepage: https://github.com/MoSafi2/cairo-mojo

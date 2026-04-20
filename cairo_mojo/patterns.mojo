@@ -1,5 +1,5 @@
 from std.ffi import c_double
-from . import _ffi_dl as ffi
+from . import _ffi as ffi
 from .cairo_enums import Extend, Filter, PatternType, Status
 from .common import _ensure_success
 from .surfaces import ImageSurface, PDFSurface, RecordingSurface, SVGSurface, Surface

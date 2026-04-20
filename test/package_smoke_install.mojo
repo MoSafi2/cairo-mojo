@@ -1,6 +1,6 @@
-from src.cairo_core import Context, ImageSurface
-from src.cairo_enums import Status
-from src.cairo_runtime import ensure_cairo_loader_handle
+from cairo_mojo.cairo_core import Context, ImageSurface
+from cairo_mojo.cairo_enums import Status
+from cairo_mojo.cairo_runtime import ensure_cairo_loader_handle
 from std.testing import TestSuite, assert_equal
 
 

@@ -1,6 +1,5 @@
 from std.ffi import c_double
-from . import _ffi_dl as ffi
-
+from . import _ffi as ffi
 
 def _ensure_success(status: ffi.cairo_status_t, operation: String) raises:
     if status.value != ffi.cairo_status_t.CAIRO_STATUS_SUCCESS.value:

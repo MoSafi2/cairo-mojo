@@ -1,9 +1,9 @@
 from std.ffi import c_int, c_uint
-from . import _ffi_dl as ffi
+from . import _ffi as ffi
 
 
 @fieldwise_init
-struct Status(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Status(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime SUCCESS = Self(0)
@@ -17,7 +17,7 @@ struct Status(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Format(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Format(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime ARGB32 = Self(0)
@@ -36,7 +36,7 @@ struct Format(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Operator(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Operator(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime SOURCE = Self(1)
@@ -54,7 +54,7 @@ struct Operator(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Antialias(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Antialias(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime DEFAULT = Self(0)
@@ -71,7 +71,7 @@ struct Antialias(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct LineCap(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct LineCap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime BUTT = Self(0)
@@ -87,7 +87,7 @@ struct LineCap(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct LineJoin(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct LineJoin(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime MITER = Self(0)
@@ -103,7 +103,7 @@ struct LineJoin(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct FillRule(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct FillRule(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime WINDING = Self(0)
@@ -118,7 +118,7 @@ struct FillRule(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Content(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Content(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime COLOR = Self(4096)
@@ -134,7 +134,7 @@ struct Content(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct PatternType(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct PatternType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime SOLID = Self(0)
@@ -153,7 +153,7 @@ struct PatternType(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct FontSlant(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct FontSlant(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime NORMAL = Self(0)
@@ -169,7 +169,7 @@ struct FontSlant(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct FontWeight(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct FontWeight(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime NORMAL = Self(0)
@@ -184,7 +184,7 @@ struct FontWeight(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Extend(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Extend(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime NONE = Self(0)
@@ -201,7 +201,7 @@ struct Extend(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
 
 
 @fieldwise_init
-struct Filter(Copyable, Movable, RegisterPassable, ImplicitlyCopyable):
+struct Filter(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
     var _value: Int
 
     comptime FAST = Self(0)

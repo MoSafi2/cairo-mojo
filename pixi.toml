@@ -15,18 +15,26 @@ backend = { name = "pixi-build-mojo", version = "0.*" }
 source = { path = "." }
 
 [package.build.config]
-extra-input-globs = ["README.md", "LICENSE", "CHANGELOG.md", "examples/**/*.mojo", "test/**/*.mojo"]
+extra-input-globs = [
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "examples/**/*.mojo",
+    "test/**/*.mojo",
+]
 
 [package.build.config.pkg]
 name = "cairo_mojo"
-path = "$RECIPE_DIR/src"
+path = "$RECIPE_DIR/cairo_mojo"
 
 [tasks]
-test = "pixi run mojo run test/test_ffi_smoke.mojo && pixi run mojo run test/test_high_level_api.mojo"
-build-package = "pixi build"
+test = "pixi run test-unit-install && pixi run test-functional"
+test-unit-install = "pixi run mojo run test/test_install_unit.mojo && pixi run mojo run test/package_smoke_install.mojo"
+test-functional = "pixi run mojo run test/test_ffi_smoke.mojo && pixi run mojo run test/test_high_level_api.mojo"
+build = "pixi build"
 package-artifacts = "pixi build --output-dir dist/conda"
-verify-package = "pixi run verify-packaged-import"
-verify-packaged-import = "pixi run mojo run test/package_smoke_install.mojo"
+verify-install = "pixi run test-unit-install"
+verify-import = "pixi run mojo run test/package_smoke_install.mojo"
 
 [dependencies]
 mojo = ">=0.26.3.0.dev2026042005,<0.27"

@@ -1,5 +1,5 @@
 from std.ffi import c_double
-from . import _ffi_dl as ffi
+from . import _ffi as ffi
 
 
 @fieldwise_init
