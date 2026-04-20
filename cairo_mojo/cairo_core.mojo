@@ -1,3 +1,5 @@
+"""High-level re-export module for core Cairo wrapper types."""
+
 from .context import Context, ContextStateGuard
 from .fonts import FontFace, FontOptions
 from .patterns import Pattern

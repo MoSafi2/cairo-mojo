@@ -1,3 +1,5 @@
+"""Public API surface for the `cairo_mojo` package."""
+
 from .cairo_core import (
     Context,
     ContextStateGuard,

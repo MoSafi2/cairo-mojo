@@ -1,9 +1,12 @@
+"""Typed enum wrappers for Cairo constants and status values."""
+
 from std.ffi import c_int, c_uint
 from . import _ffi as ffi
 
 
 @fieldwise_init
 struct Status(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Cairo status/error codes."""
     var _value: Int
 
     comptime SUCCESS = Self(0)
@@ -18,6 +21,7 @@ struct Status(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Format(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Pixel formats used by Cairo image surfaces."""
     var _value: Int
 
     comptime ARGB32 = Self(0)
@@ -37,6 +41,7 @@ struct Format(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Operator(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Compositing operators used for drawing."""
     var _value: Int
 
     comptime SOURCE = Self(1)
@@ -55,6 +60,7 @@ struct Operator(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Antialias(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Antialiasing modes for rasterization."""
     var _value: Int
 
     comptime DEFAULT = Self(0)
@@ -72,6 +78,7 @@ struct Antialias(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct LineCap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Stroke line-cap styles."""
     var _value: Int
 
     comptime BUTT = Self(0)
@@ -88,6 +95,7 @@ struct LineCap(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct LineJoin(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Stroke line-join styles."""
     var _value: Int
 
     comptime MITER = Self(0)
@@ -104,6 +112,7 @@ struct LineJoin(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct FillRule(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Rules for determining filled interior regions."""
     var _value: Int
 
     comptime WINDING = Self(0)
@@ -119,6 +128,7 @@ struct FillRule(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Content(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Surface content types (color and/or alpha)."""
     var _value: Int
 
     comptime COLOR = Self(4096)
@@ -135,6 +145,7 @@ struct Content(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct PatternType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Kinds of Cairo source patterns."""
     var _value: Int
 
     comptime SOLID = Self(0)
@@ -154,6 +165,7 @@ struct PatternType(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct FontSlant(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Font slant styles for toy text API."""
     var _value: Int
 
     comptime NORMAL = Self(0)
@@ -170,6 +182,7 @@ struct FontSlant(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct FontWeight(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Font weight styles for toy text API."""
     var _value: Int
 
     comptime NORMAL = Self(0)
@@ -185,6 +198,7 @@ struct FontWeight(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Extend(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Out-of-bounds extension behavior for patterns."""
     var _value: Int
 
     comptime NONE = Self(0)
@@ -202,6 +216,7 @@ struct Extend(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
 
 @fieldwise_init
 struct Filter(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    """Sampling filters applied when patterns are transformed."""
     var _value: Int
 
     comptime FAST = Self(0)

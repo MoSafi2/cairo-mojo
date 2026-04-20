@@ -1,3 +1,5 @@
+"""Convenience drawing helpers built on top of `Context`."""
+
 from .cairo_core import Context, Point2D
 from .cairo_enums import FontSlant, FontWeight, Operator
 from .cairo_types import Color
@@ -11,6 +13,7 @@ def rounded_rectangle_path(
     height: Float64,
     radius: Float64,
 ) raises:
+    """Create a rounded-rectangle path on `ctx`."""
     var clamped_radius = radius
     if clamped_radius < 0.0:
         clamped_radius = 0.0
@@ -54,17 +57,20 @@ def rounded_rectangle_path(
 
 
 def circle_path(mut ctx: Context, cx: Float64, cy: Float64, radius: Float64) raises:
+    """Create a closed circular path centered at `(cx, cy)`."""
     ctx.new_path()
     ctx.arc(cx, cy, radius, 0.0, 6.283185307179586)
     ctx.close_path()
 
 
 def fill_circle(mut ctx: Context, cx: Float64, cy: Float64, radius: Float64) raises:
+    """Fill a circle using the current source pattern."""
     circle_path(ctx, cx, cy, radius)
     ctx.fill()
 
 
 def stroke_circle(mut ctx: Context, cx: Float64, cy: Float64, radius: Float64) raises:
+    """Stroke a circle using current stroke settings."""
     circle_path(ctx, cx, cy, radius)
     ctx.stroke()
 
@@ -72,6 +78,7 @@ def stroke_circle(mut ctx: Context, cx: Float64, cy: Float64, radius: Float64) r
 def line_path(
     mut ctx: Context, x1: Float64, y1: Float64, x2: Float64, y2: Float64
 ) raises:
+    """Create a path with a single line segment."""
     ctx.new_path()
     ctx.move_to(x1, y1)
     ctx.line_to(x2, y2)
@@ -80,11 +87,13 @@ def line_path(
 def stroke_line(
     mut ctx: Context, x1: Float64, y1: Float64, x2: Float64, y2: Float64
 ) raises:
+    """Stroke a single line segment from `(x1, y1)` to `(x2, y2)`."""
     line_path(ctx, x1, y1, x2, y2)
     ctx.stroke()
 
 
 def polyline_path(mut ctx: Context, ref points: List[Point2D]) raises:
+    """Create an open polyline path from `points`."""
     if len(points) == 0:
         ctx.new_path()
         return
@@ -95,22 +104,26 @@ def polyline_path(mut ctx: Context, ref points: List[Point2D]) raises:
 
 
 def polygon_path(mut ctx: Context, ref points: List[Point2D]) raises:
+    """Create a closed polygon path from `points`."""
     polyline_path(ctx, points)
     if len(points) > 1:
         ctx.close_path()
 
 
 def stroke_polyline(mut ctx: Context, ref points: List[Point2D]) raises:
+    """Stroke an open polyline defined by `points`."""
     polyline_path(ctx, points)
     ctx.stroke()
 
 
 def fill_polygon(mut ctx: Context, ref points: List[Point2D]) raises:
+    """Fill a polygon defined by `points`."""
     polygon_path(ctx, points)
     ctx.fill()
 
 
 def stroke_polygon(mut ctx: Context, ref points: List[Point2D]) raises:
+    """Stroke a polygon defined by `points`."""
     polygon_path(ctx, points)
     ctx.stroke()
 
@@ -118,6 +131,7 @@ def stroke_polygon(mut ctx: Context, ref points: List[Point2D]) raises:
 def ellipse_path(
     mut ctx: Context, cx: Float64, cy: Float64, rx: Float64, ry: Float64
 ) raises:
+    """Create a closed ellipse path centered at `(cx, cy)`."""
     ctx.new_path()
     ctx.save()
     ctx.translate(cx, cy)
@@ -130,6 +144,7 @@ def ellipse_path(
 def fill_ellipse(
     mut ctx: Context, cx: Float64, cy: Float64, rx: Float64, ry: Float64
 ) raises:
+    """Fill an ellipse centered at `(cx, cy)`."""
     ellipse_path(ctx, cx, cy, rx, ry)
     ctx.fill()
 
@@ -137,6 +152,7 @@ def fill_ellipse(
 def stroke_ellipse(
     mut ctx: Context, cx: Float64, cy: Float64, rx: Float64, ry: Float64
 ) raises:
+    """Stroke an ellipse centered at `(cx, cy)`."""
     ellipse_path(ctx, cx, cy, rx, ry)
     ctx.stroke()
 
@@ -144,6 +160,7 @@ def stroke_ellipse(
 def fill_rectangle(
     mut ctx: Context, x: Float64, y: Float64, width: Float64, height: Float64
 ) raises:
+    """Fill an axis-aligned rectangle."""
     ctx.rectangle(x, y, width, height)
     ctx.fill()
 
@@ -151,6 +168,7 @@ def fill_rectangle(
 def stroke_rectangle(
     mut ctx: Context, x: Float64, y: Float64, width: Float64, height: Float64
 ) raises:
+    """Stroke an axis-aligned rectangle."""
     ctx.rectangle(x, y, width, height)
     ctx.stroke()
 
@@ -163,6 +181,7 @@ def fill_rounded_rectangle(
     height: Float64,
     radius: Float64,
 ) raises:
+    """Fill a rounded rectangle."""
     rounded_rectangle_path(ctx, x, y, width, height, radius)
     ctx.fill()
 
@@ -175,6 +194,7 @@ def stroke_rounded_rectangle(
     height: Float64,
     radius: Float64,
 ) raises:
+    """Stroke a rounded rectangle."""
     rounded_rectangle_path(ctx, x, y, width, height, radius)
     ctx.stroke()
 
@@ -189,6 +209,7 @@ def draw_text(
     weight: FontWeight = FontWeight.NORMAL,
     size: Float64 = 12.0,
 ) raises:
+    """Draw text at `(x, y)` with optional font styling."""
     ctx.select_font_face(family, slant=slant, weight=weight)
     ctx.set_font_size(size)
     ctx.move_to(x, y)
@@ -198,6 +219,7 @@ def draw_text(
 def clear_rgba(
     mut ctx: Context, r: Float64, g: Float64, b: Float64, a: Float64
 ) raises:
+    """Clear the target with an explicit RGBA color."""
     ctx.save()
     ctx.set_operator(materialize[Operator.SOURCE]())
     ctx.set_source_rgba(r, g, b, a)
@@ -206,4 +228,5 @@ def clear_rgba(
 
 
 def clear(mut ctx: Context, color: Color) raises:
+    """Clear the target with a `Color` value."""
     clear_rgba(ctx, color.r, color.g, color.b, color.a)

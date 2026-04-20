@@ -1,3 +1,5 @@
+"""Internal shared helpers for Cairo status checks and allocations."""
+
 from std.ffi import c_double
 from . import _ffi as ffi
 

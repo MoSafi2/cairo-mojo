@@ -14,6 +14,9 @@ from std.subprocess import run
 from std.sys.info import CompilationTarget
 
 
+# TODO: FIX: currently there is no way to have a global handle to the cairo library. so every time we need to use cairo, we need to open the library again.
+# This if quite inefficient and we should be changed as soon as mojo supports global handles.
+
 comptime _CAIRO_LIB_ENV_VAR = "CAIRO_LIB"
 
 
@@ -48,7 +51,8 @@ def _append_linux_ldconfig_hints(mut candidates: List[String]):
     # fallback hint source; canonical leaf names should already have been tried.
     try:
         var output = run(
-            "ldconfig -p 2>/dev/null | awk '/libcairo\\.so/ { if (NF >= 1) print $1; if (NF >= 4) print $NF }'"
+            "ldconfig -p 2>/dev/null | awk '/libcairo\\.so/ { if (NF >= 1)"
+            " print $1; if (NF >= 4) print $NF }'"
         )
         _append_lines(candidates, output)
     except:
@@ -58,10 +62,16 @@ def _append_linux_ldconfig_hints(mut candidates: List[String]):
 def _append_macos_homebrew_hints(mut candidates: List[String]):
     # Optional macOS convenience for common Homebrew setups.
     try:
-        var cairo_prefix = String(run("brew --prefix cairo 2>/dev/null").strip())
+        var cairo_prefix = String(
+            run("brew --prefix cairo 2>/dev/null").strip()
+        )
         if cairo_prefix.byte_length() > 0:
-            _append_unique(candidates, String(cairo_prefix, "/lib/libcairo.2.dylib"))
-            _append_unique(candidates, String(cairo_prefix, "/lib/libcairo.dylib"))
+            _append_unique(
+                candidates, String(cairo_prefix, "/lib/libcairo.2.dylib")
+            )
+            _append_unique(
+                candidates, String(cairo_prefix, "/lib/libcairo.dylib")
+            )
     except:
         pass
 
@@ -71,7 +81,8 @@ def _append_pkg_config_hints(mut candidates: List[String], is_macos: Bool):
     # discovery mechanism, but its library directories can provide useful hints.
     try:
         var output = run(
-            "pkg-config --libs-only-L cairo 2>/dev/null | tr ' ' '\\n' | sed -n 's/^-L//p'"
+            "pkg-config --libs-only-L cairo 2>/dev/null | tr ' ' '\\n' | sed -n"
+            " 's/^-L//p'"
         )
         for directory_slice in output.split("\n"):
             var directory = String(directory_slice.strip())
@@ -79,7 +90,9 @@ def _append_pkg_config_hints(mut candidates: List[String], is_macos: Bool):
                 continue
 
             if is_macos:
-                _append_unique(candidates, String(directory, "/libcairo.2.dylib"))
+                _append_unique(
+                    candidates, String(directory, "/libcairo.2.dylib")
+                )
                 _append_unique(candidates, String(directory, "/libcairo.dylib"))
             else:
                 _append_unique(candidates, String(directory, "/libcairo.so.2"))
@@ -118,9 +131,7 @@ def discover_cairo_candidates() raises -> List[String]:
 
 
 def try_open_cairo(candidate: String) raises -> OwnedDLHandle:
-    return OwnedDLHandle(
-        candidate, RTLD.NOW | RTLD.GLOBAL | RTLD.NODELETE
-    )
+    return OwnedDLHandle(candidate, RTLD.NOW | RTLD.GLOBAL | RTLD.NODELETE)
 
 
 def resolve_cairo_library_from_candidates(
