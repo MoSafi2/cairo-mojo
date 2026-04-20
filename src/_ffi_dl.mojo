@@ -259,7 +259,7 @@ comptime cairo_user_data_key_t = _cairo_user_data_key
 
 # enum _cairo_status - underlying UINT -> c_uint (verify C ABI)
 @fieldwise_init
-struct _cairo_status(Copyable, Movable, RegisterPassable):
+struct _cairo_status(Movable, RegisterPassable, ImplicitlyCopyable):
     var value: c_uint
     comptime CAIRO_STATUS_SUCCESS = Self(c_uint(0))
     comptime CAIRO_STATUS_NO_MEMORY = Self(c_uint(1))
@@ -1269,6 +1269,15 @@ def cairo_recording_surface_ink_extents(surface: UnsafePointer[cairo_surface_t, 
 
 def cairo_recording_surface_get_extents(surface: UnsafePointer[cairo_surface_t, MutExternalOrigin], extents: UnsafePointer[cairo_rectangle_t, MutExternalOrigin]) raises -> cairo_bool_t:
     return _bindgen_dl().call["cairo_recording_surface_get_extents", c_int, UnsafePointer[cairo_surface_t, MutExternalOrigin], UnsafePointer[cairo_rectangle_t, MutExternalOrigin]](surface, extents)
+
+def cairo_pdf_surface_create(filename: UnsafePointer[c_char, ImmutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[cairo_surface_t, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_pdf_surface_create", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], c_double, c_double](filename, width_in_points, height_in_points)
+
+def cairo_pdf_surface_set_size(surface: UnsafePointer[cairo_surface_t, MutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> None:
+    _bindgen_dl().call["cairo_pdf_surface_set_size", NoneType, UnsafePointer[cairo_surface_t, MutExternalOrigin], c_double, c_double](surface, width_in_points, height_in_points)
+
+def cairo_svg_surface_create(filename: UnsafePointer[c_char, ImmutExternalOrigin], width_in_points: c_double, height_in_points: c_double) raises -> UnsafePointer[cairo_surface_t, MutExternalOrigin]:
+    return _bindgen_dl().call["cairo_svg_surface_create", UnsafePointer[_cairo_surface, MutExternalOrigin], UnsafePointer[c_char, ImmutExternalOrigin], c_double, c_double](filename, width_in_points, height_in_points)
 
 def cairo_pattern_create_raster_source(user_data: MutOpaquePointer[MutExternalOrigin], content: cairo_content_t, width: c_int, height: c_int) raises -> UnsafePointer[cairo_pattern_t, MutExternalOrigin]:
     return _bindgen_dl().call["cairo_pattern_create_raster_source", UnsafePointer[_cairo_pattern, MutExternalOrigin], MutOpaquePointer[MutExternalOrigin], cairo_content_t, c_int, c_int](user_data, content, width, height)
