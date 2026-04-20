@@ -10,6 +10,10 @@ def cairo_version_string() raises -> String:
     """Return the runtime cairo version string."""
     return String(ffi.cairo_version_string())
 
+def get_include() -> String:
+    """Return include-style import path for cairo_mojo."""
+    return "cairo_mojo"
+
 @fieldwise_init
 struct VersionInfo(Copyable, ImplicitlyCopyable, Movable):
     var major: Int
@@ -22,6 +26,24 @@ def version_info() raises -> VersionInfo:
     var minor = (value % 10000) // 100
     var micro = value % 100
     return VersionInfo(major=major, minor=minor, micro=micro)
+
+def version() raises -> Int:
+    return cairo_version()
+
+def CAIRO_VERSION() raises -> Int:
+    return cairo_version()
+
+def CAIRO_VERSION_STRING() raises -> String:
+    return cairo_version_string()
+
+def CAIRO_VERSION_MAJOR() raises -> Int:
+    return version_info().major
+
+def CAIRO_VERSION_MINOR() raises -> Int:
+    return version_info().minor
+
+def CAIRO_VERSION_MICRO() raises -> Int:
+    return version_info().micro
 
 @fieldwise_init
 struct HAS(Copyable, ImplicitlyCopyable, Movable):
@@ -36,6 +58,15 @@ struct HAS(Copyable, ImplicitlyCopyable, Movable):
     comptime MIME_SURFACE = True
     comptime USER_FONT = True
     comptime PNG_FUNCTIONS = True
+    comptime ATSUI_FONT = False
+    comptime FT_FONT = False
+    comptime GLITZ_SURFACE = False
+    comptime QUARTZ_SURFACE = False
+    comptime WIN32_FONT = False
+    comptime WIN32_SURFACE = False
+    comptime XCB_SURFACE = False
+    comptime XLIB_SURFACE = False
+    comptime DWRITE_FONT = False
 
 @fieldwise_init
 struct TAG(Copyable, ImplicitlyCopyable, Movable):
@@ -58,3 +89,6 @@ struct MIME_TYPE(Copyable, ImplicitlyCopyable, Movable):
     comptime JBIG2 = "application/x-cairo.jbig2"
     comptime JBIG2_GLOBAL = "application/x-cairo.jbig2-global"
     comptime JBIG2_GLOBAL_ID = "application/x-cairo.jbig2-global-id"
+
+comptime PDF_OUTLINE_ROOT = 0
+comptime COLOR_PALETTE_DEFAULT = 0

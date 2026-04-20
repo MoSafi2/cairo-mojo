@@ -55,6 +55,30 @@ pixi run mojo run examples/red_rectangle_png.mojo
 pixi run mojo run examples/advanced_dashboard_card_png.mojo
 ```
 
+## Examples gallery
+
+Run any example with:
+
+```bash
+pixi run mojo run examples/<example_file>.mojo
+```
+
+### libcairo-inspired examples
+
+- `examples/libcairo_arc_and_arc_negative_png.mojo` -> `libcairo_arc_and_arc_negative.png`
+- `examples/libcairo_curve_to_png.mojo` -> `libcairo_curve_to.png`
+- `examples/libcairo_clip_png.mojo` -> `libcairo_clip.png`
+- `examples/libcairo_text_extents_png.mojo` -> `libcairo_text_extents.png`
+- `examples/libcairo_fill_and_stroke_png.mojo` -> `libcairo_fill_and_stroke.png`
+
+### pycairo-snippets-inspired examples
+
+- `examples/pycairo_gradient_png.mojo` -> `pycairo_gradient.png`
+- `examples/pycairo_set_line_cap_png.mojo` -> `pycairo_set_line_cap.png`
+- `examples/pycairo_set_line_join_png.mojo` -> `pycairo_set_line_join.png`
+- `examples/pycairo_text_align_center_png.mojo` -> `pycairo_text_align_center.png`
+- `examples/pycairo_spiral_png.mojo` -> `pycairo_spiral.png`
+
 ## Basic usage
 
 ```mojo
@@ -139,3 +163,14 @@ Current toolchain target:
 
 Backend-specific APIs (for example PS/Script/Tee and platform-native surfaces) depend on
 the linked Cairo build and remain capability-gated.
+
+## Strict parity tracking
+
+- Strict checklist: `docs/pycairo_strict_parity_checklist.md`
+- New strict parity tests:
+  - `test/test_parity_constants_enums.mojo`
+  - `test/test_parity_text_patterns.mojo`
+  - `test/test_parity_surfaces_linux.mojo`
+- Linux-first backend policy:
+  - backend wrappers not present in generated FFI are exposed as capability-gated placeholders
+  - APIs return explicit unsupported errors until corresponding FFI symbols are generated

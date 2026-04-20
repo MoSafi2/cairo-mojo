@@ -5,6 +5,7 @@ from cairo_mojo import _ffi as ffi
 from cairo_mojo.cairo_enums import Extend, Filter, PatternType, Status
 from cairo_mojo.cairo_types import Matrix2D
 from cairo_mojo.common import _ensure_success
+from cairo_mojo.paths import Path
 from cairo_mojo.surfaces import (
     SurfaceLike,
 )
@@ -301,7 +302,7 @@ struct Pattern(Movable):
         _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_pattern_get_matrix")
         var out = Matrix2D.from_ffi(matrix_ptr[])
         matrix_ptr.free()
-        return out
+        return out^
 
     def set_matrix(self, matrix: Matrix2D) raises:
         """Set the pattern matrix."""
@@ -326,4 +327,108 @@ struct Pattern(Movable):
         ffi.cairo_mesh_pattern_end_patch(self._ptr)
         _ensure_success(
             ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_end_patch"
+        )
+
+    def mesh_move_to(self, x: Float64, y: Float64) raises:
+        ffi.cairo_mesh_pattern_move_to(self._ptr, c_double(x), c_double(y))
+        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_move_to")
+
+    def mesh_line_to(self, x: Float64, y: Float64) raises:
+        ffi.cairo_mesh_pattern_line_to(self._ptr, c_double(x), c_double(y))
+        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_line_to")
+
+    def mesh_curve_to(
+        self, x1: Float64, y1: Float64, x2: Float64, y2: Float64, x3: Float64, y3: Float64
+    ) raises:
+        ffi.cairo_mesh_pattern_curve_to(
+            self._ptr,
+            c_double(x1),
+            c_double(y1),
+            c_double(x2),
+            c_double(y2),
+            c_double(x3),
+            c_double(y3),
+        )
+        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_curve_to")
+
+    def mesh_set_control_point(
+        self, point_num: Int, x: Float64, y: Float64
+    ) raises:
+        ffi.cairo_mesh_pattern_set_control_point(
+            self._ptr, c_uint(point_num), c_double(x), c_double(y)
+        )
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_set_control_point"
+        )
+
+    def mesh_set_corner_color_rgba(
+        self, corner_num: Int, red: Float64, green: Float64, blue: Float64, alpha: Float64
+    ) raises:
+        ffi.cairo_mesh_pattern_set_corner_color_rgba(
+            self._ptr,
+            c_uint(corner_num),
+            c_double(red),
+            c_double(green),
+            c_double(blue),
+            c_double(alpha),
+        )
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_set_corner_color_rgba"
+        )
+
+    def color_stop_count(self) raises -> Int:
+        var count_ptr = alloc[c_int](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_color_stop_count(self._ptr, count_ptr),
+            "cairo_pattern_get_color_stop_count",
+        )
+        var out = Int(count_ptr[])
+        count_ptr.free()
+        return out
+
+    def color_stop_rgba(self, index: Int) raises -> List[Float64]:
+        var offset_ptr = alloc[c_double](1)
+        var red_ptr = alloc[c_double](1)
+        var green_ptr = alloc[c_double](1)
+        var blue_ptr = alloc[c_double](1)
+        var alpha_ptr = alloc[c_double](1)
+        _ensure_success(
+            ffi.cairo_pattern_get_color_stop_rgba(
+                self._ptr,
+                c_int(index),
+                offset_ptr,
+                red_ptr,
+                green_ptr,
+                blue_ptr,
+                alpha_ptr,
+            ),
+            "cairo_pattern_get_color_stop_rgba",
+        )
+        var out: List[Float64] = [
+            Float64(offset_ptr[]),
+            Float64(red_ptr[]),
+            Float64(green_ptr[]),
+            Float64(blue_ptr[]),
+            Float64(alpha_ptr[]),
+        ]
+        offset_ptr.free()
+        red_ptr.free()
+        green_ptr.free()
+        blue_ptr.free()
+        alpha_ptr.free()
+        return out^
+
+    def mesh_patch_count(self) raises -> Int:
+        var count_ptr = alloc[c_uint](1)
+        _ensure_success(
+            ffi.cairo_mesh_pattern_get_patch_count(self._ptr, count_ptr),
+            "cairo_mesh_pattern_get_patch_count",
+        )
+        var out = Int(count_ptr[])
+        count_ptr.free()
+        return out
+
+    def mesh_patch_path(self, patch_num: Int) raises -> Path:
+        return Path.unsafe_from_owned_raw(
+            ffi.cairo_mesh_pattern_get_path(self._ptr, c_uint(patch_num))
         )

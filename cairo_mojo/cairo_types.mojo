@@ -1,6 +1,6 @@
 """Value types shared across Cairo contexts, fonts, and surfaces."""
 
-from std.ffi import c_double, c_int
+from std.ffi import c_double, c_int, c_ulong
 from . import _ffi as ffi
 
 
@@ -144,6 +144,11 @@ struct Glyph(Copyable, ImplicitlyCopyable, Movable):
     def from_ffi(glyph: ffi.cairo_glyph_t) -> Self:
         return Self(index=Int(glyph.index), x=Float64(glyph.x), y=Float64(glyph.y))
 
+    def to_ffi(self) -> ffi.cairo_glyph_t:
+        return ffi.cairo_glyph_t(
+            index=c_ulong(self.index), x=c_double(self.x), y=c_double(self.y)
+        )
+
 
 @fieldwise_init
 struct TextCluster(Copyable, ImplicitlyCopyable, Movable):
@@ -156,6 +161,12 @@ struct TextCluster(Copyable, ImplicitlyCopyable, Movable):
         return Self(
             num_bytes=Int(cluster.num_bytes),
             num_glyphs=Int(cluster.num_glyphs),
+        )
+
+    def to_ffi(self) -> ffi.cairo_text_cluster_t:
+        return ffi.cairo_text_cluster_t(
+            num_bytes=c_int(self.num_bytes),
+            num_glyphs=c_int(self.num_glyphs),
         )
 
 

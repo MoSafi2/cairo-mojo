@@ -72,3 +72,83 @@ struct Region(Movable):
         )
         rect_ptr.free()
         return overlap
+
+    def copy(self) raises -> Self:
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_region_copy(
+                self._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                    ImmutExternalOrigin
+                ]()
+            )
+        )
+
+    def __init__(
+        out self,
+        *,
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_region_t, MutExternalOrigin],
+    ) raises:
+        self._ptr = unsafe_raw_ptr
+        _ensure_success(ffi.cairo_region_status(self._ptr), "cairo_region")
+
+    def equal(self, ref other: Self) raises -> Bool:
+        return (
+            Int(
+                ffi.cairo_region_equal(
+                    self._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                        ImmutExternalOrigin
+                    ](),
+                    other._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                        ImmutExternalOrigin
+                    ](),
+                )
+            )
+            != 0
+        )
+
+    def translate(self, dx: Int, dy: Int) raises:
+        ffi.cairo_region_translate(self._ptr, c_int(dx), c_int(dy))
+        _ensure_success(ffi.cairo_region_status(self._ptr), "cairo_region_translate")
+
+    def union(self, ref other: Self) raises:
+        _ensure_success(
+            ffi.cairo_region_union(
+                self._ptr,
+                other._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                    ImmutExternalOrigin
+                ](),
+            ),
+            "cairo_region_union",
+        )
+
+    def intersect(self, ref other: Self) raises:
+        _ensure_success(
+            ffi.cairo_region_intersect(
+                self._ptr,
+                other._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                    ImmutExternalOrigin
+                ](),
+            ),
+            "cairo_region_intersect",
+        )
+
+    def subtract(self, ref other: Self) raises:
+        _ensure_success(
+            ffi.cairo_region_subtract(
+                self._ptr,
+                other._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                    ImmutExternalOrigin
+                ](),
+            ),
+            "cairo_region_subtract",
+        )
+
+    def xor(self, ref other: Self) raises:
+        _ensure_success(
+            ffi.cairo_region_xor(
+                self._ptr,
+                other._ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                    ImmutExternalOrigin
+                ](),
+            ),
+            "cairo_region_xor",
+        )

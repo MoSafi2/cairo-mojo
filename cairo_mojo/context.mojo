@@ -1012,6 +1012,78 @@ struct Context(Movable):
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_show_glyphs")
         glyph_ptr.free()
 
+    def show_text_glyphs(
+        self,
+        text: String,
+        ref glyphs: List[Glyph],
+        ref clusters: List[TextCluster],
+        cluster_flags: TextClusterFlags = TextClusterFlags.NONE,
+    ) raises:
+        var glyph_count = len(glyphs)
+        var cluster_count = len(clusters)
+        var glyph_ptr = alloc[ffi.cairo_glyph_t](glyph_count)
+        var cluster_ptr = alloc[ffi.cairo_text_cluster_t](cluster_count)
+        for i in range(glyph_count):
+            glyph_ptr[i] = ffi.cairo_glyph_t(
+                index=c_ulong(glyphs[i].index),
+                x=c_double(glyphs[i].x),
+                y=c_double(glyphs[i].y),
+            )
+        for i in range(cluster_count):
+            cluster_ptr[i] = ffi.cairo_text_cluster_t(
+                num_bytes=c_int(clusters[i].num_bytes),
+                num_glyphs=c_int(clusters[i].num_glyphs),
+            )
+        var text_mut = text.copy()
+        var text_ptr = (
+            text_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_show_text_glyphs(
+            self.ptr,
+            text_ptr,
+            c_int(text.byte_length()),
+            glyph_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            c_int(glyph_count),
+            cluster_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            c_int(cluster_count),
+            cluster_flags._to_ffi(),
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_show_text_glyphs")
+        glyph_ptr.free()
+        cluster_ptr.free()
+
+    def glyph_extents(self, ref glyphs: List[Glyph]) raises -> TextExtents:
+        var count = len(glyphs)
+        if count == 0:
+            return TextExtents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        var glyph_ptr = alloc[ffi.cairo_glyph_t](count)
+        for i in range(count):
+            glyph_ptr[i] = ffi.cairo_glyph_t(
+                index=c_ulong(glyphs[i].index),
+                x=c_double(glyphs[i].x),
+                y=c_double(glyphs[i].y),
+            )
+        var extents_ptr = alloc[ffi.cairo_text_extents_t](1)
+        ffi.cairo_glyph_extents(
+            self.ptr,
+            glyph_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            c_int(count),
+            extents_ptr,
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_glyph_extents")
+        var out = TextExtents.from_ffi(extents_ptr[])
+        glyph_ptr.free()
+        extents_ptr.free()
+        return out
+
     def glyph_path(self, ref glyphs: List[Glyph]) raises:
         var count = len(glyphs)
         if count == 0:

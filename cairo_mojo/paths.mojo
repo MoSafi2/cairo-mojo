@@ -2,8 +2,15 @@
 
 from std.ffi import c_int
 from . import _ffi as ffi
-from .cairo_enums import Status
+from .cairo_enums import PathDataType, Status
+from .cairo_types import Point2D
 from .common import _ensure_success
+
+@fieldwise_init
+struct PathSegment(Movable):
+    var kind: PathDataType
+    var points: List[Point2D]
+
 
 struct Path(Movable):
     """Owns a copied cairo path object."""
@@ -28,6 +35,24 @@ struct Path(Movable):
 
     def num_data(self) -> Int:
         return Int(self._ptr[].num_data)
+
+    def segments(self) -> List[PathSegment]:
+        var out: List[PathSegment] = []
+        var i = 0
+        while i < self.num_data():
+            var header = rebind[ffi.cairo_path_data_t__anon_struct_1](self._ptr[].data[i])
+            var kind = PathDataType._from_ffi(header.type)
+            var points: List[Point2D] = []
+            if kind._value == PathDataType.MOVE_TO._value or kind._value == PathDataType.LINE_TO._value:
+                var p1 = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + 1])
+                points.append(Point2D(x=Float64(p1.x), y=Float64(p1.y)))
+            elif kind._value == PathDataType.CURVE_TO._value:
+                for j in range(1, 4):
+                    var p = rebind[ffi.cairo_path_data_t__anon_struct_2](self._ptr[].data[i + j])
+                    points.append(Point2D(x=Float64(p.x), y=Float64(p.y)))
+            out.append(PathSegment(kind=kind, points=points^))
+            i = i + Int(header.length)
+        return out
 
     def unsafe_raw_ptr(self) -> UnsafePointer[ffi.cairo_path_t, MutExternalOrigin]:
         return self._ptr

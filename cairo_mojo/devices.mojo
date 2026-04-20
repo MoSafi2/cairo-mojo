@@ -44,3 +44,14 @@ struct Device(Movable):
     def finish(self) raises:
         ffi.cairo_device_finish(self._ptr)
         _ensure_success(ffi.cairo_device_status(self._ptr), "cairo_device_finish")
+
+
+struct ScriptDevice(Movable):
+    """Linux-first parity placeholder for script devices."""
+    var _device: Device
+
+    def __init__(out self, filename: String) raises:
+        _ = filename
+        raise Error(
+            "ScriptDevice is not available in current generated FFI; enable cairo script backend bindings."
+        )

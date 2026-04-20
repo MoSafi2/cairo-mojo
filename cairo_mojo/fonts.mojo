@@ -1,6 +1,6 @@
 """Font face, scaled font, and font option wrappers for Cairo text rendering."""
 
-from std.ffi import c_double
+from std.ffi import c_double, c_int, c_uint
 from . import _ffi as ffi
 from .cairo_enums import (
     Antialias,
@@ -8,9 +8,17 @@ from .cairo_enums import (
     HintStyle,
     Status,
     SubpixelOrder,
+    TextClusterFlags,
 )
-from .cairo_types import FontExtents, Matrix2D, TextExtents
+from .cairo_types import FontExtents, Glyph, Matrix2D, TextCluster, TextExtents
 from .common import _ensure_success
+
+
+@fieldwise_init
+struct TextToGlyphsResult(Movable):
+    var glyphs: List[Glyph]
+    var clusters: List[TextCluster]
+    var cluster_flags: TextClusterFlags
 
 
 struct FontOptions(Movable):
@@ -235,6 +243,60 @@ struct ScaledFont(Movable):
         var out = TextExtents.from_ffi(extents_ptr[])
         extents_ptr.free()
         return out
+
+    def text_to_glyphs(
+        self, x: Float64, y: Float64, text: String
+    ) raises -> TextToGlyphsResult:
+        var text_mut = text.copy()
+        var text_ptr = (
+            text_mut.as_c_string_slice().unsafe_ptr().unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        var glyphs_ptr_ptr = alloc[UnsafePointer[ffi.cairo_glyph_t, MutExternalOrigin]](1)
+        var num_glyphs_ptr = alloc[c_int](1)
+        var clusters_ptr_ptr = alloc[UnsafePointer[ffi.cairo_text_cluster_t, MutExternalOrigin]](1)
+        var num_clusters_ptr = alloc[c_int](1)
+        var flags_ptr = alloc[ffi.cairo_text_cluster_flags_t](1)
+        glyphs_ptr_ptr[] = UnsafePointer[ffi.cairo_glyph_t, MutExternalOrigin]()
+        num_glyphs_ptr[] = c_int(0)
+        clusters_ptr_ptr[] = UnsafePointer[ffi.cairo_text_cluster_t, MutExternalOrigin]()
+        num_clusters_ptr[] = c_int(0)
+        flags_ptr[] = ffi.cairo_text_cluster_flags_t(c_uint(0))
+        _ensure_success(
+            ffi.cairo_scaled_font_text_to_glyphs(
+                self._ptr,
+                c_double(x),
+                c_double(y),
+                text_ptr,
+                c_int(text.byte_length()),
+                glyphs_ptr_ptr,
+                num_glyphs_ptr,
+                clusters_ptr_ptr,
+                num_clusters_ptr,
+                flags_ptr,
+            ),
+            "cairo_scaled_font_text_to_glyphs",
+        )
+        var glyphs: List[Glyph] = []
+        for i in range(Int(num_glyphs_ptr[])):
+            glyphs.append(Glyph.from_ffi(glyphs_ptr_ptr[][i]))
+        var clusters: List[TextCluster] = []
+        for i in range(Int(num_clusters_ptr[])):
+            clusters.append(TextCluster.from_ffi(clusters_ptr_ptr[][i]))
+        if Int(num_glyphs_ptr[]) > 0:
+            ffi.cairo_glyph_free(glyphs_ptr_ptr[])
+        if Int(num_clusters_ptr[]) > 0:
+            ffi.cairo_text_cluster_free(clusters_ptr_ptr[])
+        var out = TextToGlyphsResult(
+            glyphs=glyphs^,
+            clusters=clusters^,
+            cluster_flags=TextClusterFlags._from_ffi(flags_ptr[]),
+        )
+        glyphs_ptr_ptr.free()
+        num_glyphs_ptr.free()
+        clusters_ptr_ptr.free()
+        num_clusters_ptr.free()
+        flags_ptr.free()
+        return out^
 
     def unsafe_raw_ptr(self) -> UnsafePointer[ffi.cairo_scaled_font_t, MutExternalOrigin]:
         return self._ptr

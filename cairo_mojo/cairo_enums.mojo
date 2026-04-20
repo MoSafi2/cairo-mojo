@@ -375,3 +375,86 @@ struct SurfaceObserverMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassab
     var _value: Int
     comptime NORMAL = Self(0)
     comptime RECORD_OPERATIONS = Self(1)
+
+
+@fieldwise_init
+struct PSLevel(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime LEVEL_2 = Self(0)
+    comptime LEVEL_3 = Self(1)
+
+
+@fieldwise_init
+struct PDFVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime V1_4 = Self(0)
+    comptime V1_5 = Self(1)
+    comptime V1_6 = Self(2)
+    comptime V1_7 = Self(3)
+
+
+@fieldwise_init
+struct SVGVersion(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime V1_1 = Self(0)
+    comptime V1_2 = Self(1)
+
+
+@fieldwise_init
+struct ScriptMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime ASCII = Self(0)
+    comptime BINARY = Self(1)
+
+
+@fieldwise_init
+struct PDFOutlineFlags(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime OPEN = Self(1)
+    comptime BOLD = Self(2)
+    comptime ITALIC = Self(4)
+
+
+@fieldwise_init
+struct SVGUnit(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime USER = Self(0)
+    comptime EM = Self(1)
+    comptime EX = Self(2)
+    comptime PX = Self(3)
+    comptime IN = Self(4)
+    comptime CM = Self(5)
+    comptime MM = Self(6)
+    comptime PT = Self(7)
+    comptime PC = Self(8)
+    comptime PERCENT = Self(9)
+
+
+@fieldwise_init
+struct PDFMetadata(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime TITLE = Self(0)
+    comptime AUTHOR = Self(1)
+    comptime SUBJECT = Self(2)
+    comptime KEYWORDS = Self(3)
+    comptime CREATOR = Self(4)
+    comptime CREATE_DATE = Self(5)
+    comptime MOD_DATE = Self(6)
+
+
+@fieldwise_init
+struct ColorMode(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime DEFAULT = Self(0)
+    comptime RGB = Self(1)
+    comptime GRAY = Self(2)
+
+
+@fieldwise_init
+struct Dither(Copyable, ImplicitlyCopyable, Movable, RegisterPassable):
+    var _value: Int
+    comptime DEFAULT = Self(0)
+    comptime NONE = Self(1)
+    comptime FAST = Self(2)
+    comptime GOOD = Self(3)
+    comptime BEST = Self(4)

@@ -608,3 +608,64 @@ struct RecordingSurface(Movable, SurfaceLike):
     def as_surface(self) raises -> Surface:
         """View this recording surface as the generic `Surface` wrapper."""
         return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())
+
+
+struct PSSurface(Movable, SurfaceLike):
+    var _surface: Surface
+
+    def __init__(
+        out self, filename: String, width_points: Float64, height_points: Float64
+    ) raises:
+        _ = filename
+        _ = width_points
+        _ = height_points
+        raise Error(
+            "PSSurface is not available in current generated FFI; enable cairo PS backend bindings."
+        )
+
+    def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
+        return self._surface.unsafe_raw_surface_ptr()
+
+
+struct ScriptSurface(Movable, SurfaceLike):
+    var _surface: Surface
+
+    def __init__(out self) raises:
+        raise Error(
+            "ScriptSurface is not available in current generated FFI; enable cairo script backend bindings."
+        )
+
+    def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
+        return self._surface.unsafe_raw_surface_ptr()
+
+
+struct TeeSurface(Movable, SurfaceLike):
+    var _surface: Surface
+
+    def __init__(out self) raises:
+        raise Error(
+            "TeeSurface is not available in current generated FFI; enable cairo tee backend bindings."
+        )
+
+    def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
+        return self._surface.unsafe_raw_surface_ptr()
+
+
+struct XCBSurface(Movable, SurfaceLike):
+    var _surface: Surface
+
+    def __init__(out self) raises:
+        raise Error("XCBSurface deferred: requires platform-specific constructor inputs.")
+
+    def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
+        return self._surface.unsafe_raw_surface_ptr()
+
+
+struct XlibSurface(Movable, SurfaceLike):
+    var _surface: Surface
+
+    def __init__(out self) raises:
+        raise Error("XlibSurface deferred: requires platform-specific constructor inputs.")
+
+    def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
+        return self._surface.unsafe_raw_surface_ptr()

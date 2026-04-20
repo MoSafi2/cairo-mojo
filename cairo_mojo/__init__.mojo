@@ -9,12 +9,19 @@ from .cairo_core import (
     ImageSurface,
     Path,
     PDFSurface,
+    PSSurface,
     Pattern,
     Region,
     RecordingSurface,
     ScaledFont,
+    ScriptDevice,
+    ScriptSurface,
     Surface,
     SVGSurface,
+    TeeSurface,
+    TextToGlyphsResult,
+    XCBSurface,
+    XlibSurface,
 )
 from .cairo_convenience import (
     circle_path,
@@ -40,12 +47,21 @@ from .cairo_convenience import (
     stroke_rounded_rectangle,
 )
 from .cairo_constants import (
+    CAIRO_VERSION,
+    CAIRO_VERSION_MAJOR,
+    CAIRO_VERSION_MICRO,
+    CAIRO_VERSION_MINOR,
+    CAIRO_VERSION_STRING,
+    COLOR_PALETTE_DEFAULT,
     HAS,
     MIME_TYPE,
+    PDF_OUTLINE_ROOT,
     TAG,
     VersionInfo,
     cairo_version,
     cairo_version_string,
+    get_include,
+    version,
     version_info,
 )
 from .cairo_enums import *  # noqa: F401,F403
