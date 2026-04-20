@@ -22,41 +22,41 @@ struct Surface(Movable, SurfaceLike):
     `Surface` manages a reference-counted Cairo surface pointer and provides
     backend-agnostic lifecycle and IO operations.
     """
-    var ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
+    var _ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
 
     def __init__(
         out self,
         *,
-        raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin],
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin],
     ) raises:
-        self.ptr = raw_ptr
+        self._ptr = unsafe_raw_ptr
         _ensure_success(
-            ffi.cairo_surface_status(self.ptr), "cairo_surface_create"
+            ffi.cairo_surface_status(self._ptr), "cairo_surface_create"
         )
 
     @staticmethod
-    def from_owned_raw(
-        raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
+    def unsafe_from_owned_raw(
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
     ) raises -> Self:
         """Wrap an owned raw Cairo surface pointer.
 
         Args:
-            raw_ptr: Owned pointer whose reference count is now managed by `Self`.
+            unsafe_raw_ptr: Owned pointer whose reference count is now managed by `Self`.
 
         Returns:
-            Surface: Managed wrapper around `raw_ptr`.
+            Surface: Managed wrapper around `unsafe_raw_ptr`.
         """
-        return Self(raw_ptr=raw_ptr)
+        return Self(unsafe_raw_ptr=unsafe_raw_ptr)
 
     def __del__(deinit self):
         try:
-            ffi.cairo_surface_destroy(self.ptr)
+            ffi.cairo_surface_destroy(self._ptr)
         except _:
             pass
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this surface."""
-        return Status._from_ffi(ffi.cairo_surface_status(self.ptr))
+        return Status._from_ffi(ffi.cairo_surface_status(self._ptr))
 
     def flush(self) raises:
         """Flush pending drawing operations to the backend.
@@ -64,16 +64,16 @@ struct Surface(Movable, SurfaceLike):
         Raises:
             Error: If the backend reports a surface failure.
         """
-        ffi.cairo_surface_flush(self.ptr)
+        ffi.cairo_surface_flush(self._ptr)
         _ensure_success(
-            ffi.cairo_surface_status(self.ptr), "cairo_surface_flush"
+            ffi.cairo_surface_status(self._ptr), "cairo_surface_flush"
         )
 
     def mark_dirty(self) raises:
         """Mark the entire surface contents as modified."""
-        ffi.cairo_surface_mark_dirty(self.ptr)
+        ffi.cairo_surface_mark_dirty(self._ptr)
         _ensure_success(
-            ffi.cairo_surface_status(self.ptr), "cairo_surface_mark_dirty"
+            ffi.cairo_surface_status(self._ptr), "cairo_surface_mark_dirty"
         )
 
     def mark_dirty_rectangle(
@@ -81,10 +81,10 @@ struct Surface(Movable, SurfaceLike):
     ) raises:
         """Mark a rectangular region as modified."""
         ffi.cairo_surface_mark_dirty_rectangle(
-            self.ptr, c_int(x), c_int(y), c_int(width), c_int(height)
+            self._ptr, c_int(x), c_int(y), c_int(width), c_int(height)
         )
         _ensure_success(
-            ffi.cairo_surface_status(self.ptr),
+            ffi.cairo_surface_status(self._ptr),
             "cairo_surface_mark_dirty_rectangle",
         )
 
@@ -104,7 +104,7 @@ struct Surface(Movable, SurfaceLike):
             .unsafe_origin_cast[ImmutExternalOrigin]()
         )
         _ensure_success(
-            ffi.cairo_surface_write_to_png(self.ptr, filename_ptr),
+            ffi.cairo_surface_write_to_png(self._ptr, filename_ptr),
             "cairo_surface_write_to_png",
         )
 
@@ -116,36 +116,38 @@ struct Surface(Movable, SurfaceLike):
         Raises:
             Error: If Cairo reports a finish failure.
         """
-        ffi.cairo_surface_finish(self.ptr)
+        ffi.cairo_surface_finish(self._ptr)
         _ensure_success(
-            ffi.cairo_surface_status(self.ptr), "cairo_surface_finish"
+            ffi.cairo_surface_status(self._ptr), "cairo_surface_finish"
         )
 
     def content(self) raises -> Content:
         """Return the content type supported by this surface."""
-        return Content._from_ffi(ffi.cairo_surface_get_content(self.ptr))
+        return Content._from_ffi(ffi.cairo_surface_get_content(self._ptr))
 
     @staticmethod
-    def from_borrowed(
-        borrowed: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
+    def unsafe_from_borrowed(
+        unsafe_borrowed_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
     ) raises -> Self:
         """Create a managed reference from a borrowed surface pointer.
 
         This increments the Cairo reference count before wrapping.
         """
-        return Self(raw_ptr=ffi.cairo_surface_reference(borrowed))
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_surface_reference(unsafe_borrowed_ptr)
+        )
 
     def unsafe_raw_surface_ptr(
         self,
     ) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self.ptr
+        return self._ptr
 
     def unsafe_raw_ptr(
         self,
     ) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self.ptr
+        return self._ptr
 
 
 struct ImageSurface(Movable, SurfaceLike):
@@ -167,15 +169,17 @@ struct ImageSurface(Movable, SurfaceLike):
         format: Format = Format.ARGB32,
     ) raises:
         self._surface = Surface(
-            raw_ptr=ffi.cairo_image_surface_create(format._to_ffi(), c_int(width), c_int(height))
+            unsafe_raw_ptr=ffi.cairo_image_surface_create(
+                format._to_ffi(), c_int(width), c_int(height)
+            )
         )
 
     def __init__(
         out self,
         *,
-        raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin],
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin],
     ) raises:
-        self._surface = Surface(raw_ptr=raw_ptr)
+        self._surface = Surface(unsafe_raw_ptr=unsafe_raw_ptr)
 
     @staticmethod
     def create_from_png(filename: String) raises -> Self:
@@ -196,7 +200,9 @@ struct ImageSurface(Movable, SurfaceLike):
             .unsafe_ptr()
             .unsafe_origin_cast[ImmutExternalOrigin]()
         )
-        return Self(raw_ptr=ffi.cairo_image_surface_create_from_png(filename_ptr))
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_image_surface_create_from_png(filename_ptr)
+        )
 
     def create_similar_image(
         self,
@@ -218,14 +224,14 @@ struct ImageSurface(Movable, SurfaceLike):
             Error: If allocation fails.
         """
         return Self(
-            raw_ptr=ffi.cairo_surface_create_similar_image(
-                self._surface.ptr, format._to_ffi(), c_int(width), c_int(height)
+            unsafe_raw_ptr=ffi.cairo_surface_create_similar_image(
+                self._surface._ptr, format._to_ffi(), c_int(width), c_int(height)
             )
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self._surface.ptr
+        return self._surface._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this image surface."""
@@ -237,7 +243,7 @@ struct ImageSurface(Movable, SurfaceLike):
         Returns:
             Int: Width in pixels.
         """
-        return Int(ffi.cairo_image_surface_get_width(self._surface.ptr))
+        return Int(ffi.cairo_image_surface_get_width(self._surface._ptr))
 
     def height(self) raises -> Int:
         """Return the image height in pixels.
@@ -245,11 +251,11 @@ struct ImageSurface(Movable, SurfaceLike):
         Returns:
             Int: Height in pixels.
         """
-        return Int(ffi.cairo_image_surface_get_height(self._surface.ptr))
+        return Int(ffi.cairo_image_surface_get_height(self._surface._ptr))
 
     def format(self) raises -> Format:
         """Return the pixel format of the image surface."""
-        return Format._from_ffi(ffi.cairo_image_surface_get_format(self._surface.ptr))
+        return Format._from_ffi(ffi.cairo_image_surface_get_format(self._surface._ptr))
 
     def stride(self) raises -> Int:
         """Return row stride in bytes.
@@ -257,7 +263,7 @@ struct ImageSurface(Movable, SurfaceLike):
         Returns:
             Int: Number of bytes between row starts.
         """
-        return Int(ffi.cairo_image_surface_get_stride(self._surface.ptr))
+        return Int(ffi.cairo_image_surface_get_stride(self._surface._ptr))
 
     def flush(self) raises:
         """Flush pending drawing operations."""
@@ -285,7 +291,7 @@ struct ImageSurface(Movable, SurfaceLike):
         """Return the content type of the image surface."""
         return self._surface.content()
 
-    def data_ptr(self) raises -> UnsafePointer[c_uchar, MutExternalOrigin]:
+    def unsafe_data_ptr(self) raises -> UnsafePointer[c_uchar, MutExternalOrigin]:
         """Return a mutable pointer to image pixel data.
 
         Returns:
@@ -295,7 +301,7 @@ struct ImageSurface(Movable, SurfaceLike):
 
     def as_surface(self) raises -> Surface:
         """View this image surface as the generic `Surface` wrapper."""
-        return Surface.from_borrowed(self._surface.unsafe_raw_surface_ptr())
+        return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())
 
 
 struct PDFSurface(Movable, SurfaceLike):
@@ -325,14 +331,14 @@ struct PDFSurface(Movable, SurfaceLike):
             .unsafe_origin_cast[ImmutExternalOrigin]()
         )
         self._surface = Surface(
-            raw_ptr=ffi.cairo_pdf_surface_create(
+            unsafe_raw_ptr=ffi.cairo_pdf_surface_create(
                 filename_ptr, c_double(width_points), c_double(height_points)
             )
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self._surface.ptr
+        return self._surface._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this PDF surface."""
@@ -349,7 +355,7 @@ struct PDFSurface(Movable, SurfaceLike):
     def set_size(self, width_points: Float64, height_points: Float64) raises:
         """Resize the current PDF page in points."""
         ffi.cairo_pdf_surface_set_size(
-            self._surface.ptr, c_double(width_points), c_double(height_points)
+            self._surface._ptr, c_double(width_points), c_double(height_points)
         )
         _ensure_success(
             ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()), "cairo_pdf_surface_set_size"
@@ -357,7 +363,7 @@ struct PDFSurface(Movable, SurfaceLike):
 
     def as_surface(self) raises -> Surface:
         """View this PDF surface as the generic `Surface` wrapper."""
-        return Surface.from_borrowed(self._surface.unsafe_raw_surface_ptr())
+        return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())
 
 
 struct SVGSurface(Movable, SurfaceLike):
@@ -387,14 +393,14 @@ struct SVGSurface(Movable, SurfaceLike):
             .unsafe_origin_cast[ImmutExternalOrigin]()
         )
         self._surface = Surface(
-            raw_ptr=ffi.cairo_svg_surface_create(
+            unsafe_raw_ptr=ffi.cairo_svg_surface_create(
                 filename_ptr, c_double(width_points), c_double(height_points)
             )
         )
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self._surface.ptr
+        return self._surface._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this SVG surface."""
@@ -410,7 +416,7 @@ struct SVGSurface(Movable, SurfaceLike):
 
     def as_surface(self) raises -> Surface:
         """View this SVG surface as the generic `Surface` wrapper."""
-        return Surface.from_borrowed(self._surface.unsafe_raw_surface_ptr())
+        return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())
 
 
 struct RecordingSurface(Movable, SurfaceLike):
@@ -450,14 +456,14 @@ struct RecordingSurface(Movable, SurfaceLike):
                 .unsafe_origin_cast[ImmutExternalOrigin]()
             )
         self._surface = Surface(
-            raw_ptr=ffi.cairo_recording_surface_create(content._to_ffi(), extents_arg)
+            unsafe_raw_ptr=ffi.cairo_recording_surface_create(content._to_ffi(), extents_arg)
         )
         if bounded:
             extents_ptr.free()
 
     def unsafe_raw_surface_ptr(self) -> UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo surface pointer."""
-        return self._surface.ptr
+        return self._surface._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this recording surface."""
@@ -486,7 +492,7 @@ struct RecordingSurface(Movable, SurfaceLike):
         var height_ptr = UnsafePointer[c_double, MutExternalOrigin]()
         _alloc_double_quad(x0_ptr, y0_ptr, width_ptr, height_ptr)
         ffi.cairo_recording_surface_ink_extents(
-            self._surface.ptr, x0_ptr, y0_ptr, width_ptr, height_ptr
+            self._surface._ptr, x0_ptr, y0_ptr, width_ptr, height_ptr
         )
         _ensure_success(
             ffi.cairo_surface_status(self._surface.unsafe_raw_surface_ptr()),
@@ -515,7 +521,11 @@ struct RecordingSurface(Movable, SurfaceLike):
         """
         var extents_ptr = alloc[ffi.cairo_rectangle_t](1)
         var has_extents = (
-            Int(ffi.cairo_recording_surface_get_extents(self._surface.ptr, extents_ptr))
+            Int(
+                ffi.cairo_recording_surface_get_extents(
+                    self._surface._ptr, extents_ptr
+                )
+            )
             != 0
         )
         _ensure_success(
@@ -537,4 +547,4 @@ struct RecordingSurface(Movable, SurfaceLike):
 
     def as_surface(self) raises -> Surface:
         """View this recording surface as the generic `Surface` wrapper."""
-        return Surface.from_borrowed(self._surface.unsafe_raw_surface_ptr())
+        return Surface.unsafe_from_borrowed(self._surface.unsafe_raw_surface_ptr())

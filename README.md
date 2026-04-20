@@ -2,7 +2,7 @@
 
 Mojo bindings and high-level wrappers for Cairo (`libcairo`) with:
 
-- low-level FFI bindings in `cairo_mojo/_ffi.mojo` 
+- low-level FFI bindings in `cairo_mojo/_ffi.mojo`
 - runtime library resolution helpers in `cairo_mojo/cairo_runtime.mojo`
 - typed high-level API in `cairo_mojo/cairo_core.mojo`, `cairo_mojo/cairo_enums.mojo`, `cairo_mojo/cairo_types.mojo`, and `cairo_mojo/cairo_convenience.mojo`
 
@@ -42,6 +42,14 @@ Run it with:
 ```bash
 pixi run mojo run simple_example.mojo
 ```
+
+## Safety model
+
+`cairo_mojo` is safe-by-default at the wrapper level:
+
+- standard drawing workflows should use `Context`, `ImageSurface`, `Pattern`, and convenience helpers
+- most users should never need to construct or pass raw Cairo pointers
+- low-level pointer interop is available only through explicitly named `unsafe_*` APIs
 
 ## Build Conda package
 

@@ -3,7 +3,14 @@ from cairo_mojo.cairo_runtime import ensure_cairo_loader_handle
 from std.ffi import OwnedDLHandle
 from std.testing import TestSuite, assert_equal, assert_true
 
-from cairo_mojo.cairo_core import Context, ImageSurface, PDFSurface, Pattern, RecordingSurface, SVGSurface
+from cairo_mojo.cairo_core import (
+    Context,
+    ImageSurface,
+    PDFSurface,
+    Pattern,
+    RecordingSurface,
+    SVGSurface,
+)
 from cairo_mojo.cairo_enums import (
     Antialias,
     Content,
@@ -488,6 +495,28 @@ def test_recording_surface_extents_and_context_target() raises:
         ._to_ffi()
         .value,
     )
+    _ = handle
+
+
+def test_explicit_unsafe_interop_entrypoints() raises:
+    var handle = _ensure_cairo_loaded()
+    var image = ImageSurface(width=20, height=20)
+    var raw_surface = image.unsafe_raw_surface_ptr()
+    var raw_pixels = image.unsafe_data_ptr()
+    var pattern = Pattern.unsafe_create_for_surface_ptr(raw_surface)
+    var raw_pattern = pattern.unsafe_raw_ptr()
+
+    assert_equal(
+        image.status()._to_ffi().value,
+        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
+    )
+    assert_equal(
+        pattern.status()._to_ffi().value,
+        Status._from_ffi(ffi.cairo_status_t.CAIRO_STATUS_SUCCESS)._to_ffi().value,
+    )
+    assert_true(Int(raw_surface) != 0)
+    assert_true(Int(raw_pixels) != 0)
+    assert_true(Int(raw_pattern) != 0)
     _ = handle
 
 

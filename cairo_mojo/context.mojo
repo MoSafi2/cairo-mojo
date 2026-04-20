@@ -35,16 +35,16 @@ struct ContextStateGuard(Movable):
     This guard snapshots the current Cairo graphics state on construction and
     restores it when the guard is dropped, unless `dismiss()` is called.
     """
-    var ctx_ptr: UnsafePointer[ffi.cairo_t, MutExternalOrigin]
+    var _ctx_ptr: UnsafePointer[ffi.cairo_t, MutExternalOrigin]
     var active: Bool
 
     def __init__(
-        out self, ctx_ptr: UnsafePointer[ffi.cairo_t, MutExternalOrigin]
+        out self, unsafe_ctx_ptr: UnsafePointer[ffi.cairo_t, MutExternalOrigin]
     ) raises:
-        self.ctx_ptr = ctx_ptr
+        self._ctx_ptr = unsafe_ctx_ptr
         self.active = True
-        ffi.cairo_save(self.ctx_ptr)
-        _ensure_success(ffi.cairo_status(self.ctx_ptr), "cairo_save")
+        ffi.cairo_save(self._ctx_ptr)
+        _ensure_success(ffi.cairo_status(self._ctx_ptr), "cairo_save")
 
     def dismiss(mut self):
         """Disable automatic restore on guard destruction.
@@ -57,7 +57,7 @@ struct ContextStateGuard(Movable):
     def __del__(deinit self):
         if self.active:
             try:
-                ffi.cairo_restore(self.ctx_ptr)
+                ffi.cairo_restore(self._ctx_ptr)
             except _:
                 pass
 
@@ -167,7 +167,7 @@ struct Context(Movable):
         Raises:
             Error: If Cairo fails while binding the pattern.
         """
-        ffi.cairo_set_source(self.ptr, pattern.ptr)
+        ffi.cairo_set_source(self.ptr, pattern.unsafe_raw_ptr())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_source")
 
     def source_pattern(self) raises -> Pattern:
@@ -177,17 +177,17 @@ struct Context(Movable):
             Pattern: Referenced source pattern.
         """
         var borrowed = ffi.cairo_get_source(self.ptr)
-        return Pattern.from_borrowed(borrowed)
+        return Pattern.unsafe_from_borrowed(borrowed)
 
     def target_surface(self) raises -> Surface:
         """Get the current target surface."""
         var borrowed = ffi.cairo_get_target(self.ptr)
-        return Surface.from_borrowed(borrowed)
+        return Surface.unsafe_from_borrowed(borrowed)
 
     def group_target_surface(self) raises -> Surface:
         """Get the current group target surface."""
         var borrowed = ffi.cairo_get_group_target(self.ptr)
-        return Surface.from_borrowed(borrowed)
+        return Surface.unsafe_from_borrowed(borrowed)
 
     def paint(self) raises:
         """Paint the current source over the entire clip region.
@@ -234,7 +234,7 @@ struct Context(Movable):
         """Pop the current group and return it as a source pattern."""
         var pattern_ptr = ffi.cairo_pop_group(self.ptr)
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_pop_group")
-        return Pattern(raw_ptr=pattern_ptr)
+        return Pattern(unsafe_raw_ptr=pattern_ptr)
 
     def pop_group_to_source(self) raises:
         """Pop the current group and set it as the source pattern."""
@@ -737,7 +737,7 @@ struct Context(Movable):
 
     def mask(self, ref pattern: Pattern) raises:
         """Mask paint operations using a pattern."""
-        ffi.cairo_mask(self.ptr, pattern.ptr)
+        ffi.cairo_mask(self.ptr, pattern.unsafe_raw_ptr())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_mask")
 
     def mask_surface[
@@ -790,7 +790,7 @@ struct Context(Movable):
 
     def set_font_options(self, ref options: FontOptions) raises:
         """Set rendering options for font rasterization."""
-        ffi.cairo_set_font_options(self.ptr, options.ptr)
+        ffi.cairo_set_font_options(self.ptr, options.unsafe_raw_ptr())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_font_options")
 
     def show_text(self, text: String) raises:
@@ -825,11 +825,11 @@ struct Context(Movable):
     def font_face(self) raises -> FontFace:
         """Return the currently selected font face."""
         var borrowed = ffi.cairo_get_font_face(self.ptr)
-        return FontFace.from_borrowed(borrowed)
+        return FontFace.unsafe_from_borrowed(borrowed)
 
     def set_font_face(self, ref font_face: FontFace) raises:
         """Set the current font face."""
-        ffi.cairo_set_font_face(self.ptr, font_face.ptr)
+        ffi.cairo_set_font_face(self.ptr, font_face.unsafe_raw_ptr())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_font_face")
 
     def text_extents(self, text: String) raises -> TextExtents:

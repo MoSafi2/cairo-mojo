@@ -20,28 +20,28 @@ struct Pattern(Movable):
     `gradient.add_color_stop_rgb(0.0, 0.1, 0.2, 0.8)`
     `gradient.add_color_stop_rgb(1.0, 0.8, 0.9, 1.0)`
     """
-    var ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+    var _ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
 
     def __init__(
         out self,
         *,
-        raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin],
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin],
     ) raises:
-        self.ptr = raw_ptr
+        self._ptr = unsafe_raw_ptr
         _ensure_success(
-            ffi.cairo_pattern_status(self.ptr), "cairo_pattern_create"
+            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_create"
         )
 
     @staticmethod
-    def from_owned_raw(
-        raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+    def unsafe_from_owned_raw(
+        unsafe_raw_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
     ) raises -> Self:
         """Wrap an owned raw Cairo pattern pointer."""
-        return Self(raw_ptr=raw_ptr)
+        return Self(unsafe_raw_ptr=unsafe_raw_ptr)
 
     def __del__(deinit self):
         try:
-            ffi.cairo_pattern_destroy(self.ptr)
+            ffi.cairo_pattern_destroy(self._ptr)
         except _:
             pass
 
@@ -58,7 +58,7 @@ struct Pattern(Movable):
             Pattern: Opaque solid-color pattern.
         """
         return Self(
-            raw_ptr=ffi.cairo_pattern_create_rgb(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_rgb(
                 c_double(r), c_double(g), c_double(b)
             )
         )
@@ -79,23 +79,25 @@ struct Pattern(Movable):
             Pattern: Alpha-aware solid-color pattern.
         """
         return Self(
-            raw_ptr=ffi.cairo_pattern_create_rgba(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_rgba(
                 c_double(r), c_double(g), c_double(b), c_double(a)
             )
         )
 
     @staticmethod
-    def create_for_surface_ptr(
-        surface: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
+    def unsafe_create_for_surface_ptr(
+        unsafe_surface_ptr: UnsafePointer[ffi.cairo_surface_t, MutExternalOrigin]
     ) raises -> Self:
         """Create a surface pattern from a raw surface pointer."""
-        return Self(raw_ptr=ffi.cairo_pattern_create_for_surface(surface))
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_for_surface(unsafe_surface_ptr)
+        )
 
     @staticmethod
     def create_for_surface[T: SurfaceLike](ref surface: T) raises -> Self:
         """Create a surface pattern from a `SurfaceLike` object."""
         return Self(
-            raw_ptr=ffi.cairo_pattern_create_for_surface(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_for_surface(
                 surface.unsafe_raw_surface_ptr()
             )
         )
@@ -116,7 +118,7 @@ struct Pattern(Movable):
             Pattern: Linear gradient pattern.
         """
         return Self(
-            raw_ptr=ffi.cairo_pattern_create_linear(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_linear(
                 c_double(x0), c_double(y0), c_double(x1), c_double(y1)
             )
         )
@@ -144,7 +146,7 @@ struct Pattern(Movable):
             Pattern: Radial gradient pattern.
         """
         return Self(
-            raw_ptr=ffi.cairo_pattern_create_radial(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_radial(
                 c_double(cx0),
                 c_double(cy0),
                 c_double(radius0),
@@ -155,25 +157,27 @@ struct Pattern(Movable):
         )
 
     @staticmethod
-    def from_borrowed(
-        borrowed: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
+    def unsafe_from_borrowed(
+        unsafe_borrowed_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
     ) raises -> Self:
         """Create a managed pattern from a borrowed pointer."""
-        return Self(raw_ptr=ffi.cairo_pattern_reference(borrowed))
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_pattern_reference(unsafe_borrowed_ptr)
+        )
 
     def unsafe_raw_ptr(
         self,
     ) -> UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]:
         """Expose the underlying raw Cairo pattern pointer."""
-        return self.ptr
+        return self._ptr
 
     def status(self) raises -> Status:
         """Return the current Cairo status for this pattern."""
-        return Status._from_ffi(ffi.cairo_pattern_status(self.ptr))
+        return Status._from_ffi(ffi.cairo_pattern_status(self._ptr))
 
     def kind(self) raises -> PatternType:
         """Return the pattern type."""
-        return PatternType._from_ffi(ffi.cairo_pattern_get_type(self.ptr))
+        return PatternType._from_ffi(ffi.cairo_pattern_get_type(self._ptr))
 
     def add_color_stop_rgb(
         self, offset: Float64, red: Float64, green: Float64, blue: Float64
@@ -190,14 +194,14 @@ struct Pattern(Movable):
             Error: If this pattern type does not accept color stops.
         """
         ffi.cairo_pattern_add_color_stop_rgb(
-            self.ptr,
+            self._ptr,
             c_double(offset),
             c_double(red),
             c_double(green),
             c_double(blue),
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self.ptr),
+            ffi.cairo_pattern_status(self._ptr),
             "cairo_pattern_add_color_stop_rgb",
         )
 
@@ -222,7 +226,7 @@ struct Pattern(Movable):
             Error: If this pattern type does not accept color stops.
         """
         ffi.cairo_pattern_add_color_stop_rgba(
-            self.ptr,
+            self._ptr,
             c_double(offset),
             c_double(red),
             c_double(green),
@@ -230,7 +234,7 @@ struct Pattern(Movable):
             c_double(alpha),
         )
         _ensure_success(
-            ffi.cairo_pattern_status(self.ptr),
+            ffi.cairo_pattern_status(self._ptr),
             "cairo_pattern_add_color_stop_rgba",
         )
 
@@ -243,9 +247,9 @@ struct Pattern(Movable):
         Raises:
             Error: If Cairo rejects the new mode.
         """
-        ffi.cairo_pattern_set_extend(self.ptr, extend._to_ffi())
+        ffi.cairo_pattern_set_extend(self._ptr, extend._to_ffi())
         _ensure_success(
-            ffi.cairo_pattern_status(self.ptr), "cairo_pattern_set_extend"
+            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_extend"
         )
 
     def set_filter(self, filter: Filter) raises:
@@ -257,15 +261,15 @@ struct Pattern(Movable):
         Raises:
             Error: If Cairo rejects the new filter.
         """
-        ffi.cairo_pattern_set_filter(self.ptr, filter._to_ffi())
+        ffi.cairo_pattern_set_filter(self._ptr, filter._to_ffi())
         _ensure_success(
-            ffi.cairo_pattern_status(self.ptr), "cairo_pattern_set_filter"
+            ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_filter"
         )
 
     def extend(self) raises -> Extend:
         """Get the current extension behavior."""
-        return Extend._from_ffi(ffi.cairo_pattern_get_extend(self.ptr))
+        return Extend._from_ffi(ffi.cairo_pattern_get_extend(self._ptr))
 
     def filter(self) raises -> Filter:
         """Get the current sampling filter."""
-        return Filter._from_ffi(ffi.cairo_pattern_get_filter(self.ptr))
+        return Filter._from_ffi(ffi.cairo_pattern_get_filter(self._ptr))
