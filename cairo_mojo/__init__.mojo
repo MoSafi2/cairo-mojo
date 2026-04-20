@@ -3,12 +3,16 @@
 from .cairo_core import (
     Context,
     ContextStateGuard,
+    Device,
     FontFace,
     FontOptions,
     ImageSurface,
+    Path,
     PDFSurface,
     Pattern,
+    Region,
     RecordingSurface,
+    ScaledFont,
     Surface,
     SVGSurface,
 )
@@ -34,6 +38,15 @@ from .cairo_convenience import (
     stroke_polyline,
     stroke_rectangle,
     stroke_rounded_rectangle,
+)
+from .cairo_constants import (
+    HAS,
+    MIME_TYPE,
+    TAG,
+    VersionInfo,
+    cairo_version,
+    cairo_version_string,
+    version_info,
 )
 from .cairo_enums import *  # noqa: F401,F403
 from .cairo_types import *  # noqa: F401,F403

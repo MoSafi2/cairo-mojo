@@ -1,6 +1,6 @@
 """Value types shared across Cairo contexts, fonts, and surfaces."""
 
-from std.ffi import c_double
+from std.ffi import c_double, c_int
 from . import _ffi as ffi
 
 
@@ -96,6 +96,67 @@ struct Extents2D(Copyable, ImplicitlyCopyable, Movable):
     var y1: Float64
     var x2: Float64
     var y2: Float64
+
+
+@fieldwise_init
+struct Rectangle(Copyable, ImplicitlyCopyable, Movable):
+    """Floating-point rectangle used by surface and path APIs."""
+    var x: Float64
+    var y: Float64
+    var width: Float64
+    var height: Float64
+
+
+@fieldwise_init
+struct RectangleInt(Copyable, ImplicitlyCopyable, Movable):
+    """Integer rectangle used by region APIs."""
+    var x: Int
+    var y: Int
+    var width: Int
+    var height: Int
+
+    @staticmethod
+    def from_ffi(rect: ffi.cairo_rectangle_int_t) -> Self:
+        return Self(
+            x=Int(rect.x),
+            y=Int(rect.y),
+            width=Int(rect.width),
+            height=Int(rect.height),
+        )
+
+    def to_ffi(self) -> ffi.cairo_rectangle_int_t:
+        return ffi.cairo_rectangle_int_t(
+            x=c_int(self.x),
+            y=c_int(self.y),
+            width=c_int(self.width),
+            height=c_int(self.height),
+        )
+
+
+@fieldwise_init
+struct Glyph(Copyable, ImplicitlyCopyable, Movable):
+    """Glyph id and placement used by low-level text APIs."""
+    var index: Int
+    var x: Float64
+    var y: Float64
+
+    @staticmethod
+    def from_ffi(glyph: ffi.cairo_glyph_t) -> Self:
+        return Self(index=Int(glyph.index), x=Float64(glyph.x), y=Float64(glyph.y))
+
+
+@fieldwise_init
+struct TextCluster(Copyable, ImplicitlyCopyable, Movable):
+    """Text-to-glyph cluster mapping information."""
+    var num_bytes: Int
+    var num_glyphs: Int
+
+    @staticmethod
+    def from_ffi(cluster: ffi.cairo_text_cluster_t) -> Self:
+        return Self(
+            num_bytes=Int(cluster.num_bytes),
+            num_glyphs=Int(cluster.num_glyphs),
+        )
 
 
 @fieldwise_init

@@ -1,8 +1,9 @@
 """Cairo pattern creation and configuration wrappers."""
 
-from std.ffi import c_double
+from std.ffi import c_double, c_int, c_uint
 from cairo_mojo import _ffi as ffi
 from cairo_mojo.cairo_enums import Extend, Filter, PatternType, Status
+from cairo_mojo.cairo_types import Matrix2D
 from cairo_mojo.common import _ensure_success
 from cairo_mojo.surfaces import (
     SurfaceLike,
@@ -157,6 +158,25 @@ struct Pattern(Movable):
         )
 
     @staticmethod
+    def create_mesh() raises -> Self:
+        """Create a mesh pattern."""
+        return Self(unsafe_raw_ptr=ffi.cairo_pattern_create_mesh())
+
+    @staticmethod
+    def create_raster_source(
+        content: Int, width: Int, height: Int
+    ) raises -> Self:
+        """Create a raster source pattern placeholder."""
+        return Self(
+            unsafe_raw_ptr=ffi.cairo_pattern_create_raster_source(
+                MutOpaquePointer[MutExternalOrigin](),
+                ffi.cairo_content_t(c_uint(content)),
+                c_int(width),
+                c_int(height),
+            )
+        )
+
+    @staticmethod
     def unsafe_from_borrowed(
         unsafe_borrowed_ptr: UnsafePointer[ffi.cairo_pattern_t, MutExternalOrigin]
     ) raises -> Self:
@@ -273,3 +293,37 @@ struct Pattern(Movable):
     def filter(self) raises -> Filter:
         """Get the current sampling filter."""
         return Filter._from_ffi(ffi.cairo_pattern_get_filter(self._ptr))
+
+    def matrix(self) raises -> Matrix2D:
+        """Get the pattern matrix."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        ffi.cairo_pattern_get_matrix(self._ptr, matrix_ptr)
+        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_pattern_get_matrix")
+        var out = Matrix2D.from_ffi(matrix_ptr[])
+        matrix_ptr.free()
+        return out
+
+    def set_matrix(self, matrix: Matrix2D) raises:
+        """Set the pattern matrix."""
+        var matrix_ptr = alloc[ffi.cairo_matrix_t](1)
+        matrix_ptr[] = matrix.to_ffi()
+        ffi.cairo_pattern_set_matrix(
+            self._ptr,
+            matrix_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+        )
+        _ensure_success(ffi.cairo_pattern_status(self._ptr), "cairo_pattern_set_matrix")
+        matrix_ptr.free()
+
+    def mesh_begin_patch(self) raises:
+        ffi.cairo_mesh_pattern_begin_patch(self._ptr)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_begin_patch"
+        )
+
+    def mesh_end_patch(self) raises:
+        ffi.cairo_mesh_pattern_end_patch(self._ptr)
+        _ensure_success(
+            ffi.cairo_pattern_status(self._ptr), "cairo_mesh_pattern_end_patch"
+        )

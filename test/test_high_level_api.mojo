@@ -8,7 +8,9 @@ from cairo_mojo.cairo_core import (
     ImageSurface,
     PDFSurface,
     Pattern,
+    Region,
     RecordingSurface,
+    ScaledFont,
     SVGSurface,
 )
 from cairo_mojo.cairo_enums import (
@@ -23,8 +25,9 @@ from cairo_mojo.cairo_enums import (
     LineJoin,
     Operator,
     Status,
+    SubpixelOrder,
 )
-from cairo_mojo.cairo_types import Matrix2D, Point2D
+from cairo_mojo.cairo_types import Glyph, Matrix2D, Point2D, RectangleInt
 from cairo_mojo.cairo_convenience import (
     clear_rgba,
     draw_text,
@@ -39,6 +42,7 @@ from cairo_mojo.cairo_convenience import (
     stroke_rounded_rectangle,
 )
 from cairo_mojo.fonts import FontOptions
+from cairo_mojo.cairo_constants import cairo_version, cairo_version_string, version_info
 
 
 def _ensure_cairo_loaded() raises -> OwnedDLHandle:
@@ -546,6 +550,40 @@ def test_explicit_unsafe_interop_entrypoints() raises:
     assert_true(Int(raw_surface) != 0)
     assert_true(Int(raw_pixels) != 0)
     assert_true(Int(raw_pattern) != 0)
+    _ = handle
+
+
+def test_parity_additions_paths_regions_and_scaled_fonts() raises:
+    var handle = _ensure_cairo_loaded()
+    var surface = ImageSurface(width=64, height=64)
+    var ctx = Context(surface)
+    var options = FontOptions()
+    options.set_subpixel_order(SubpixelOrder.RGB)
+
+    ctx.move_to(4.0, 4.0)
+    ctx.new_sub_path()
+    ctx.line_to(20.0, 20.0)
+    var copied = ctx.copy_path()
+    ctx.new_path()
+    ctx.append_path(copied)
+    assert_true(copied.num_data() > 0)
+
+    var region = Region(RectangleInt(x=0, y=0, width=8, height=8))
+    assert_equal(region.is_empty(), False)
+    assert_equal(region.contains_point(2, 2), True)
+
+    var font_face = ctx.font_face()
+    var identity = Matrix2D(xx=1.0, yx=0.0, xy=0.0, yy=1.0, x0=0.0, y0=0.0)
+    var scaled = ScaledFont(font_face, identity, identity, options)
+    ctx.set_scaled_font(scaled)
+    var glyphs = [Glyph(index=65, x=12.0, y=20.0)]
+    ctx.show_glyphs(glyphs)
+
+    var ver = cairo_version()
+    var ver_info = version_info()
+    assert_true(ver > 0)
+    assert_true(cairo_version_string().byte_length() > 0)
+    assert_true(ver_info.major >= 1)
     _ = handle
 
 

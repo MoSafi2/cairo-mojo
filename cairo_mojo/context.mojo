@@ -1,6 +1,6 @@
 """Drawing context bindings and scoped context-state management."""
 
-from std.ffi import c_double, c_int
+from std.ffi import c_double, c_int, c_ulong
 from cairo_mojo import _ffi as ffi
 from cairo_mojo.cairo_enums import (
     Antialias,
@@ -11,12 +11,15 @@ from cairo_mojo.cairo_enums import (
     LineJoin,
     Operator,
     Status,
+    TextClusterFlags,
 )
 from cairo_mojo.cairo_types import (
     Extents2D,
     FontExtents,
+    Glyph,
     Matrix2D,
     Point2D,
+    TextCluster,
     TextExtents,
 )
 from cairo_mojo.common import (
@@ -24,7 +27,8 @@ from cairo_mojo.common import (
     _alloc_double_quad,
     _ensure_success,
 )
-from cairo_mojo.fonts import FontFace, FontOptions
+from cairo_mojo.fonts import FontFace, FontOptions, ScaledFont
+from cairo_mojo.paths import Path
 from cairo_mojo.patterns import Pattern
 from cairo_mojo.surfaces import Surface, SurfaceLike
 
@@ -255,30 +259,49 @@ struct Context(Movable):
         ffi.cairo_set_operator(self.ptr, op._to_ffi())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_operator")
 
+    def operator(self) raises -> Operator:
+        """Return current compositing operator."""
+        return Operator._from_ffi(ffi.cairo_get_operator(self.ptr))
+
     def set_antialias(self, antialias: Antialias) raises:
         """Set antialiasing mode for drawing."""
         ffi.cairo_set_antialias(self.ptr, antialias._to_ffi())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_antialias")
+
+    def antialias(self) raises -> Antialias:
+        return Antialias._from_ffi(ffi.cairo_get_antialias(self.ptr))
 
     def set_line_width(self, width: Float64) raises:
         """Set stroke line width in user-space units."""
         ffi.cairo_set_line_width(self.ptr, c_double(width))
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_line_width")
 
+    def line_width(self) raises -> Float64:
+        return Float64(ffi.cairo_get_line_width(self.ptr))
+
     def set_line_cap(self, line_cap: LineCap) raises:
         """Set stroke line-cap style."""
         ffi.cairo_set_line_cap(self.ptr, line_cap._to_ffi())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_line_cap")
+
+    def line_cap(self) raises -> LineCap:
+        return LineCap._from_ffi(ffi.cairo_get_line_cap(self.ptr))
 
     def set_line_join(self, line_join: LineJoin) raises:
         """Set stroke line-join style."""
         ffi.cairo_set_line_join(self.ptr, line_join._to_ffi())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_line_join")
 
+    def line_join(self) raises -> LineJoin:
+        return LineJoin._from_ffi(ffi.cairo_get_line_join(self.ptr))
+
     def set_fill_rule(self, fill_rule: FillRule) raises:
         """Set the fill rule for path filling."""
         ffi.cairo_set_fill_rule(self.ptr, fill_rule._to_ffi())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_fill_rule")
+
+    def fill_rule(self) raises -> FillRule:
+        return FillRule._from_ffi(ffi.cairo_get_fill_rule(self.ptr))
 
     def set_dash(self, ref dashes: List[Float64], offset: Float64 = 0.0) raises:
         """Set dash pattern for stroking."""
@@ -305,10 +328,16 @@ struct Context(Movable):
         ffi.cairo_set_miter_limit(self.ptr, c_double(limit))
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_miter_limit")
 
+    def miter_limit(self) raises -> Float64:
+        return Float64(ffi.cairo_get_miter_limit(self.ptr))
+
     def set_tolerance(self, tolerance: Float64) raises:
         """Set curve approximation tolerance."""
         ffi.cairo_set_tolerance(self.ptr, c_double(tolerance))
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_tolerance")
+
+    def tolerance(self) raises -> Float64:
+        return Float64(ffi.cairo_get_tolerance(self.ptr))
 
     def translate(self, tx: Float64, ty: Float64) raises:
         """Apply a translation to the current transformation matrix.
@@ -445,6 +474,29 @@ struct Context(Movable):
         """Clear the current path."""
         ffi.cairo_new_path(self.ptr)
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_new_path")
+
+    def new_sub_path(self) raises:
+        """Start a new disconnected sub-path."""
+        ffi.cairo_new_sub_path(self.ptr)
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_new_sub_path")
+
+    def copy_path(self) raises -> Path:
+        """Copy current path including curves."""
+        return Path.unsafe_from_owned_raw(ffi.cairo_copy_path(self.ptr))
+
+    def copy_path_flat(self) raises -> Path:
+        """Copy current path flattened to lines."""
+        return Path.unsafe_from_owned_raw(ffi.cairo_copy_path_flat(self.ptr))
+
+    def append_path(self, ref path: Path) raises:
+        """Append a copied path onto current path."""
+        ffi.cairo_append_path(
+            self.ptr,
+            path.unsafe_raw_ptr().unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_append_path")
 
     def move_to(self, x: Float64, y: Float64) raises:
         """Begin a new sub-path at `(x, y)`.
@@ -749,6 +801,44 @@ struct Context(Movable):
         )
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_mask_surface")
 
+    def copy_page(self) raises:
+        """Emit current page while preserving page contents."""
+        ffi.cairo_copy_page(self.ptr)
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_copy_page")
+
+    def show_page(self) raises:
+        """Emit current page and clear for next page."""
+        ffi.cairo_show_page(self.ptr)
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_show_page")
+
+    def tag_begin(self, tag_name: String, attributes: String = "") raises:
+        """Begin a tagged content section."""
+        var tag_name_mut = tag_name.copy()
+        var tag_name_ptr = (
+            tag_name_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        var attributes_mut = attributes.copy()
+        var attributes_ptr = (
+            attributes_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_tag_begin(self.ptr, tag_name_ptr, attributes_ptr)
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_tag_begin")
+
+    def tag_end(self, tag_name: String) raises:
+        """End a tagged content section."""
+        var tag_name_mut = tag_name.copy()
+        var tag_name_ptr = (
+            tag_name_mut.as_c_string_slice()
+            .unsafe_ptr()
+            .unsafe_origin_cast[ImmutExternalOrigin]()
+        )
+        ffi.cairo_tag_end(self.ptr, tag_name_ptr)
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_tag_end")
+
     def select_font_face(
         self,
         family: String,
@@ -792,6 +882,19 @@ struct Context(Movable):
         """Set rendering options for font rasterization."""
         ffi.cairo_set_font_options(self.ptr, options.unsafe_raw_ptr())
         _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_font_options")
+
+    def set_scaled_font(self, ref scaled_font: ScaledFont) raises:
+        ffi.cairo_set_scaled_font(
+            self.ptr,
+            scaled_font.unsafe_raw_ptr().unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_set_scaled_font")
+
+    def scaled_font(self) raises -> ScaledFont:
+        var borrowed = ffi.cairo_get_scaled_font(self.ptr)
+        return ScaledFont.unsafe_from_borrowed(borrowed)
 
     def show_text(self, text: String) raises:
         """Draw UTF-8 text at the current point.
@@ -887,3 +990,45 @@ struct Context(Movable):
         var out = FontExtents.from_ffi(extents_ptr[])
         extents_ptr.free()
         return out
+
+    def show_glyphs(self, ref glyphs: List[Glyph]) raises:
+        var count = len(glyphs)
+        if count == 0:
+            return
+        var glyph_ptr = alloc[ffi.cairo_glyph_t](count)
+        for i in range(count):
+            glyph_ptr[i] = ffi.cairo_glyph_t(
+                index=c_ulong(glyphs[i].index),
+                x=c_double(glyphs[i].x),
+                y=c_double(glyphs[i].y),
+            )
+        ffi.cairo_show_glyphs(
+            self.ptr,
+            glyph_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            c_int(count),
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_show_glyphs")
+        glyph_ptr.free()
+
+    def glyph_path(self, ref glyphs: List[Glyph]) raises:
+        var count = len(glyphs)
+        if count == 0:
+            return
+        var glyph_ptr = alloc[ffi.cairo_glyph_t](count)
+        for i in range(count):
+            glyph_ptr[i] = ffi.cairo_glyph_t(
+                index=c_ulong(glyphs[i].index),
+                x=c_double(glyphs[i].x),
+                y=c_double(glyphs[i].y),
+            )
+        ffi.cairo_glyph_path(
+            self.ptr,
+            glyph_ptr.unsafe_mut_cast[target_mut=False]().unsafe_origin_cast[
+                ImmutExternalOrigin
+            ](),
+            c_int(count),
+        )
+        _ensure_success(ffi.cairo_status(self.ptr), "cairo_glyph_path")
+        glyph_ptr.free()

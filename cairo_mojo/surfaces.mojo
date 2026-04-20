@@ -3,8 +3,9 @@
 from std.ffi import c_double, c_int, c_uchar
 from . import _ffi as ffi
 from .cairo_enums import Content, Format, Status 
-from .cairo_types import Extents2D
+from .cairo_types import Extents2D, Point2D
 from .common import _alloc_double_quad, _ensure_success
+from .devices import Device
 
 
 trait SurfaceLike:
@@ -124,6 +125,70 @@ struct Surface(Movable, SurfaceLike):
     def content(self) raises -> Content:
         """Return the content type supported by this surface."""
         return Content._from_ffi(ffi.cairo_surface_get_content(self._ptr))
+
+    def copy_page(self) raises:
+        ffi.cairo_surface_copy_page(self._ptr)
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_copy_page")
+
+    def show_page(self) raises:
+        ffi.cairo_surface_show_page(self._ptr)
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_show_page")
+
+    def set_device_scale(self, x_scale: Float64, y_scale: Float64) raises:
+        ffi.cairo_surface_set_device_scale(self._ptr, c_double(x_scale), c_double(y_scale))
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_set_device_scale")
+
+    def device_scale(self) raises -> Point2D:
+        var x_ptr = alloc[c_double](1)
+        var y_ptr = alloc[c_double](1)
+        ffi.cairo_surface_get_device_scale(self._ptr, x_ptr, y_ptr)
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_get_device_scale")
+        var out = Point2D(x=Float64(x_ptr[]), y=Float64(y_ptr[]))
+        x_ptr.free()
+        y_ptr.free()
+        return out
+
+    def set_device_offset(self, x_offset: Float64, y_offset: Float64) raises:
+        ffi.cairo_surface_set_device_offset(
+            self._ptr, c_double(x_offset), c_double(y_offset)
+        )
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_set_device_offset")
+
+    def device_offset(self) raises -> Point2D:
+        var x_ptr = alloc[c_double](1)
+        var y_ptr = alloc[c_double](1)
+        ffi.cairo_surface_get_device_offset(self._ptr, x_ptr, y_ptr)
+        _ensure_success(ffi.cairo_surface_status(self._ptr), "cairo_surface_get_device_offset")
+        var out = Point2D(x=Float64(x_ptr[]), y=Float64(y_ptr[]))
+        x_ptr.free()
+        y_ptr.free()
+        return out
+
+    def set_fallback_resolution(self, x_pixels_per_inch: Float64, y_pixels_per_inch: Float64) raises:
+        ffi.cairo_surface_set_fallback_resolution(
+            self._ptr, c_double(x_pixels_per_inch), c_double(y_pixels_per_inch)
+        )
+        _ensure_success(
+            ffi.cairo_surface_status(self._ptr),
+            "cairo_surface_set_fallback_resolution",
+        )
+
+    def fallback_resolution(self) raises -> Point2D:
+        var x_ptr = alloc[c_double](1)
+        var y_ptr = alloc[c_double](1)
+        ffi.cairo_surface_get_fallback_resolution(self._ptr, x_ptr, y_ptr)
+        _ensure_success(
+            ffi.cairo_surface_status(self._ptr),
+            "cairo_surface_get_fallback_resolution",
+        )
+        var out = Point2D(x=Float64(x_ptr[]), y=Float64(y_ptr[]))
+        x_ptr.free()
+        y_ptr.free()
+        return out
+
+    def device(self) raises -> Device:
+        var borrowed = ffi.cairo_surface_get_device(self._ptr)
+        return Device.unsafe_from_borrowed(borrowed)
 
     @staticmethod
     def unsafe_from_borrowed(
@@ -425,12 +490,7 @@ struct RecordingSurface(Movable, SurfaceLike):
     A recording surface stores drawing operations instead of rasterizing them
     immediately, which makes it useful for replay and analysis.
 
-    Example:
-    ```mojo
-    var recording = RecordingSurface(bounded=True, width=200.0, height=120.0)
-    var ctx = Context(recording); ctx.rectangle(10.0, 10.0, 80.0, 40.0); ctx.fill()
-    var used = recording.ink_extents()
-    ```
+    Example usage is covered in `test/test_high_level_api.mojo`.
     """
     var _surface: Surface
 

@@ -125,3 +125,17 @@ pixi run package-artifacts
 Current toolchain target:
 
 - Mojo: currently nightly and then starting with `mojo 26.3` stable
+
+## Pycairo parity snapshot
+
+`cairo-mojo` now includes high-level wrappers for most core pycairo families:
+
+- module constants and version helpers (`cairo_version()`, `cairo_version_string()`, `version_info()`, `HAS`, `TAG`, `MIME_TYPE`)
+- expanded enums and status values (including hinting/subpixel and text-cluster flags)
+- path object workflow (`copy_path`, `copy_path_flat`, `append_path`, `Path`)
+- region/device wrappers (`Region`, `RectangleInt`, `Device`)
+- advanced text wrappers (`ScaledFont`, glyph-based drawing via `show_glyphs`)
+- extended surface controls (`show_page`, `copy_page`, device scale/offset, fallback resolution)
+
+Backend-specific APIs (for example PS/Script/Tee and platform-native surfaces) depend on
+the linked Cairo build and remain capability-gated.
