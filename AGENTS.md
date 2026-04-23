@@ -1,4 +1,4 @@
-# Agent instructions for BlazeSeq
+# Agent instructions for cairo-mojo
 
 ## Running Mojo code
 
