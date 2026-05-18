@@ -1,4 +1,4 @@
-from cairo_mojo._ffi import (
+from cairo_mojo._bindings import (
     cairo_antialias_t,
     cairo_arc,
     cairo_close_path,

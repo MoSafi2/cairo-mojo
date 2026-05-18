@@ -1,4 +1,4 @@
-from cairo_mojo._ffi import cairo_status_t
+from cairo_mojo._bindings import cairo_status_t
 from cairo_mojo.cairo_enums import Status
 from cairo_mojo.cairo_runtime import (
     discover_cairo_candidates,

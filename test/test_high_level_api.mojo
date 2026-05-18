@@ -1,4 +1,4 @@
-import cairo_mojo._ffi as bindings
+import cairo_mojo._bindings as bindings
 from cairo_mojo.cairo_runtime import ensure_cairo_loader_handle
 from std.ffi import OwnedDLHandle
 from std.testing import TestSuite, assert_equal, assert_true
